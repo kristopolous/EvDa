@@ -1,0 +1,12 @@
+<script src=http://documentcloud.github.com/underscore/underscore-min.js></script>
+<script src=event.js></script>
+
+<script>
+var ev = EvDa();
+
+ev.Data.onSet('one', function(value){
+  console.log(value);
+});
+
+ev.Data('one', 'two');
+</script>
