@@ -2,11 +2,17 @@ function EvDa () {
   var 
     pub = {},
 
-    // Underscore shortcuts
+    // Underscore shortcuts ... pleases the minifier
     each = _.each,
     keys = _.keys,
     extend = _.extend,
+    isFunction = _.isFunction,
+    isArray = _.isArray,
+    isString = _.isString,
+    isNumber = _.isNumber,
     slice = Array.prototype.slice,
+
+    // Internals
     data = {},
     fHandle = 0,
     fMap = {},
@@ -15,34 +21,27 @@ function EvDa () {
     shared = {};
 
   function Stage ( key, value, meta, opts ) {
-    var 
-      runList = stageMap[opts.stage][key],
-      len;
-    
-    if ( runList ) {
+    var runList = stageMap[opts.stage][key];
 
-      len = runList.length;
-
-      // This closure is needed in order to save a pointer
-      // to the callback, which may be run asynchronously.
-      each(runList, function(callback, ix) {
-        opts.result[ix] = callback ( value, {
-          meta: meta,
-          oldValue: opts.oldValue,
-          currentValue: data[key],
-          key: key,
-          deregister: function () {
-            callback.once = true;
-          }
-        });
-      });
-
-      for ( ix = 0; ix < len; ix++ ) {
-        if ( runList[ix].once ) {
-          deregister ( runList[ix] );
+    // This closure is needed in order to save a pointer
+    // to the callback, which may be run asynchronously.
+    each(runList, function(callback, ix) {
+      opts.result[ix] = callback ( value, {
+        meta: meta,
+        oldValue: opts.oldValue,
+        currentValue: data[key],
+        key: key,
+        deregister: function () {
+          callback.once = true;
         }
+      });
+    });
+
+    each(runList, function(callback) {
+      if(callback.once) {
+        deregister(callback);
       }
-    }
+    });
   }
 
   function Invoke ( key, value, meta ) {
@@ -68,7 +67,6 @@ function EvDa () {
 
   function Test ( key, value, meta ) {
     var  
-      len = stageMap.test[key].length,
       success = 0,
       failure = 0;
 
@@ -78,7 +76,7 @@ function EvDa () {
       success += ok;
       failure += !ok;
 
-      if ( success + failure == len ) {
+      if ( success + failure == stageMap.test[key].length ) {
         if ( failure ) { 
           keyCheck[key] = false;
         } else {
@@ -122,7 +120,7 @@ function EvDa () {
   function run ( keyList, value, meta ) {
     var result = {};
 
-    if ( _.isString ( keyList ) ) {
+    if ( isString ( keyList ) ) {
       keyList = [keyList];
     }
 
@@ -152,7 +150,7 @@ function EvDa () {
 
   shared = {
     push: function ( key, value ) {
-      if ( !_.isArray ( data[key] ) ) {
+      if ( !isArray ( data[key] ) ) {
         data[key] = [];
       }
 
@@ -162,7 +160,7 @@ function EvDa () {
     },
 
     pop: function ( key ) {
-      if ( _.isArray ( data[key] ) ) {
+      if ( isArray ( data[key] ) ) {
         data[key].pop ();
         data[key].current = _.last(data[key]);
 
@@ -175,15 +173,15 @@ function EvDa () {
     },
 
     decr: function ( key ) {
-      if ( key in data && _.isNumber( data[key] ) ) {
-        return run ( key, data[key] - 1 );
-      } 
-
-      return run ( key, 0 );
+      // if key isn't in data, it returns 0 and sets it
+      // if key is in data but isn't a number, it returns NaN and sets it
+      // if key is 1, then it gets reduced to 0, getting 0,
+      // if key is any other number, than it gets set
+      return run ( key, data[key] - 1 || 0 );
     },
 
     incr: function ( key ) {
-      if ( key in data && _.isNumber( data[key] ) ) {
+      if ( key in data && isNumber( data[key] ) ) {
         return run ( key, data[key] + 1 );
       } 
 
@@ -222,7 +220,7 @@ function EvDa () {
       if ( callback ) {
         callback = register ( callback );
 
-        if ( _.isString ( keyList ) ) {
+        if ( isString ( keyList ) ) {
           keyList = [keyList];
         }
 
@@ -278,7 +276,7 @@ function EvDa () {
 
     var context = chain ({ scope: scope });
      
-    if ( _.isFunction ( invoke ) ) {
+    if ( isFunction ( invoke ) ) {
       context.invoke ( invoke );
     } else if ( arguments.length > 1 ){
       context.run ( invoke );
@@ -326,9 +324,9 @@ function EvDa () {
         return ret;
       }
 
-      if ( _.isArray ( data[key] ) ) { 
+      if ( isArray ( data[key] ) ) { 
         try { 
-          _.isFunction ( data[key].push );
+          isFunction ( data[key].push );
         // There's an IE9 bug that can mangle data pointers
         } catch ( ex ) {
           data[key] = slice.call ( data[key] );
@@ -338,7 +336,7 @@ function EvDa () {
       return data[key];
     } 
 
-    if ( _.isArray(this) ) {
+    if ( isArray(this) ) {
       params = this;
     }
 
