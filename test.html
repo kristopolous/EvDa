@@ -1,5 +1,5 @@
 <script src=http://documentcloud.github.com/underscore/underscore-min.js></script>
-<script src=event.js></script>
+<script src=evda.js></script>
 
 <script>
 var ev = EvDa();
@@ -9,4 +9,12 @@ ev.Data.onSet('one', function(value){
 });
 
 ev.Data('one', 'two');
+
+var prefix = 'pre';
+
+for(var ix = 0; ix < 4; ix++) {
+  ev.Data(prefix + ix, ix);
+}
+
+console.log(ev.Data(prefix + '.*'));
 </script>

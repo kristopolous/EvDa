@@ -362,10 +362,24 @@ function EvDa ( ) {
     }
 
     if ( arguments.length == 1 ) {
+      if( key.search(/[\*\?]/) != -1 ) {
+        var 
+          keyRegex = new RegExp( key, 'ig' ),
+          ret = [];
+
+        _.each(_.keys(data), function(toTest) {
+          if (toTest.match(keyRegex)) {
+            ret.push(toTest);
+          }
+        });
+
+        return ret;
+      }
 
       if ( _.isArray ( data[key] ) ) { 
         try { 
           _.isFunction ( data[key].push );
+        // There's an IE9 bug that can mangle data pointers
         } catch ( ex ) {
           console.log ( "woops, caught a bad error for " + key );
           data[key] = slice.call ( data[key] );
@@ -382,11 +396,14 @@ function EvDa ( ) {
     return shared.run.apply ( this, args.concat ( params ) );
   }
 
-  _.each ( "Event,Data".split ( ',' ), function ( which ) {
-    inherit ({
-      child: pub[which],
-      parent: shared
-    });
+  inherit ({
+    child: pub.Event,
+    parent: shared
+  });
+
+  inherit ({
+    child: pub.Data,
+    parent: shared
   });
 
   shared.set = pub.Data;
