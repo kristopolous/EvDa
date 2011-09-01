@@ -1,13 +1,17 @@
 function EvDa ( ) {
   var 
     pub = {},
+
+    // Underscore shortcuts
+    each = _.each,
+    keys = _.keys,
+    slice = Array.prototype.slice,
     data = {},
     fHandle = 0,
     fMap = {},
     stageMap = {},
     keyCheck = {},
     Do = {},
-    slice = Array.prototype.slice,
     shared = {};
 
   Do.Stage = function ( key, value, meta, opts ) {
@@ -21,17 +25,19 @@ function EvDa ( ) {
 
     len = runList.length;
 
-    for ( var ix = 0; ix < len; ix++ ) {
-      opts.result[runList[ix]] = runList[ix] ( value, {
+    // This closure is needed in order to save a pointer
+    // to the callback, which may be run asynchronously.
+    each(runList, function(callback, ix) {
+      opts.result[ix] = callback ( value, {
         meta: meta,
         oldValue: opts.oldValue,
         currentValue: data[key],
         key: key,
         deregister: function ( ) {
-          runList[ix].oneShot = true;
+          callback.oneShot = true;
         }
       });
-    }
+    });
 
     for ( ix = 0; ix < len; ix++ ) {
       if ( runList[ix].oneShot ) {
@@ -89,7 +95,7 @@ function EvDa ( ) {
       }
     }
 
-    _.each ( stageMap.test[key], function ( cb ) {
+    each ( stageMap.test[key], function ( cb ) {
       result[cb.ix] = 
         cb ( value, {
           meta: meta,
@@ -136,7 +142,7 @@ function EvDa ( ) {
   function deregister ( handle ) {
     if ( handle.refList ) {
 
-      _.each ( handle.refList, function ( tuple ) {
+      each ( handle.refList, function ( tuple ) {
         var
           stage = tuple[0],
           key = tuple[1], 
@@ -233,7 +239,8 @@ function EvDa ( ) {
       if ( _.isString ( keyList ) ) {
         keyList = [keyList];
       }
-      _.each ( keyList, function ( key ) {
+
+      each ( keyList, function ( key ) {
         result[key] = Do.Run ( key, value, meta );
       });
 
@@ -265,7 +272,7 @@ function EvDa ( ) {
     return handle;
   };
 
-  _.each ( 'test,invoke,after'.split ( ',' ), function ( stage ) {
+  each ( 'test,invoke,after'.split ( ',' ), function ( stage ) {
     stageMap[stage] = {};
 
     shared[stage] = function ( keyList, callback ) {
@@ -276,7 +283,8 @@ function EvDa ( ) {
         if ( _.isString ( keyList ) ) {
           keyList = [keyList];
         }
-        _.each ( keyList, function ( key ) {
+
+        each ( keyList, function ( key ) {
 
           if ( !stageMap[stage][key] ) {
             stageMap[stage][key] = [];
@@ -308,7 +316,7 @@ function EvDa ( ) {
       obj.meta = [];
     }
 
-    _.each ( _.keys ( shared ), function ( func ) {
+    each ( keys ( shared ), function ( func ) {
       context[func] = function ( ){
         
         shared[func].apply ( this, obj.scope.concat ( slice.call ( arguments ), obj.meta ) );
@@ -367,7 +375,7 @@ function EvDa ( ) {
           keyRegex = new RegExp( key, 'ig' ),
           ret = [];
 
-        _.each(_.keys(data), function(toTest) {
+        each( keys(data), function(toTest) {
           if (toTest.match(keyRegex)) {
             ret.push(toTest);
           }
@@ -406,8 +414,11 @@ function EvDa ( ) {
     parent: shared
   });
 
-  shared.set = pub.Data;
-  shared.get = pub.Data;
-  pub.Data.set = pub.Data;
+  // All aliases to the master catchall
+  shared.set = 
+    pub.Data.set = 
+    pub.get = 
+    pub.set = pub.Data;
+
   return pub;
 }
