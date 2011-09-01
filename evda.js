@@ -1,4 +1,4 @@
-function EvDa ( ) {
+function EvDa () {
   var 
     pub = {},
 
@@ -33,7 +33,7 @@ function EvDa ( ) {
         oldValue: opts.oldValue,
         currentValue: data[key],
         key: key,
-        deregister: function ( ) {
+        deregister: function () {
           callback.oneShot = true;
         }
       });
@@ -102,7 +102,7 @@ function EvDa ( ) {
           oldValue: data[key],
           callback: check,
           key: key,
-          deregister: function ( ) {
+          deregister: function () {
             deregister ( cb );
           }
         });
@@ -135,6 +135,20 @@ function EvDa ( ) {
     return callback;
   }
 
+  function run ( keyList, value, meta ) {
+    var result = {};
+
+    if ( _.isString ( keyList ) ) {
+      keyList = [keyList];
+    }
+
+    each ( keyList, function ( key ) {
+      result[key] = Run ( key, value, meta );
+    });
+
+    return result;
+  }
+
   function deregister ( handle ) {
     if ( handle.refList ) {
 
@@ -153,34 +167,7 @@ function EvDa ( ) {
   }
 
   shared = {
-    ifChanged: function ( key, value ) {
-      if (! ( key in data ) ) {           
-        return shared.run ( key, value );
-      }
-
-      if ( data[key] !== value ) {
-        return shared.run ( key, value );
-      }
-
-      return false;
-    },
-
-    pop: function ( key ) {
-      if ( !_.isArray ( data[key] ) ) {
-        return false;
-      }
-
-      data[key].pop ( );
-      if ( data[key].length > 0 ) {
-        data[key].current = data[key][data[key].length - 1];
-      } else {
-        data[key].current = undefined;
-      }
-
-      return shared.run ( key, data[key] );
-    },
-
-    append: function ( key, value ) {
+    push: function ( key, value ) {
       if ( !_.isArray ( data[key] ) ) {
         data[key] = [];
       }
@@ -188,42 +175,56 @@ function EvDa ( ) {
       data[key].push ( value );
       data[key].current = value;
       
-      return shared.run ( key, data[key] );
+      return run ( key, data[key] );
+    },
+
+    pop: function ( key ) {
+      if ( !_.isArray ( data[key] ) ) {
+        return false;
+      }
+
+      data[key].pop ();
+      if ( data[key].length > 0 ) {
+        data[key].current = data[key][data[key].length - 1];
+      } else {
+        data[key].current = undefined;
+      }
+
+      return run ( key, data[key] );
     },
 
     onSet: function ( key, callback ) {
       return (shared.invoke ( key, callback )).handle;
     },
 
+    ifChanged: function ( key, value ) {
+      if (! ( key in data ) ) {           
+        return run ( key, value );
+      }
+
+      if ( data[key] !== value ) {
+        return run ( key, value );
+      }
+
+      return false;
+    },
+
     decr: function ( key ) {
       if ( key in data && _.isNumber( data[key] ) ) {
-        return shared.run ( key, data[key] - 1 );
-      } else {
-        return shared.run ( key, 0 );
-      }
+        return run ( key, data[key] - 1 );
+      } 
+
+      return run ( key, 0 );
     },
 
     incr: function ( key ) {
       if ( key in data && _.isNumber( data[key] ) ) {
-        return shared.run ( key, data[key] + 1 );
-      } else {
-        return shared.run ( key, 1 );
-      }
+        return run ( key, data[key] + 1 );
+      } 
+
+      return run ( key, 1 );
     },
 
-    run: function ( keyList, value, meta ) {
-      var result = {};
-
-      if ( _.isString ( keyList ) ) {
-        keyList = [keyList];
-      }
-
-      each ( keyList, function ( key ) {
-        result[key] = Run ( key, value, meta );
-      });
-
-      return result;
-    },
 
     notNull: function ( key, cb ) {
       if ( ( key in data ) && data[key] !== null ) {
@@ -237,11 +238,10 @@ function EvDa ( ) {
       return chain ({meta: prop}); 
     },
 
+    run: run,
+    share: shared.meta,
     deregister: deregister
   };
-
-  shared.push = shared.append;
-  shared.share = shared.meta;
 
   shared.onSet.once = function ( key, stageMap ) {
     var handle = shared.onSet ( key, stageMap );
@@ -378,17 +378,16 @@ function EvDa ( ) {
       params = this;
     }
 
-    return shared.run.apply ( this, args.concat ( params ) );
+    return run.apply ( this, args.concat ( params ) );
   }
 
   extend ( pub.Event, shared );
   extend ( pub.Data, shared );
 
   // All aliases to the master catchall
-  shared.set = 
-    pub.Data.set = 
-    pub.get = 
-    pub.set = pub.Data;
+  pub.Data.set = 
+  pub.get = 
+  pub.set = pub.Data;
 
   return pub;
 }
