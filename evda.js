@@ -5,16 +5,16 @@ function EvDa ( ) {
     // Underscore shortcuts
     each = _.each,
     keys = _.keys,
+    extend = _.extend,
     slice = Array.prototype.slice,
     data = {},
     fHandle = 0,
     fMap = {},
     stageMap = {},
     keyCheck = {},
-    Do = {},
     shared = {};
 
-  Do.Stage = function ( key, value, meta, opts ) {
+  function Stage ( key, value, meta, opts ) {
     var 
       runList = stageMap[opts.stage][key],
       len;
@@ -46,7 +46,7 @@ function EvDa ( ) {
     }
   }
 
-  Do.Invoke = function ( key, value, meta ) {
+  function Invoke ( key, value, meta ) {
     var 
       oldValue = data[key],
       result = {};
@@ -55,13 +55,13 @@ function EvDa ( ) {
       data[key] = value;
     }
 
-    Do.Stage ( key, value, meta, {
+    Stage ( key, value, meta, {
       result: result, 
       stage: 'invoke', 
       oldValue: oldValue
     });
 
-    Do.Stage ( key, value, meta, {
+    Stage ( key, value, meta, {
       result: result, 
       stage: 'after',
       oldValue: oldValue
@@ -71,7 +71,7 @@ function EvDa ( ) {
     return result;
   }
 
-  Do.Test = function ( key, value, meta ) {
+  function Test ( key, value, meta ) {
     var  
       len = stageMap.test[key].length,
       result = {},
@@ -90,7 +90,7 @@ function EvDa ( ) {
         if ( failure ) { 
           keyCheck[key] = false;
         } else {
-          return Do.Invoke ( key, value, meta );
+          return Invoke ( key, value, meta );
         }
       }
     }
@@ -109,19 +109,19 @@ function EvDa ( ) {
     });
   }
 
-  Do.Run = function ( key, value, meta ) {
+  function Run ( key, value, meta ) {
     var result = {};
 
     if ( keyCheck[key] ) {
-      return result;
+      return {};
     }
   
     keyCheck[key] = true;
 
     if ( ! stageMap.test[key] ) {
-      result = Do.Invoke ( key, value, meta );
+      result = Invoke ( key, value, meta );
     } else {
-      result = Do.Test ( key, value, meta );
+      result = Test ( key, value, meta );
     }
 
     return result;
@@ -133,10 +133,6 @@ function EvDa ( ) {
     fMap[callback.ix] = callback;
 
     return callback;
-  }
-
-  function inherit ( opts ) {
-    return _.extend ( opts.child, opts.parent );
   }
 
   function deregister ( handle ) {
@@ -156,7 +152,6 @@ function EvDa ( ) {
     delete fMap[handle.ix];
   }
 
-
   shared = {
     ifChanged: function ( key, value ) {
       if (! ( key in data ) ) {           
@@ -170,20 +165,8 @@ function EvDa ( ) {
       return false;
     },
 
-    popandpush: function ( key, value ) {
-      if ( !is.array ( data[key] ) ) {
-        data[key] = [];
-      }
-
-      data[key].pop ( );
-      data[key].push ( value );
-      data[key].current = value;
-
-      return shared.run ( key, data[key] );
-    },
-
     pop: function ( key ) {
-      if ( !is.array ( data[key] ) ) {
+      if ( !_.isArray ( data[key] ) ) {
         return false;
       }
 
@@ -198,7 +181,7 @@ function EvDa ( ) {
     },
 
     append: function ( key, value ) {
-      if ( !is.array ( data[key] ) ) {
+      if ( !_.isArray ( data[key] ) ) {
         data[key] = [];
       }
 
@@ -208,17 +191,12 @@ function EvDa ( ) {
       return shared.run ( key, data[key] );
     },
 
-    setHash: function ( key, map ) {
-      return shared.run ( key, _.extend ( true, map, data[key] ) );
-    },
-
     onSet: function ( key, callback ) {
-      var obj = shared.invoke ( key, callback );
-      return obj.handle;
+      return (shared.invoke ( key, callback )).handle;
     },
 
     decr: function ( key ) {
-      if ( key in data && typeof data[key] == 'number' ) {
+      if ( key in data && _.isNumber( data[key] ) ) {
         return shared.run ( key, data[key] - 1 );
       } else {
         return shared.run ( key, 0 );
@@ -226,7 +204,7 @@ function EvDa ( ) {
     },
 
     incr: function ( key ) {
-      if ( key in data && typeof data[key] == 'number' ) {
+      if ( key in data && _.isNumber( data[key] ) ) {
         return shared.run ( key, data[key] + 1 );
       } else {
         return shared.run ( key, 1 );
@@ -241,7 +219,7 @@ function EvDa ( ) {
       }
 
       each ( keyList, function ( key ) {
-        result[key] = Do.Run ( key, value, meta );
+        result[key] = Run ( key, value, meta );
       });
 
       return result;
@@ -272,7 +250,7 @@ function EvDa ( ) {
     return handle;
   };
 
-  each ( 'test,invoke,after'.split ( ',' ), function ( stage ) {
+  each ( ['test','invoke','after'], function ( stage ) {
     stageMap[stage] = {};
 
     shared[stage] = function ( keyList, callback ) {
@@ -296,10 +274,10 @@ function EvDa ( ) {
         });
       }
 
-      return inherit ({
-        child: {handle: callback},
-        parent: shared
-      });
+      return extend ( 
+        {handle: callback},
+        shared
+      );
     }
   });
 
@@ -317,7 +295,7 @@ function EvDa ( ) {
     }
 
     each ( keys ( shared ), function ( func ) {
-      context[func] = function ( ){
+      context[func] = function () {
         
         shared[func].apply ( this, obj.scope.concat ( slice.call ( arguments ), obj.meta ) );
 
@@ -363,7 +341,7 @@ function EvDa ( ) {
 
     if ( typeof key === 'object' ) {
       for ( var el in key ) {
-        ret[el] = arguments.callee.apply ( this, [el, key[el]] );
+        ret[el] = pub.Data.apply ( this, [el, key[el]] );
       }
 
       return ret;
@@ -389,7 +367,6 @@ function EvDa ( ) {
           _.isFunction ( data[key].push );
         // There's an IE9 bug that can mangle data pointers
         } catch ( ex ) {
-          console.log ( "woops, caught a bad error for " + key );
           data[key] = slice.call ( data[key] );
         }
       }
@@ -404,15 +381,8 @@ function EvDa ( ) {
     return shared.run.apply ( this, args.concat ( params ) );
   }
 
-  inherit ({
-    child: pub.Event,
-    parent: shared
-  });
-
-  inherit ({
-    child: pub.Data,
-    parent: shared
-  });
+  extend ( pub.Event, shared );
+  extend ( pub.Data, shared );
 
   // All aliases to the master catchall
   shared.set = 
