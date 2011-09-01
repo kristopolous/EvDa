@@ -82,7 +82,7 @@ function EvDa () {
         if ( failure ) { 
           keyCheck[key] = false;
         } else {
-          return Invoke ( key, value, meta );
+          Invoke ( key, value, meta );
         }
       }
     }
