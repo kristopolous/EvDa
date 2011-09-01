@@ -19,29 +19,28 @@ function EvDa () {
       runList = stageMap[opts.stage][key],
       len;
     
-    if ( ! runList ) {
-      return opts.result;
-    }
+    if ( runList ) {
 
-    len = runList.length;
+      len = runList.length;
 
-    // This closure is needed in order to save a pointer
-    // to the callback, which may be run asynchronously.
-    each(runList, function(callback, ix) {
-      opts.result[ix] = callback ( value, {
-        meta: meta,
-        oldValue: opts.oldValue,
-        currentValue: data[key],
-        key: key,
-        deregister: function () {
-          callback.oneShot = true;
-        }
+      // This closure is needed in order to save a pointer
+      // to the callback, which may be run asynchronously.
+      each(runList, function(callback, ix) {
+        opts.result[ix] = callback ( value, {
+          meta: meta,
+          oldValue: opts.oldValue,
+          currentValue: data[key],
+          key: key,
+          deregister: function () {
+            callback.once = true;
+          }
+        });
       });
-    });
 
-    for ( ix = 0; ix < len; ix++ ) {
-      if ( runList[ix].oneShot ) {
-        deregister ( runList[ix] );
+      for ( ix = 0; ix < len; ix++ ) {
+        if ( runList[ix].once ) {
+          deregister ( runList[ix] );
+        }
       }
     }
   }
@@ -55,33 +54,26 @@ function EvDa () {
       data[key] = value;
     }
 
-    Stage ( key, value, meta, {
-      result: result, 
-      stage: 'invoke', 
-      oldValue: oldValue
+    each( ['invoke', 'after'], function(which) {
+      Stage ( key, value, meta, {
+        result: result, 
+        stage: which,
+        oldValue: oldValue
+      });
     });
 
-    Stage ( key, value, meta, {
-      result: result, 
-      stage: 'after',
-      oldValue: oldValue
-    });
-
-    delete keyCheck[key];
+    keyCheck[key] = false;
     return result;
   }
 
   function Test ( key, value, meta ) {
     var  
       len = stageMap.test[key].length,
-      result = {},
       success = 0,
       failure = 0;
 
     function check ( ok ) {
-      if ( arguments.length == 0 ) {
-        ok = true;
-      }
+      ok = (ok !== false);
 
       success += ok;
       failure += !ok;
@@ -96,35 +88,27 @@ function EvDa () {
     }
 
     each ( stageMap.test[key], function ( cb ) {
-      result[cb.ix] = 
-        cb ( value, {
-          meta: meta,
-          oldValue: data[key],
-          callback: check,
-          key: key,
-          deregister: function () {
-            deregister ( cb );
-          }
-        });
+      cb ( value, {
+        meta: meta,
+        oldValue: data[key],
+        callback: check,
+        key: key,
+        deregister: function () {
+          deregister ( cb );
+        }
+      });
     });
   }
 
-  function Run ( key, value, meta ) {
-    var result = {};
+  function Set ( key, value, meta ) {
+    if ( ! keyCheck[key] ) {
+    
+      keyCheck[key] = true;
 
-    if ( keyCheck[key] ) {
-      return {};
+      return ( stageMap.test[key] ) ?
+        Test ( key, value, meta ) :
+        Invoke ( key, value, meta );
     }
-  
-    keyCheck[key] = true;
-
-    if ( ! stageMap.test[key] ) {
-      result = Invoke ( key, value, meta );
-    } else {
-      result = Test ( key, value, meta );
-    }
-
-    return result;
   }
 
   function register ( callback ) {
@@ -143,7 +127,7 @@ function EvDa () {
     }
 
     each ( keyList, function ( key ) {
-      result[key] = Run ( key, value, meta );
+      result[key] = Set ( key, value, meta );
     });
 
     return result;
@@ -172,41 +156,22 @@ function EvDa () {
         data[key] = [];
       }
 
-      data[key].push ( value );
-      data[key].current = value;
+      data[key].current = data[key].push ( value );
       
       return run ( key, data[key] );
     },
 
     pop: function ( key ) {
-      if ( !_.isArray ( data[key] ) ) {
-        return false;
-      }
+      if ( _.isArray ( data[key] ) ) {
+        data[key].pop ();
+        data[key].current = _.last(data[key]);
 
-      data[key].pop ();
-      if ( data[key].length > 0 ) {
-        data[key].current = data[key][data[key].length - 1];
-      } else {
-        data[key].current = undefined;
+        return run ( key, data[key] );
       }
-
-      return run ( key, data[key] );
     },
 
     onSet: function ( key, callback ) {
       return (shared.invoke ( key, callback )).handle;
-    },
-
-    ifChanged: function ( key, value ) {
-      if (! ( key in data ) ) {           
-        return run ( key, value );
-      }
-
-      if ( data[key] !== value ) {
-        return run ( key, value );
-      }
-
-      return false;
     },
 
     decr: function ( key ) {
@@ -224,7 +189,6 @@ function EvDa () {
 
       return run ( key, 1 );
     },
-
 
     notNull: function ( key, cb ) {
       if ( ( key in data ) && data[key] !== null ) {
@@ -246,7 +210,7 @@ function EvDa () {
   shared.onSet.once = function ( key, stageMap ) {
     var handle = shared.onSet ( key, stageMap );
 
-    handle.oneShot = true;
+    handle.once = true;
     return handle;
   };
 
@@ -275,7 +239,7 @@ function EvDa () {
       }
 
       return extend ( 
-        {handle: callback},
+        { handle: callback },
         shared
       );
     }
@@ -318,10 +282,10 @@ function EvDa () {
       context.invoke ( invoke );
     } else if ( arguments.length > 1 ){
       context.run ( invoke );
-    } else if ( arguments[0].constructor == Object ) {
+    } else if ( scope.constructor == Object ) {
       context = {};
-      for ( var key in arguments[0] ) {
-        context[key] = pub.Event ( key, arguments[0][key] );
+      for ( var key in scope ) {
+        context[key] = pub.Event ( key, scope[key] );
       }
     }
 
@@ -335,19 +299,19 @@ function EvDa () {
       ret = {},
       params = [];
 
-    if ( arguments.length === 0 ) {
+    if ( args.length == 0 ) {
       return data;
     }
 
-    if ( typeof key === 'object' ) {
+    if ( typeof key == 'object' ) {
       for ( var el in key ) {
-        ret[el] = pub.Data.apply ( this, [el, key[el]] );
+        ret[el] = pub.Data ( el, key[el] );
       }
 
       return ret;
     }
 
-    if ( arguments.length == 1 ) {
+    if ( args.length == 1 ) {
       if( key.search(/[\*\?]/) != -1 ) {
         var 
           keyRegex = new RegExp( key, 'ig' ),
@@ -374,7 +338,7 @@ function EvDa () {
       return data[key];
     } 
 
-    if ( this.constructor == Array ) {
+    if ( _.isArray(this) ) {
       params = this;
     }
 
