@@ -390,6 +390,7 @@ function EvDa ( ) {
   });
 
   shared.set = pub.Data;
+  shared.get = pub.Data;
   pub.Data.set = pub.Data;
   return pub;
 }
