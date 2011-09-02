@@ -27,20 +27,22 @@ function EvDa () {
     // This closure is needed in order to save a pointer
     // to the callback, which may be run asynchronously.
     each(runList, function(callback, ix) {
+
       opts.result[ix] = callback ( value, {
         meta: meta,
         oldValue: opts.oldValue,
         currentValue: data[key],
         key: key,
         deregister: function () {
-          callback.once = true;
+          callback.rm = true;
         }
+
       });
     });
 
     each(runList, function(callback) {
-      if(callback.once) {
-        deregister(callback);
+      if ( callback.rm ) {
+        deregister( callback );
       }
     });
   }
@@ -50,9 +52,7 @@ function EvDa () {
       oldValue = data[key],
       result = {};
 
-    // if ( value !== undefined ) {
-      data[key] = value;
-    // }
+    data[key] = value;
 
     each( ['during', 'after'], function(which) {
       Stage ( key, value, meta, {
@@ -86,14 +86,14 @@ function EvDa () {
       }
     }
 
-    each ( stageMap.test[key], function ( cb ) {
-      cb ( value, {
+    each ( stageMap.test[key], function ( callback ) {
+      callback ( value, {
         meta: meta,
         oldValue: data[key],
         callback: check,
         key: key,
         deregister: function () {
-          deregister ( cb );
+          deregister ( callback );
         }
       });
     });
@@ -180,16 +180,16 @@ function EvDa () {
       return run ( key, isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
-    notNull: function ( key, cb ) {
+    notNull: function ( key, callback ) {
       if ( ( key in data ) && data[key] !== null ) {
-        cb ( data[key] );
+        callback ( data[key] );
       } else {
-        return shared.once ( key, cb );
+        return shared.once ( key, callback );
       }
     },
 
     share: function ( prop ) {
-      return chain ({meta: prop}); 
+      return chain ({ meta: prop }); 
     },
 
     run: run,
@@ -318,7 +318,7 @@ function EvDa () {
       args = args.concat(this);
     }
 
-    return run.apply ( this, args );
+    return run.apply ( 0, args );
   }
 
   extend ( pub.Event, shared );
