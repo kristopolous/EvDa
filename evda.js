@@ -26,9 +26,9 @@ function EvDa () {
 
     // This closure is needed in order to save a pointer
     // to the callback, which may be run asynchronously.
-    each(runList, function(callback, ix) {
+    each(runList, function(callback, index) {
 
-      opts.result[ix] = callback ( value, {
+      opts.result[ index ] = callback ( value, {
         meta: meta,
         oldValue: opts.oldValue,
         currentValue: data[key],
@@ -111,9 +111,8 @@ function EvDa () {
   }
 
   function register ( callback ) {
-    callback.ix = ++funHandle;
     callback.refList = [];
-    funMap[callback.ix] = callback;
+    funMap[ callback.ix = ++funHandle ] = callback;
   }
 
   function run ( keyList, value, meta ) {
