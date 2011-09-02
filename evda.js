@@ -181,11 +181,9 @@ function EvDa () {
     },
 
     incr: function ( key ) {
-      if ( key in data && isNumber( data[key] ) ) {
-        return run ( key, data[key] + 1 );
-      } 
-
-      return run ( key, 1 );
+      // we can't use the same trick here because if we
+      // hit 0, it will auto-increment to 1
+      return run ( key, isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
     notNull: function ( key, cb ) {
@@ -282,9 +280,10 @@ function EvDa () {
       context.run ( invoke );
     } else if ( scope.constructor == Object ) {
       context = {};
-      for ( var key in scope ) {
+
+      each( scope, function(key) {
         context[key] = pub.Event ( key, scope[key] );
-      }
+      });
     }
 
     return context;
@@ -302,18 +301,17 @@ function EvDa () {
     }
 
     if ( typeof key == 'object' ) {
-      for ( var el in key ) {
+      each( key, function(el) {
         ret[el] = pub.Data ( el, key[el] );
-      }
+      });
 
       return ret;
     }
 
     if ( args.length == 1 ) {
       if( key.search(/[\*\?]/) != -1 ) {
-        var 
-          keyRegex = new RegExp( key, 'ig' ),
-          ret = [];
+        var keyRegex = new RegExp( key, 'ig' );
+        ret = [];
 
         each( keys(data), function(toTest) {
           if (toTest.match(keyRegex)) {

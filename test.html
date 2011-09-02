@@ -37,4 +37,13 @@ _.each(ev.Data(prefix + '.*'), function(key) {
   console.log(key, ev.get(key));
 });
 
+ev.Data.incr('key')
+console.log("Incremented key, got ", ev.Data('key'));
+ev.Data.decr('key')
+console.log("Decremented key, got ", ev.Data('key'));
+ev.Data.decr('key')
+console.log("Decremented key, got ", ev.Data('key'));
+ev.Data.incr('key')
+console.log("Incremented key, got ", ev.Data('key'));
+
 </script>
