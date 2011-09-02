@@ -5,10 +5,6 @@ function EvDa () {
     keys = _.keys,
     extend = _.extend,
     flatten = _.flatten,
-    isFunction = _.isFunction,
-    isArray = _.isArray,
-    isNumber = _.isNumber,
-    isObject = _.isObject,
     slice = Array.prototype.slice,
 
     // Internals
@@ -30,7 +26,7 @@ function EvDa () {
         oldValue: opts.oldValue,
         currentValue: data[key],
         key: key,
-        deregister: function () {
+        remove: function () {
           callback.rm = true;
         }
 
@@ -39,7 +35,7 @@ function EvDa () {
 
     each(runList, function(callback) {
       if ( callback.rm ) {
-        deregister( callback );
+        remove( callback );
       }
     });
   }
@@ -65,16 +61,14 @@ function EvDa () {
 
   function Test ( key, value, meta ) {
     var  
-      success = 0,
+      times = stageMap.test[key].length,
       failure = 0;
 
     function check ( ok ) {
-      ok = (ok !== false);
+      times --;
+      failure += (ok === false);
 
-      success += ok;
-      failure += !ok;
-
-      if ( success + failure == stageMap.test[key].length ) {
+      if ( ! times ) {
         if ( ! failure ) { 
           Invoke ( key, value, meta );
         }
@@ -89,8 +83,8 @@ function EvDa () {
         oldValue: data[key],
         callback: check,
         key: key,
-        deregister: function () {
-          deregister ( callback );
+        remove: function () {
+          remove ( callback );
         }
       });
     });
@@ -122,7 +116,7 @@ function EvDa () {
     return result;
   }
 
-  function deregister ( handle ) {
+  function remove ( handle ) {
     each ( handle.refList, function ( tuple ) {
       var
         stage = tuple[0],
@@ -173,7 +167,7 @@ function EvDa () {
       return [data, stageMap];
     }
 
-    if ( isObject(scope) ) {
+    if ( _.isObject(scope) ) {
 
       each( scope, function( _value, _key ) {
         context[_key] = pub ( _key, _value );
@@ -196,7 +190,7 @@ function EvDa () {
 
     context = chain ({ scope: scope });
      
-    if ( isFunction ( value ) ) {
+    if ( _.isFunction ( value ) ) {
       context.during ( value );
     } else if ( len > 1 ){
       context.run ( value );
@@ -265,7 +259,7 @@ function EvDa () {
     incr: function ( key ) {
       // we can't use the same trick here because if we
       // hit 0, it will auto-increment to 1
-      return run ( key, isNumber(data[key]) ? (data[key] + 1) : 1 );
+      return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
     notNull: function ( key, callback ) {
@@ -283,7 +277,6 @@ function EvDa () {
     run: run,
     get: pub,
     set: pub,
-
-    deregister: deregister
+    remove: remove
   });
 }

@@ -34,7 +34,7 @@ var cancelHandle = ev.test('one', function(value, meta) {
 console.log("----");
 ev.set('one', 'four');
 
-ev.set.deregister(cancelHandle.handle);
+ev.remove(cancelHandle.handle);
 
 console.log("----");
 ev.set('one', 'five');
