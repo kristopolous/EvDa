@@ -6,9 +6,9 @@ function EvDa () {
     each = _.each,
     keys = _.keys,
     extend = _.extend,
+    flatten = _.flatten,
     isFunction = _.isFunction,
     isArray = _.isArray,
-    isString = _.isString,
     isNumber = _.isNumber,
     isObject = _.isObject,
     slice = Array.prototype.slice,
@@ -54,7 +54,7 @@ function EvDa () {
       data[key] = value;
     // }
 
-    each( ['invoke', 'after'], function(which) {
+    each( ['during', 'after'], function(which) {
       Stage ( key, value, meta, {
         result: result, 
         stage: which,
@@ -114,18 +114,12 @@ function EvDa () {
     callback.ix = ++funHandle;
     callback.refList = [];
     funMap[callback.ix] = callback;
-
-    return callback;
   }
 
   function run ( keyList, value, meta ) {
     var result = {};
 
-    if ( isString ( keyList ) ) {
-      keyList = [keyList];
-    }
-
-    each ( keyList, function ( key ) {
+    each ( flatten([ keyList ]), function ( key ) {
       result[key] = Set ( key, value, meta );
     });
 
@@ -133,17 +127,14 @@ function EvDa () {
   }
 
   function deregister ( handle ) {
-    if ( handle.refList ) {
+    each ( handle.refList, function ( tuple ) {
+      var
+        stage = tuple[0],
+        key = tuple[1];
 
-      each ( handle.refList, function ( tuple ) {
-        var
-          stage = tuple[0],
-          key = tuple[1];
-
-        stageMap[stage][key] = 
-          _.without( stageMap[stage][key], handle );
-      });
-    }
+      stageMap[stage][key] = 
+        _.without( stageMap[stage][key], handle );
+    });
 
     delete funMap[handle.ix];
   }
@@ -168,15 +159,11 @@ function EvDa () {
       return run ( key, data[key] );
     },
 
-    onSet: function ( key, callback ) {
-      return (shared.invoke ( key, callback )).handle;
-    },
+    once: function ( key, callback ) {
+      var ret = shared.during ( key, callback );
 
-    once: function ( key, stageMap ) {
-      var handle = shared.onSet ( key, stageMap );
-
-      handle.once = true;
-      return handle;
+      ret.handle.once = true;
+      return ret;
     },
 
     decr: function ( key ) {
@@ -211,26 +198,20 @@ function EvDa () {
   };
 
 
-  each ( ['test', 'invoke', 'after'], function ( stage ) {
+  each ( ['test', 'during', 'after'], function ( stage ) {
     stageMap[stage] = {};
 
     shared[stage] = function ( keyList, callback ) {
 
-      if ( callback ) {
-        callback = register ( callback );
+      register ( callback );
 
-        if ( isString ( keyList ) ) {
-          keyList = [keyList];
-        }
+      each ( flatten([ keyList ]), function ( key ) {
 
-        each ( keyList, function ( key ) {
+        stageMap[stage][key] = 
+          (stageMap[stage][key] || []).concat(callback);
 
-          stageMap[stage][key] = 
-            (stageMap[stage][key] || []).concat(callback);
-
-          callback.refList.push ( [stage, key] );
-        });
-      }
+        callback.refList.push ( [stage, key] );
+      });
 
       return extend ( 
         { handle: callback },
@@ -278,7 +259,7 @@ function EvDa () {
     var context = chain ({ scope: scope });
      
     if ( isFunction ( invoke ) ) {
-      context.invoke ( invoke );
+      context.during ( invoke );
     } else if ( len > 1 ){
       context.run ( invoke );
     } else if ( isObject(scope) ) {

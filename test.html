@@ -5,21 +5,41 @@
 var ev = EvDa();
 
 // Register callbacks
-ev.Event.test('one', function(value, meta){
-  console.log('test', meta.key, meta)
-  meta.callback(true);
-});
+ev.Event
+  .test('one', function(value, meta){
+    console.log('test', value, meta.key, meta)
+    meta.callback(true);
+  })
+  .during('one', function(value, meta){
+    console.log('during', value, meta.key, meta);
+  })
+  .after('one', function(value, meta){
+    console.log('after', value, meta.key, meta)
+  });
 
-ev.Event.after('one', function(value, meta){
-  console.log('after', meta.key, meta)
-});
-
-ev.Data.onSet('one', function(value, meta){
-  console.log('during', meta.key, meta);
+ev.Event.once('one', function(value, meta) {
+  console.log('once', value, meta.key, meta);
 });
 
 // Do the set
+console.log("----");
 ev.Data('one', 'two');
+console.log("----");
+ev.Data('one', 'three');
+
+var cancelHandle = ev.Event.test('one', function(value, meta) {
+  console.log("Cancelling", value, meta.key, meta);
+  meta.callback(false);
+});
+
+console.log("----");
+ev.Data('one', 'four');
+
+ev.Data.deregister(cancelHandle.handle);
+
+console.log("----");
+ev.Data('one', 'five');
+console.log("----");
 
 // RegExp based key matching
 var prefix = 'pre';
