@@ -5,8 +5,7 @@
 var ev = EvDa();
 
 // Register callbacks
-ev.Event
-  .test('one', function(value, meta){
+ev.test('one', function(value, meta){
     console.log('test', value, meta.key, meta)
     meta.callback(true);
   })
@@ -17,53 +16,60 @@ ev.Event
     console.log('after', value, meta.key, meta)
   });
 
-ev.Event.once('one', function(value, meta) {
+ev.once('one', function(value, meta) {
   console.log('once', value, meta.key, meta);
 });
 
 // Do the set
 console.log("----");
-ev.Data('one', 'two');
+ev.set('one', 'two');
 console.log("----");
-ev.Data('one', 'three');
+ev.set('one', 'three');
 
-var cancelHandle = ev.Event.test('one', function(value, meta) {
+var cancelHandle = ev.test('one', function(value, meta) {
   console.log("Cancelling", value, meta.key, meta);
   meta.callback(false);
 });
 
 console.log("----");
-ev.Data('one', 'four');
+ev.set('one', 'four');
 
-ev.Data.deregister(cancelHandle.handle);
+ev.set.deregister(cancelHandle.handle);
 
 console.log("----");
-ev.Data('one', 'five');
+ev.set('one', 'five');
 console.log("----");
 
+ev.set({
+  one: 'one',
+  two: 'two',
+  three: 'three'
+});
+console.log("----");
+console.log(ev());
 // RegExp based key matching
 var prefix = 'pre';
 
 // Set up a bunch of K/V pairs
 for(var ix = 0; ix < 4; ix++) {
-  ev.Data(prefix + ix, ix);
+  ev.set(prefix + ix, ix);
 }
 
 // List the ones that match the standard regexp
-console.log('keys matching the regex: ', ev.Data(prefix + '.*'));
+console.log('keys matching the regex: ', ev.set(prefix + '.*'));
 
 // Show the values.
-_.each(ev.Data(prefix + '.*'), function(key) {
+_.each(ev.get(prefix + '.*'), function(key) {
   console.log(key, ev.get(key));
 });
 
-ev.Data.incr('key')
-console.log("Incremented key, got ", ev.Data('key'));
-ev.Data.decr('key')
-console.log("Decremented key, got ", ev.Data('key'));
-ev.Data.decr('key')
-console.log("Decremented key, got ", ev.Data('key'));
-ev.Data.incr('key')
-console.log("Incremented key, got ", ev.Data('key'));
+ev.incr('key')
+console.log("Incremented key, got ", ev.get('key'));
+ev.decr('key')
+console.log("Decremented key, got ", ev.get('key'));
+ev.decr('key')
+console.log("Decremented key, got ", ev.get('key'));
+ev.incr('key')
+console.log("Incremented key, got ", ev.get('key'));
 
 </script>

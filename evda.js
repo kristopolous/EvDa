@@ -1,7 +1,5 @@
 function EvDa () {
   var 
-    pub = {},
-
     // Underscore shortcuts ... pleases the minifier
     each = _.each,
     keys = _.keys,
@@ -18,8 +16,7 @@ function EvDa () {
     funHandle = 0,
     funMap = {},
     stageMap = {},
-    keyCheck = {},
-    shared = {};
+    keyCheck = {};
 
   function Stage ( key, value, meta, opts ) {
     var runList = stageMap[opts.stage][key];
@@ -138,7 +135,99 @@ function EvDa () {
     delete funMap[handle.ix];
   }
 
-  shared = {
+  function chain ( obj ) {
+    var context = {};
+
+    if ( !obj.scope ) {
+      obj.scope = [];
+    } else {
+      obj.scope = [obj.scope];
+    }
+
+    obj.meta = obj.meta || [];
+
+    each ( keys ( pub ), function ( func ) {
+      context[func] = function () {
+        
+        pub[func].apply ( this, 
+          obj.scope.concat ( 
+            slice.call ( arguments ), 
+            obj.meta 
+          ) 
+        );
+
+        return context;
+      }
+    });
+
+    return context;
+  }
+
+
+  function pub ( scope, value ) {
+    var 
+      len = arguments.length,
+      context = {};
+
+    if ( len == 0 ) {
+      return [data, stageMap];
+    }
+
+    if ( isObject(scope) ) {
+
+      each( scope, function( _value, _key ) {
+        context[_key] = pub ( _key, _value );
+      });
+
+      return context;
+    }
+
+    if ( len == 1 ) {
+      if( scope.search(/[\*\?]/) != -1 ) {
+        keyRegex = new RegExp( scope, 'ig' );
+
+        return _.select( keys(data), function(toTest) {
+          return toTest.match(keyRegex);
+        });
+      }
+
+      return data[ scope ];
+    } 
+
+    context = chain ({ scope: scope });
+     
+    if ( isFunction ( value ) ) {
+      context.during ( value );
+    } else if ( len > 1 ){
+      context.run ( value );
+    }
+
+    return context;
+  }
+
+  each ( ['test', 'during', 'after'], function ( stage ) {
+    stageMap[stage] = {};
+
+    pub[stage] = function ( keyList, callback ) {
+
+      register ( callback );
+
+      each ( flatten([ keyList ]), function ( key ) {
+
+        stageMap[stage][key] = 
+          (stageMap[stage][key] || []).concat(callback);
+
+        callback.refList.push ( [stage, key] );
+      });
+
+      return extend ( 
+        { handle: callback },
+        pub
+      );
+    }
+  });
+
+  return extend(pub, {
     // If we are pushing and popping a non-array then
     // it's better that the browser tosses the error
     // to the user than we try to be graceful and silent
@@ -159,7 +248,7 @@ function EvDa () {
     },
 
     once: function ( key, callback ) {
-      var ret = shared.during ( key, callback );
+      var ret = pub.during ( key, callback );
 
       ret.handle.once = true;
       return ret;
@@ -183,7 +272,7 @@ function EvDa () {
       if ( ( key in data ) && data[key] !== null ) {
         callback ( data[key] );
       } else {
-        return shared.once ( key, callback );
+        return pub.once ( key, callback );
       }
     },
 
@@ -192,139 +281,9 @@ function EvDa () {
     },
 
     run: run,
+    get: pub,
+    set: pub,
 
     deregister: deregister
-  };
-
-
-  each ( ['test', 'during', 'after'], function ( stage ) {
-    stageMap[stage] = {};
-
-    shared[stage] = function ( keyList, callback ) {
-
-      register ( callback );
-
-      each ( flatten([ keyList ]), function ( key ) {
-
-        stageMap[stage][key] = 
-          (stageMap[stage][key] || []).concat(callback);
-
-        callback.refList.push ( [stage, key] );
-      });
-
-      return extend ( 
-        { handle: callback },
-        shared
-      );
-    }
   });
-
-  function chain ( obj ) {
-    var context = {};
-
-    if ( !obj.scope ) {
-      obj.scope = [];
-    } else {
-      obj.scope = [obj.scope];
-    }
-
-    obj.meta = obj.meta || [];
-
-    each ( keys ( shared ), function ( func ) {
-      context[func] = function () {
-        
-        shared[func].apply ( this, 
-          obj.scope.concat ( 
-            slice.call ( arguments ), 
-            obj.meta 
-          ) 
-        );
-
-        return context;
-      }
-    });
-
-    return context;
-  }
-
-  // Events have chains
-  pub.Event = function ( scope, invoke ) {
-    var len = arguments.length;
-
-    if ( len == 0 ) {
-      return stageMap;
-    }
-
-    var context = chain ({ scope: scope });
-     
-    if ( isFunction ( invoke ) ) {
-      context.during ( invoke );
-    } else if ( len > 1 ){
-      context.run ( invoke );
-    } else if ( isObject(scope) ) {
-      context = {};
-
-      each( scope, function(key) {
-        context[key] = pub.Event ( key, scope[key] );
-      });
-    }
-
-    return context;
-  }
-
-  // Data has getters and setters
-  pub.Data = function ( key, value ) {
-    var 
-      args = slice.call ( arguments ),
-      len = args.length,
-      ret = {},
-      keyRegex;
-
-    if ( len == 0 ) {
-      return data;
-    }
-
-    if ( isObject( key ) ) {
-      each( key, function(el) {
-        ret[el] = pub.Data ( el, key[el] );
-      });
-
-      return ret;
-    }
-
-    if ( len == 1 ) {
-      if( key.search(/[\*\?]/) != -1 ) {
-        keyRegex = new RegExp( key, 'ig' );
-
-        return _.select( keys(data), function(toTest) {
-          return toTest.match(keyRegex);
-        });
-      }
-
-      if ( isArray ( data[key] ) ) { 
-        try { 
-          // There's an IE9 bug that can mangle array pointers
-          data[key].slice();
-        } catch ( ex ) {
-          data[key] = slice.call ( data[key] );
-        }
-      }
-
-      return data[key];
-    } 
-
-    if (isArray(this)) {
-      args = args.concat(this);
-    }
-
-    return run.apply ( 0, args );
-  }
-
-  extend ( pub.Event, shared );
-  extend ( pub.Data, shared );
-
-  // All aliases to the master catchall
-  pub.get = pub.set = pub.Data;
-
-  return pub;
 }
