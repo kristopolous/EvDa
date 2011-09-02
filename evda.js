@@ -33,11 +33,11 @@ function EvDa () {
       });
     });
 
-    each(runList, function(callback) {
+    for (var callback in runList) {
       if ( callback.rm ) {
-        remove( callback );
+        remove ( callback );
       }
-    });
+    }
   }
 
   function Invoke ( key, value, meta ) {
@@ -215,8 +215,8 @@ function EvDa () {
       });
 
       return extend ( 
-        { handle: callback },
-        pub
+        pub,
+        { handle: callback }
       );
     }
   });
@@ -270,9 +270,11 @@ function EvDa () {
       }
     },
 
+    /*
     share: function ( prop ) {
       return chain ({ meta: prop }); 
     },
+    */
 
     run: run,
     get: pub,
