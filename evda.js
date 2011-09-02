@@ -15,8 +15,8 @@ function EvDa () {
 
     // Internals
     data = {},
-    fHandle = 0,
-    fMap = {},
+    funHandle = 0,
+    funMap = {},
     stageMap = {},
     keyCheck = {},
     shared = {};
@@ -50,9 +50,9 @@ function EvDa () {
       oldValue = data[key],
       result = {};
 
-    if ( value !== undefined ) {
+    // if ( value !== undefined ) {
       data[key] = value;
-    }
+    // }
 
     each( ['invoke', 'after'], function(which) {
       Stage ( key, value, meta, {
@@ -78,11 +78,11 @@ function EvDa () {
       failure += !ok;
 
       if ( success + failure == stageMap.test[key].length ) {
-        if ( failure ) { 
-          keyCheck[key] = false;
-        } else {
+        if ( ! failure ) { 
           Invoke ( key, value, meta );
         }
+
+        keyCheck[key] = false;
       }
     }
 
@@ -111,9 +111,9 @@ function EvDa () {
   }
 
   function register ( callback ) {
-    callback.ix = ++fHandle;
+    callback.ix = ++funHandle;
     callback.refList = [];
-    fMap[callback.ix] = callback;
+    funMap[callback.ix] = callback;
 
     return callback;
   }
@@ -145,31 +145,38 @@ function EvDa () {
       });
     }
 
-    delete fMap[handle.ix];
+    delete funMap[handle.ix];
   }
 
   shared = {
+    // If we are pushing and popping a non-array then
+    // it's better that the browser tosses the error
+    // to the user than we try to be graceful and silent
+    // Therein, we don't try to handle input validation
+    // and just try it anyway
     push: function ( key, value ) {
-      if ( !isArray ( data[key] ) ) {
-        data[key] = [];
-      }
-
+      data[key] = data[key] || [];
       data[key].current = data[key].push ( value );
       
       return run ( key, data[key] );
     },
 
     pop: function ( key ) {
-      if ( isArray ( data[key] ) ) {
-        data[key].pop ();
-        data[key].current = _.last(data[key]);
+      data[key].pop ();
+      data[key].current = _.last(data[key]);
 
-        return run ( key, data[key] );
-      }
+      return run ( key, data[key] );
     },
 
     onSet: function ( key, callback ) {
       return (shared.invoke ( key, callback )).handle;
+    },
+
+    once: function ( key, stageMap ) {
+      var handle = shared.onSet ( key, stageMap );
+
+      handle.once = true;
+      return handle;
     },
 
     decr: function ( key ) {
@@ -190,27 +197,21 @@ function EvDa () {
       if ( ( key in data ) && data[key] !== null ) {
         cb ( data[key] );
       } else {
-        return shared.onSet.once ( key, cb );
+        return shared.once ( key, cb );
       }
     },
 
-    meta: function ( prop ) {
+    share: function ( prop ) {
       return chain ({meta: prop}); 
     },
 
     run: run,
-    share: shared.meta,
+
     deregister: deregister
   };
 
-  shared.onSet.once = function ( key, stageMap ) {
-    var handle = shared.onSet ( key, stageMap );
 
-    handle.once = true;
-    return handle;
-  };
-
-  each ( ['test','invoke','after'], function ( stage ) {
+  each ( ['test', 'invoke', 'after'], function ( stage ) {
     stageMap[stage] = {};
 
     shared[stage] = function ( keyList, callback ) {
@@ -224,11 +225,8 @@ function EvDa () {
 
         each ( keyList, function ( key ) {
 
-          if ( !stageMap[stage][key] ) {
-            stageMap[stage][key] = [];
-          }
-
-          stageMap[stage][key].push ( callback );
+          stageMap[stage][key] = 
+            (stageMap[stage][key] || []).concat(callback);
 
           callback.refList.push ( [stage, key] );
         });
@@ -250,14 +248,17 @@ function EvDa () {
       obj.scope = [obj.scope];
     }
 
-    if ( !obj.meta ) {
-      obj.meta = [];
-    }
+    obj.meta = obj.meta || [];
 
     each ( keys ( shared ), function ( func ) {
       context[func] = function () {
         
-        shared[func].apply ( this, obj.scope.concat ( slice.call ( arguments ), obj.meta ) );
+        shared[func].apply ( this, 
+          obj.scope.concat ( 
+            slice.call ( arguments ), 
+            obj.meta 
+          ) 
+        );
 
         return context;
       }
@@ -268,7 +269,9 @@ function EvDa () {
 
   // Events have chains
   pub.Event = function ( scope, invoke ) {
-    if ( arguments.length == 0 ) {
+    var len = arguments.length;
+
+    if ( len == 0 ) {
       return stageMap;
     }
 
@@ -276,7 +279,7 @@ function EvDa () {
      
     if ( isFunction ( invoke ) ) {
       context.invoke ( invoke );
-    } else if ( arguments.length > 1 ){
+    } else if ( len > 1 ){
       context.run ( invoke );
     } else if ( isObject(scope) ) {
       context = {};
@@ -293,10 +296,11 @@ function EvDa () {
   pub.Data = function ( key, value ) {
     var 
       args = slice.call ( arguments ),
+      len = args.length,
       ret = {},
-      params = [];
+      keyRegex;
 
-    if ( args.length == 0 ) {
+    if ( len == 0 ) {
       return data;
     }
 
@@ -308,24 +312,19 @@ function EvDa () {
       return ret;
     }
 
-    if ( args.length == 1 ) {
+    if ( len == 1 ) {
       if( key.search(/[\*\?]/) != -1 ) {
-        var keyRegex = new RegExp( key, 'ig' );
-        ret = [];
+        keyRegex = new RegExp( key, 'ig' );
 
-        each( keys(data), function(toTest) {
-          if (toTest.match(keyRegex)) {
-            ret.push(toTest);
-          }
+        return _.select( keys(data), function(toTest) {
+          return toTest.match(keyRegex);
         });
-
-        return ret;
       }
 
       if ( isArray ( data[key] ) ) { 
         try { 
-          isFunction ( data[key].push );
-        // There's an IE9 bug that can mangle data pointers
+          // There's an IE9 bug that can mangle array pointers
+          data[key].slice();
         } catch ( ex ) {
           data[key] = slice.call ( data[key] );
         }
@@ -334,20 +333,18 @@ function EvDa () {
       return data[key];
     } 
 
-    if ( isArray(this) ) {
-      params = this;
+    if (isArray(this)) {
+      args = args.concat(this);
     }
 
-    return run.apply ( this, args.concat ( params ) );
+    return run.apply ( this, args );
   }
 
   extend ( pub.Event, shared );
   extend ( pub.Data, shared );
 
   // All aliases to the master catchall
-  pub.Data.set = 
-  pub.get = 
-  pub.set = pub.Data;
+  pub.get = pub.set = pub.Data;
 
   return pub;
 }
