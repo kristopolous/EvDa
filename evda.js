@@ -137,11 +137,10 @@ function EvDa () {
       each ( handle.refList, function ( tuple ) {
         var
           stage = tuple[0],
-          key = tuple[1], 
+          key = tuple[1];
 
-          offset = _.indexOf ( stageMap[stage][key], handle );
-
-        stageMap[stage][key].splice ( offset, 1 );
+        stageMap[stage][key] = 
+          _.without( stageMap[stage][key], handle );
       });
     }
 
