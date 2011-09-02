@@ -10,6 +10,7 @@ function EvDa () {
     isArray = _.isArray,
     isString = _.isString,
     isNumber = _.isNumber,
+    isObject = _.isObject,
     slice = Array.prototype.slice,
 
     // Internals
@@ -277,7 +278,7 @@ function EvDa () {
       context.invoke ( invoke );
     } else if ( arguments.length > 1 ){
       context.run ( invoke );
-    } else if ( scope.constructor == Object ) {
+    } else if ( isObject(scope) ) {
       context = {};
 
       each( scope, function(key) {
@@ -299,7 +300,7 @@ function EvDa () {
       return data;
     }
 
-    if ( typeof key == 'object' ) {
+    if ( isObject( key ) ) {
       each( key, function(el) {
         ret[el] = pub.Data ( el, key[el] );
       });
