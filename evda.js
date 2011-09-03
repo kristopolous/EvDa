@@ -5,7 +5,6 @@ function EvDa () {
     keys = _.keys,
     extend = _.extend,
     flatten = _.flatten,
-    slice = Array.prototype.slice,
 
     // Internals
     data = {},
@@ -99,7 +98,7 @@ function EvDa () {
       
         keyCheck[key] = true;
 
-        result[key] = ( stageMap.test[key] ) ?
+        result[key] = stageMap.test[key] ?
           Test ( key, value, meta ) :
           Invoke ( key, value, meta );
       }
@@ -137,7 +136,7 @@ function EvDa () {
         
         pub[func].apply ( this, 
           obj.scope.concat ( 
-            slice.call ( arguments ), 
+            _.toArray ( arguments ), 
             obj.meta 
           ) 
         );
@@ -256,11 +255,11 @@ function EvDa () {
     },
 
     exists: function ( key, callback ) {
-      if ( key in data ) {
-        callback ( data[key] );
-      } else {
+      if ( ! (key in data) ) {
         return pub.once ( key, callback );
       }
+
+      callback ( data[key] );
     },
 
     /* share: function ( prop ) { return chain ({ meta: prop }); }, */
