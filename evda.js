@@ -11,47 +11,43 @@ function EvDa () {
     data = {},
     funHandle = 0,
     funMap = {},
+    hook = ['test', /* 'before', */ 'when', 'after' /*, 'finally' */ ],
     stageMap = {},
     keyCheck = {};
 
-  function Stage ( key, value, meta, opts ) {
-    var runList = stageMap[opts.stage][key];
-
-    // This closure is needed in order to save a pointer
-    // to the callback, which may be run asynchronously.
-    each(runList, function(callback, index) {
-
-      opts.result[ index ] = callback ( value, {
-        meta: meta,
-        oldValue: opts.oldValue,
-        currentValue: data[key],
-        key: key,
-        remove: function () {
-          callback.rm = true;
-        }
-
-      });
-    });
-
-    for (var callback in runList) {
-      if ( callback.rm ) {
-        remove ( callback );
-      }
-    }
-  }
-
   function Invoke ( key, value, meta ) {
     var 
-      oldValue = data[key],
+      old = data[key],
+      callback,
+      runList,
       result = {};
 
     data[key] = value;
 
-    each( ['during', 'after'], function(which) {
-      Stage ( key, value, meta, {
-        result: result, 
-        stage: which,
-        oldValue: oldValue
+    each( hook, function(stage) {
+      runList = stageMap[stage][key];
+
+      // Runlist is an array
+      each(runList, function(callback, index) {
+
+        result[ index ] = callback ( value, {
+          meta: meta,
+          old: old,
+          current: value,
+          key: key,
+          remove: function () {
+            // we just set a flag here to
+            // maintain index integrity
+            callback.rm = true;
+          }
+
+        });
+      });
+
+      each(runList, function(callback) {
+        if ( callback.rm ) {
+          remove ( callback );
+        }
       });
     });
 
@@ -80,7 +76,7 @@ function EvDa () {
     each ( stageMap.test[key], function ( callback ) {
       callback ( value, {
         meta: meta,
-        oldValue: data[key],
+        old: data[key],
         callback: check,
         key: key,
         remove: function () {
@@ -90,19 +86,8 @@ function EvDa () {
     });
   }
 
-  function Set ( key, value, meta ) {
-    if ( ! keyCheck[key] ) {
-    
-      keyCheck[key] = true;
-
-      return ( stageMap.test[key] ) ?
-        Test ( key, value, meta ) :
-        Invoke ( key, value, meta );
-    }
-  }
-
   function register ( callback ) {
-    callback.refList = [];
+    callback.refs = [];
     funMap[ callback.ix = ++funHandle ] = callback;
   }
 
@@ -110,14 +95,21 @@ function EvDa () {
     var result = {};
 
     each ( flatten([ keyList ]), function ( key ) {
-      result[key] = Set ( key, value, meta );
+      if ( ! keyCheck[key] ) {
+      
+        keyCheck[key] = true;
+
+        result[key] = ( stageMap.test[key] ) ?
+          Test ( key, value, meta ) :
+          Invoke ( key, value, meta );
+      }
     });
 
     return result;
   }
 
   function remove ( handle ) {
-    each ( handle.refList, function ( tuple ) {
+    each ( handle.refs, function ( tuple ) {
       var
         stage = tuple[0],
         key = tuple[1];
@@ -177,11 +169,9 @@ function EvDa () {
     }
 
     if ( len == 1 ) {
-      if( scope.search(/[\*\?]/) != -1 ) {
-        keyRegex = new RegExp( scope, 'ig' );
-
+      if( scope.search(/[*?]/) + 1 ) {
         return _.select( keys(data), function(toTest) {
-          return toTest.match(keyRegex);
+          return toTest.match(scope);
         });
       }
 
@@ -191,7 +181,7 @@ function EvDa () {
     context = chain ({ scope: scope });
      
     if ( _.isFunction ( value ) ) {
-      context.during ( value );
+      context.when ( value );
     } else if ( len > 1 ){
       context.run ( value );
     }
@@ -199,7 +189,7 @@ function EvDa () {
     return context;
   }
 
-  each ( ['test', 'during', 'after'], function ( stage ) {
+  each ( hook, function ( stage ) {
     stageMap[stage] = {};
 
     pub[stage] = function ( keyList, callback ) {
@@ -211,7 +201,7 @@ function EvDa () {
         stageMap[stage][key] = 
           (stageMap[stage][key] || []).concat(callback);
 
-        callback.refList.push ( [stage, key] );
+        callback.refs.push ( [stage, key] );
       });
 
       return extend ( 
@@ -220,6 +210,9 @@ function EvDa () {
       );
     }
   });
+
+  // remove the test
+  hook.shift();
 
   return extend(pub, {
     // If we are pushing and popping a non-array then
@@ -242,9 +235,9 @@ function EvDa () {
     },
 
     once: function ( key, callback ) {
-      var ret = pub.during ( key, callback );
+      var ret = pub.when ( key, callback );
 
-      ret.handle.once = true;
+      ret.handle.rm = true;
       return ret;
     },
 
@@ -262,19 +255,15 @@ function EvDa () {
       return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
-    notNull: function ( key, callback ) {
-      if ( ( key in data ) && data[key] !== null ) {
+    exists: function ( key, callback ) {
+      if ( key in data ) {
         callback ( data[key] );
       } else {
         return pub.once ( key, callback );
       }
     },
 
-    /*
-    share: function ( prop ) {
-      return chain ({ meta: prop }); 
-    },
-    */
+    /* share: function ( prop ) { return chain ({ meta: prop }); }, */
 
     run: run,
     get: pub,
