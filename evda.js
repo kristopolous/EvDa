@@ -256,10 +256,16 @@ function EvDa () {
 
     isset: function ( key, callback ) {
       if ( ! (key in data) ) {
-        return pub.once ( key, callback );
+        if( callback ) {
+          return pub.once ( key, callback );
+        }
       }
 
-      callback ( data[key] );
+      if( callback ) {
+        callback ( data[key] );
+      }
+
+      return key in data;
     },
 
     /* share: function ( prop ) { return chain ({ meta: prop }); }, */
