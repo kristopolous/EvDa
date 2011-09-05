@@ -254,7 +254,7 @@ function EvDa () {
       return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
-    exists: function ( key, callback ) {
+    isset: function ( key, callback ) {
       if ( ! (key in data) ) {
         return pub.once ( key, callback );
       }
@@ -271,6 +271,10 @@ function EvDa () {
         v = true;
       } 
       return pub(k, v);
+    },
+    unset: function(key) {
+      // unset doesn't hook
+      delete data[key];
     },
     remove: remove
   });
