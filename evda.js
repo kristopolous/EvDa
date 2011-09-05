@@ -266,7 +266,12 @@ function EvDa () {
 
     run: run,
     get: pub,
-    set: pub,
+    set: function(k, v) {
+      if(arguments.length == 1) { 
+        v = true;
+      } 
+      return pub(k, v);
+    },
     remove: remove
   });
 }
