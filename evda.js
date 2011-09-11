@@ -267,7 +267,9 @@ function EvDa () {
 
       return key in data;
     },
-    onset: isset, 
+
+    whenset: isset,
+    onset: get,
 
     /* share: function ( prop ) { return chain ({ meta: prop }); }, */
 
