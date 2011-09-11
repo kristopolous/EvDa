@@ -233,11 +233,10 @@ function EvDa () {
       return run ( key, data[key] );
     },
 
-    once: function ( key, callback ) {
-      var ret = pub.when ( key, callback );
-
-      ret.handle.rm = true;
-      return ret;
+    incr: function ( key ) {
+      // we can't use the same trick here because if we
+      // hit 0, it will auto-increment to 1
+      return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
     },
 
     decr: function ( key ) {
@@ -248,10 +247,11 @@ function EvDa () {
       return run ( key, data[key] - 1 || 0 );
     },
 
-    incr: function ( key ) {
-      // we can't use the same trick here because if we
-      // hit 0, it will auto-increment to 1
-      return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
+    once: function ( key, callback ) {
+      var ret = pub.when ( key, callback );
+
+      ret.handle.rm = true;
+      return ret;
     },
 
     isset: function ( key, callback ) {
@@ -268,7 +268,7 @@ function EvDa () {
       return key in data;
     },
 
-    whenset: isset,
+    firstset: isset,
     onset: get,
 
     /* share: function ( prop ) { return chain ({ meta: prop }); }, */
