@@ -268,24 +268,27 @@ function EvDa () {
       return key in data;
     },
 
-    firstset: isset,
-    onset: get,
+    firstset: pub.isset,
 
     /* share: function ( prop ) { return chain ({ meta: prop }); }, */
 
     run: run,
     emit: run,
     get: pub,
+    onset: pub,
+
     set: function(k, v) {
       if(arguments.length == 1) { 
         v = true;
       } 
       return pub(k, v);
     },
+
     unset: function(key) {
       // unset doesn't hook
       delete data[key];
     },
+
     remove: remove
   });
 }
