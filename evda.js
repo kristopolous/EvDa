@@ -7,7 +7,7 @@ function EvDa () {
     flatten = _.flatten,
 
     // Internals
-    data = {},
+    data = arguments[0] || {},
     funHandle = 0,
     funMap = {},
     hook = ['test', /* 'before', */ 'when', 'after' /*, 'finally' */ ],

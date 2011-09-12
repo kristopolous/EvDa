@@ -5,6 +5,11 @@
 
 creates an event namespace, ev. You can use one for the entire app, that's fine.
 
+You can also seed it with initialization values by passing in an object, for instance:
+
+    var ev = EvDa({key: 'value'});
+
+
 ## API
 
 ### Manipulation
