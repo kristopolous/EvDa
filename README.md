@@ -72,6 +72,8 @@ You can also seed it with initialization values by passing in an object, for ins
  * Run when the key is set.
  * Gets the meta information, the old value, a remove hook, the new value, and the key affected.
 
+*on(key, [callback])* Alias of when
+
 *after(key, [callback])* 
 
  * Runs after a key has been set

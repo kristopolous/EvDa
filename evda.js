@@ -213,6 +213,8 @@ function EvDa () {
   // remove the test
   hook.shift();
 
+  pub.on = pub.when;
+
   return extend(pub, {
     // If we are pushing and popping a non-array then
     // it's better that the browser tosses the error
