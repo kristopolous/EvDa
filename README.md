@@ -1,6 +1,6 @@
 ## A JS event system
 
-Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in about 1.6K.
+Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in about 1.6KB.
 
 ### Usage
 
@@ -19,6 +19,7 @@ You can also seed it with initialization values by passing in an object, for ins
 *ev(key, value | lambda)* 
 
  * If key has a * or ? then it will be interpreted as a regular expression and return matching keys and their values
+ * If the key is an Array then the value or lambda will be associated with all the string values in the array.
  * If value and lambda are absent, this is a getter
  * If value is not a function, then it's a setter
  * If value is a function, this registers a callback.

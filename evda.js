@@ -17,7 +17,7 @@ function EvDa () {
     keyCheck = {};
 
   function Invoke ( key, value, meta ) {
-    debug('set', key, value);
+    debug('!', key, value);
     var 
       old = data[key],
       callback,
@@ -183,7 +183,7 @@ function EvDa () {
       register ( callback );
 
       each ( flatten([ keyList ]), function ( key ) {
-        debug('reg', stage, key);
+        debug(stage, key);
 
         stageMap[stage][key] = 
           (stageMap[stage][key] || []).concat(callback);
@@ -249,9 +249,7 @@ function EvDa () {
     // unset doesn't hook
     unset: function(key) { delete data[key]; },
 
-    debug: function() {
-      debug = console.log;
-    },
+    debug: function(lambda) { debug = lambda; },
 
     remove: remove
   });
