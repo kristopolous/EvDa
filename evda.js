@@ -8,6 +8,7 @@ function EvDa () {
 
     // Internals
     data = arguments[0] || {},
+    debug = function(){},
     setterMap = {},
     funHandle = 0,
     funMap = {},
@@ -16,6 +17,7 @@ function EvDa () {
     keyCheck = {};
 
   function Invoke ( key, value, meta ) {
+    debug('set', key, value);
     var 
       old = data[key],
       callback,
@@ -217,6 +219,7 @@ function EvDa () {
       // I just haven't done it yet, run through
       // those functions now.
       if( setterMap[key] ) {
+        debug('setter', key);
         setterMap[key]();
 
         delete setterMap[key];
@@ -242,6 +245,10 @@ function EvDa () {
 
     // unset doesn't hook
     unset: function(key) { delete data[key]; },
+
+    debug: function() {
+      debug = console.log;
+    },
 
     remove: remove
   });
