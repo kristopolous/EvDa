@@ -15,6 +15,7 @@ You can also seed it with initialization values by passing in an object, for ins
 ### Manipulation
 *set(key, value)* Sets [key] to [value]
 
+
 *unset(key)* Deletes the key from the db. No events are fired.
 
 *emit(key, [value])* Sets / Emits a key, with an optional [value] to assign to it
@@ -48,6 +49,9 @@ You can also seed it with initialization values by passing in an object, for ins
 ### Triggers
 
 *get(key, [callback])*  Gets the value of [key], with an optional callback to be fired whenever it's set.
+
+*setter(key, [callback])* State that the setter for a key is a callback. This will
+be run if there are things blocked on it.
 
 *isset(key, [callback])* 
 
