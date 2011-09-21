@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <title>EvDa test suite</title>
+  <link rel=stylesheet href=qunit.css>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src=underscore.js > </script>
+  <script src=../evda.js > </script>
+  <script src=qunit.js > </script>
+</head>
+<body>
+  <h1 id=qunit-header>EvDa test suite</h1>
+  <h2 id="qunit-banner"></h2>
+  <div id="qunit-testrunner-toolbar"></div>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+  <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+<script>
+$(function(){
+module("Initialization");
+  test("No arguments", function(){
+    var ev = EvDa();
+    equal(_.keys(ev()).join(' '), 'data events functions', "Initialized");
+  });
+
+module("Basic");
+  test("Set a key", function(){
+    var ev = EvDa();
+    ev('key', 'value');
+    equal(ev().data.key, 'value', "Initialized");
+  });
+
+  test("Get a key", function(){
+    var ev = EvDa();
+    ev('key', 'value');
+    equal(ev('key'), 'value', "Initialized");
+  });
+
+  test("Unset a key", function(){
+    var ev = EvDa();
+    ev('key', 'value');
+    equal(ev().data.key, 'value', "Initialized");
+    ev.unset('key')
+    equal(_.keys(ev().data).join(''), '', "Removed");
+  });
+
+module("Callbacks on set");
+// every time
+// one shot
+module("Callbacks after set");
+module("Test callbacks on set");
+module("Avoiding recursion");
+module("Defining a setter");
+
+});
+</script>
+
+

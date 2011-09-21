@@ -38,7 +38,7 @@ function EvDa () {
           remove: function () {
             // we just set a flag here to
             // maintain index integrity
-            callback.rm = true;
+            callback.rm = 1;
           }
 
         });
@@ -51,7 +51,7 @@ function EvDa () {
       });
     });
 
-    keyCheck[key] = false;
+    keyCheck[key] = 0;
     return result;
   }
 
@@ -69,7 +69,7 @@ function EvDa () {
           Invoke ( key, value, meta );
         }
 
-        keyCheck[key] = false;
+        keyCheck[key] = 0;
       }
     }
 
@@ -97,7 +97,7 @@ function EvDa () {
     each ( flatten([ keyList ]), function ( key ) {
       if ( ! keyCheck[key] ) {
       
-        keyCheck[key] = true;
+        keyCheck[key] = 1;
 
         result[key] = stageMap.test[key] ?
           Test ( key, value, meta ) :
@@ -121,26 +121,13 @@ function EvDa () {
     delete funMap[handle.ix];
   }
 
-  function chain ( obj ) {
+  function chain ( scope ) {
     var context = {};
-
-    if ( !obj.scope ) {
-      obj.scope = [];
-    } else {
-      obj.scope = [obj.scope];
-    }
-
-    obj.meta = obj.meta || [];
 
     each ( keys ( pub ), function ( func ) {
       context[func] = function () {
         
-        pub[func].apply ( this, 
-          obj.scope.concat ( 
-            _.toArray ( arguments ), 
-            obj.meta 
-          ) 
-        );
+        pub[func].apply ( this, [scope].concat( _.toArray ( arguments ) ) );
 
         return context;
       }
@@ -149,26 +136,29 @@ function EvDa () {
     return context;
   }
 
-
   function pub ( scope, value ) {
     var 
       len = arguments.length,
       context = {};
 
     if ( len == 0 ) {
-      return [data, stageMap];
-    }
-
-    if ( _.isObject(scope) ) {
-
-      each( scope, function( _value, _key ) {
-        context[_key] = pub ( _key, _value );
-      });
-
-      return context;
+      return {
+        data: data, 
+        events: stageMap, 
+        functions: funMap
+      };
     }
 
     if ( len == 1 ) {
+      if ( _.isObject(scope) ) {
+
+        each( scope, function( _value, _key ) {
+          context[_key] = pub ( _key, _value );
+        });
+
+        return context;
+      }
+
       if( scope.search(/[*?]/) + 1 ) {
         return _.select( keys(data), function(toTest) {
           return toTest.match(scope);
@@ -178,15 +168,9 @@ function EvDa () {
       return data[ scope ];
     } 
 
-    context = chain ({ scope: scope });
-     
-    if ( _.isFunction ( value ) ) {
-      context.when ( value );
-    } else if ( len > 1 ){
-      context.run ( value );
-    }
-
-    return context;
+    return chain ( scope ) [
+      _.isFunction ( value ) ? 'when' : 'run' 
+    ] ( value );
   }
 
   each ( hook, function ( stage ) {
@@ -206,7 +190,7 @@ function EvDa () {
 
       return extend ( 
         pub,
-        { handle: callback }
+        { info: callback }
       );
     }
   });
@@ -214,78 +198,34 @@ function EvDa () {
   // remove the test
   hook.shift();
 
-  pub.on = pub.when;
-
   return extend(pub, {
-    // If we are pushing and popping a non-array then
-    // it's better that the browser tosses the error
-    // to the user than we try to be graceful and silent
-    // Therein, we don't try to handle input validation
-    // and just try it anyway
-    push: function ( key, value ) {
-      data[key] = data[key] || [];
-      data[key].current = data[key].push ( value );
-      
-      return run ( key, data[key] );
-    },
-
-    pop: function ( key ) {
-      data[key].pop ();
-      data[key].current = _.last(data[key]);
-
-      return run ( key, data[key] );
-    },
-
-    incr: function ( key ) {
-      // we can't use the same trick here because if we
-      // hit 0, it will auto-increment to 1
-      return run ( key, _.isNumber(data[key]) ? (data[key] + 1) : 1 );
-    },
-
-    decr: function ( key ) {
-      // if key isn't in data, it returns 0 and sets it
-      // if key is in data but isn't a number, it returns NaN and sets it
-      // if key is 1, then it gets reduced to 0, getting 0,
-      // if key is any other number, than it gets set
-      return run ( key, data[key] - 1 || 0 );
-    },
 
     once: function ( key, callback ) {
       var ret = pub.when ( key, callback );
 
-      ret.handle.rm = true;
+      ret.info.rm = 1;
       return ret;
     },
 
-    setter: function(key, lambda) {
-      if(stageMap.when[key]) {
-        lambda();
-      } else {
-        setterMap[key] = lambda;
-      }
+    setter: function( key, lambda ) {
+      setterMap[key] = lambda;
+      pub.isset(key);
     },
 
     isset: function ( key, callback ) {
-      if ( ! (key in data) ) {
+      // If I know how to set this key but
+      // I just haven't done it yet, run through
+      // those functions now.
+      if( setterMap[key] ) {
+        setterMap[key]();
 
-        if( callback ) {
-          var handle = pub.once ( key, callback );
-        }
-
-        // If I know how to set this key but
-        // I just haven't done it yet, run through
-        // those functions now.
-        if( setterMap[key] ) {
-          setterMap[key]();
-
-          delete setterMap[key];
-        }
-
-        return handle;
+        delete setterMap[key];
       }
 
-      if( callback ) {
-        callback ( data[key] );
+      if ( callback ) {
+        return key in data ?
+          callback ( data[key] ) :
+          pub.once ( key, callback );
       }
 
       return key in data;
@@ -293,24 +233,15 @@ function EvDa () {
 
     firstset: pub.isset,
 
-    /* share: function ( prop ) { return chain ({ meta: prop }); }, */
-
     run: run,
-    emit: run,
-    get: pub,
-    onset: pub,
+    on: pub,
 
     set: function(k, v) {
-      if(arguments.length == 1) { 
-        v = true;
-      } 
-      return pub(k, v);
+      return pub ( k, arguments.length == 1 ? 1 : v );
     },
 
-    unset: function(key) {
-      // unset doesn't hook
-      delete data[key];
-    },
+    // unset doesn't hook
+    unset: function(key) { delete data[key]; },
 
     remove: remove
   });
