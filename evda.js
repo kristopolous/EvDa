@@ -261,7 +261,7 @@ function EvDa () {
       if(stageMap.when[key]) {
         lambda();
       } else {
-        (setterMap[key] || (setterMap[key] = [])).push(lambda);
+        setterMap[key] = lambda;
       }
     },
 
@@ -276,9 +276,7 @@ function EvDa () {
         // I just haven't done it yet, run through
         // those functions now.
         if( setterMap[key] ) {
-          each(setterMap, function(lambda) {
-            lamda();
-          });
+          setterMap[key]();
 
           delete setterMap[key];
         }
