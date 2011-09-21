@@ -212,7 +212,9 @@ function EvDa () {
 
     setter: function( key, lambda ) {
       setterMap[key] = lambda;
-      pub.isset(key);
+      if (key in data) {
+        pub.isset(key);
+      }
     },
 
     isset: function ( key, callback ) {
