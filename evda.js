@@ -183,6 +183,7 @@ function EvDa () {
       register ( callback );
 
       each ( flatten([ keyList ]), function ( key ) {
+        debug('reg', stage, key);
 
         stageMap[stage][key] = 
           (stageMap[stage][key] || []).concat(callback);
