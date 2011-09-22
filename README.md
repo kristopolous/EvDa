@@ -1,6 +1,6 @@
 ## A JS event system
 
-Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in about 1.6KB.
+Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in under 1.3KB.
 
 ### Usage
 
@@ -50,7 +50,6 @@ Looking at the last style, one can do the following:
 
 *ev.unset(key)* Deletes the key from the db. No events are fired.
 
-*run(key, [value])* Alias of emit
 ### Triggers
 
 *setter(key, [callback])* State that the setter for a key is a callback. This will
@@ -65,8 +64,6 @@ be run if there are things blocked on it.
    * It will be fired once.  
    * If the key is set, the callback will fire immediately.  
    * If the key is not set, it will be fired when it is.
-
-*firstset(key, [cabllack])* Alias of isset
 
 *test(key, [callback])* 
 

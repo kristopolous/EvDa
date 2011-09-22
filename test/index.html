@@ -21,7 +21,12 @@ $(function(){
 module("Initialization");
   test("No arguments", function(){
     var ev = EvDa();
-    equal(_.keys(ev()).join(' '), 'data events functions', "Initialized");
+    equal(_.keys(ev()).join(' '), 'data events', "Initialized");
+  });
+
+  test("K/V pair", function(){
+    var ev = EvDa({key: 'value'});
+    equal(ev().data.key, 'value', "Initialized");
   });
 
 module("Basic");
@@ -46,8 +51,76 @@ module("Basic");
   });
 
 module("Callbacks on set");
-// every time
-// one shot
+  test("register a callback, arglist style", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', function(value) {
+      equal(value, 'value', 'Callback triggered');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("register a callback, object style", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev({key: function(value) {
+      equal(value, 'value', 'Callback triggered');
+    }});
+
+    ev('key', 'value');
+  });
+
+  test("register a callback, list style", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev(['key'], function(value) {
+      equal(value, 'value', 'Callback triggered');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("register a callback, expect meta information", function(){
+    var ev = EvDa();
+
+    ev(['key'], function(value, meta) {
+      equal(_.keys(meta).join(' '), 'meta old now key del', 'Meta information there');
+      equal(meta.old, undefined, 'Old value correct');
+      equal(meta.now, 'value', 'Now value correct');
+      equal(meta.key, 'key', 'key correct');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("register a callback, pass meta information", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', function(value, meta) {
+      equal(meta.meta, 'meta', 'meta info correct');
+    });
+
+    ev('key', 'value', 'meta');
+  });
+
+module("Onetime callbacks on set");
+  test("register a one time callback, set twice", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.once('key', function(value) {
+      equal(value, 'value', 'Callback triggered');
+    });
+
+    ev('key', 'value');
+    ev('key', 'value');
+  });
+
 module("Callbacks after set");
 module("Test callbacks on set");
 module("Avoiding recursion");

@@ -1,54 +1,50 @@
-function EvDa () {
+function EvDa (map) {
   var 
     // Underscore shortcuts ... pleases the minifier
     each = _.each,
-    keys = _.keys,
     extend = _.extend,
     flatten = _.flatten,
 
     // Internals
-    data = arguments[0] || {},
-    debug = function(){},
+    data = map || {},
+
     setterMap = {},
-    funHandle = 0,
-    funMap = {},
-    hook = ['test', /* 'before', */ 'when', 'after' /*, 'finally' */ ],
+    T = 'test',
+    hook = [T, /* 'before', */ 'when', 'after' /*, 'finally' */ ],
     stageMap = {},
     keyCheck = {};
 
   function Invoke ( key, value, meta ) {
-    debug('!', key, value);
     var 
-      old = data[key],
-      callback,
+      oldValue = data[key],
       runList,
       result = {};
 
     data[key] = value;
 
     each( hook, function(stage) {
-      runList = stageMap[stage][key];
+      runList = stageMap[stage + key];
 
       // Runlist is an array
       each(runList, function(callback, index) {
 
         result[ index ] = callback ( value, {
           meta: meta,
-          old: old,
-          current: value,
+          old: oldValue,
+          now: value,
           key: key,
-          remove: function () {
+          del: function () {
             // we just set a flag here to
             // maintain index integrity
-            callback.rm = 1;
+            callback.X = 1;
           }
 
         });
       });
 
       each(runList, function(callback) {
-        if ( callback.rm ) {
-          remove ( callback );
+        if ( callback.X ) {
+          del ( callback );
         }
       });
     });
@@ -59,7 +55,8 @@ function EvDa () {
 
   function Test ( key, value, meta ) {
     var  
-      times = stageMap.test[key].length,
+      Key = T + key,
+      times = stageMap[ Key ].length,
       failure = 0;
 
     function check ( ok ) {
@@ -75,22 +72,17 @@ function EvDa () {
       }
     }
 
-    each ( stageMap.test[key], function ( callback ) {
+    each ( stageMap[ Key ], function ( callback ) {
       callback ( value, {
         meta: meta,
         old: data[key],
-        callback: check,
+        done: check,
         key: key,
-        remove: function () {
-          remove ( callback );
+        del: function () {
+          del ( callback );
         }
       });
     });
-  }
-
-  function register ( callback ) {
-    callback.refs = [];
-    funMap[ callback.ix = ++funHandle ] = callback;
   }
 
   function run ( keyList, value, meta ) {
@@ -101,7 +93,7 @@ function EvDa () {
       
         keyCheck[key] = 1;
 
-        result[key] = stageMap.test[key] ?
+        result[key] = stageMap[T + key] ?
           Test ( key, value, meta ) :
           Invoke ( key, value, meta );
       }
@@ -110,49 +102,28 @@ function EvDa () {
     return result;
   }
 
-  function remove ( handle ) {
-    each ( handle.refs, function ( tuple ) {
-      var
-        stage = tuple[0],
-        key = tuple[1];
-
-      stageMap[stage][key] = 
-        _.without( stageMap[stage][key], handle );
+  function del ( handle ) {
+    each ( handle.$, function ( stagekey ) {
+      stageMap[ stagekey ] = _.without( stageMap[ stagekey ], handle );
     });
-
-    delete funMap[handle.ix];
   }
 
-  function chain ( scope ) {
-    var context = {};
-
-    each ( keys ( pub ), function ( func ) {
-      context[func] = function () {
-        
-        pub[func].apply ( this, [scope].concat( _.toArray ( arguments ) ) );
-
-        return context;
-      }
-    });
-
-    return context;
-  }
-
-  function pub ( scope, value ) {
+  function pub ( scope, value, meta ) {
     var 
       len = arguments.length,
       context = {};
 
-    if ( len == 0 ) {
-      return {
-        data: data, 
-        events: stageMap, 
-        functions: funMap
-      };
-    }
-
+    // If there was one argument, then this is
+    // either a getter or the object style
+    // invocation.
     if ( len == 1 ) {
-      if ( _.isObject(scope) ) {
+
+      // The object style invocation will return
+      // handles associated with all the keys that
+      // went in. There *could* be a mix and match
+      // of callbacks and setters, but that would
+      // be fine I guess...
+      if( _.isObject(scope) ) {
 
         each( scope, function( _value, _key ) {
           context[_key] = pub ( _key, _value );
@@ -162,7 +133,7 @@ function EvDa () {
       }
 
       if( scope.search(/[*?]/) + 1 ) {
-        return _.select( keys(data), function(toTest) {
+        return _.select( _.keys(data), function(toTest) {
           return toTest.match(scope);
         });
       }
@@ -170,31 +141,34 @@ function EvDa () {
       return data[ scope ];
     } 
 
-    return chain ( scope ) [
-      _.isFunction ( value ) ? 'when' : 'run' 
-    ] ( value );
+    return len ? 
+      // If there were two arguments and if one of them was a function, then
+      // this needs to be registered.  Otherwise, we are setting a value.
+      pub [ _.isFunction ( value ) ? 'when' : 'set' ] ( scope, value, meta ) : 
+
+      // If there were no arguments (!len) then we should just return crap
+      // as if we were debugging.
+      { data: data, events: stageMap };
   }
 
+  // Register callbacks for
+  // test, when, and after.
   each ( hook, function ( stage ) {
-    stageMap[stage] = {};
 
+    // register the function
     pub[stage] = function ( keyList, callback ) {
 
-      register ( callback );
+      // This is the back-reference map to this callback
+      // so that we can unregister it in the future.
+      callback.$ || (callback.$ = []);
 
       each ( flatten([ keyList ]), function ( key ) {
-        debug(stage, key);
+        (stageMap[stage + key] || (stageMap[stage + key] = [])).push(callback);
 
-        stageMap[stage][key] = 
-          (stageMap[stage][key] || []).concat(callback);
-
-        callback.refs.push ( [stage, key] );
+        callback.$.push ( stage + key );
       });
 
-      return extend ( 
-        pub,
-        { info: callback }
-      );
+      return callback;
     }
   });
 
@@ -203,15 +177,21 @@ function EvDa () {
 
   return extend(pub, {
 
+    // The one time callback gets a property to
+    // the end of the object to notify our future-selfs
+    // that we ought to remove the function.
     once: function ( key, callback ) {
-      var ret = pub.when ( key, callback );
-
-      ret.info.rm = 1;
-      return ret;
+      return extend(
+        pub.when ( key, callback ),
+        { X: 1 }
+      );
     },
 
-    setter: function( key, lambda ) {
-      setterMap[key] = lambda;
+    // Unlike much of the reset of the code,
+    // setters have single functions.
+    setter: function ( key, callback ) {
+      setterMap[key] = callback;
+
       if (key in data) {
         pub.isset(key);
       }
@@ -222,10 +202,13 @@ function EvDa () {
       // I just haven't done it yet, run through
       // those functions now.
       if( setterMap[key] ) {
-        debug('setter', key);
         setterMap[key]();
 
-        delete setterMap[key];
+        // This is functionally the same as a delete
+        // for our purposes.  Also, this should not
+        // grow enormous so it's an inexpensive 
+        // optimization.
+        setterMap[key] = 0;
       }
 
       if ( callback ) {
@@ -237,20 +220,19 @@ function EvDa () {
       return key in data;
     },
 
-    firstset: pub.isset,
-
-    run: run,
     on: pub,
 
-    set: function(k, v) {
-      return pub ( k, arguments.length == 1 ? 1 : v );
+    set: function(k, v, m) {
+      // If v is not supplied, then we default with the
+      // value 1, which degrades to true.  In order to
+      // save a byte from ==, we swap the args in the
+      // tri-state operator. 
+      return run ( k, arguments.length - 1 ? v : 1, m );
     },
 
     // unset doesn't hook
     unset: function(key) { delete data[key]; },
 
-    debug: function(lambda) { debug = lambda; },
-
-    remove: remove
+    del: del
   });
 }
