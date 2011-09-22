@@ -9,16 +9,15 @@ function EvDa (map) {
     data = map || {},
 
     setterMap = {},
-    T = 'test',
-    hook = [T, /* 'before', */ 'when', 'after' /*, 'finally' */ ],
+    TEST = 'test',
+    hook = [/* 'before', */ 'when', 'after' /*, 'finally' */, TEST ],
     stageMap = {},
     keyCheck = {};
 
   function Invoke ( key, value, meta ) {
     var 
       oldValue = data[key],
-      runList,
-      result = {};
+      runList;
 
     data[key] = value;
 
@@ -26,9 +25,8 @@ function EvDa (map) {
       runList = stageMap[stage + key];
 
       // Runlist is an array
-      each(runList, function(callback, index) {
-
-        result[ index ] = callback ( value, {
+      each(runList, function(callback) {
+        callback ( value, {
           meta: meta,
           old: oldValue,
           now: value,
@@ -50,12 +48,11 @@ function EvDa (map) {
     });
 
     keyCheck[key] = 0;
-    return result;
   }
 
   function Test ( key, value, meta ) {
     var  
-      Key = T + key,
+      Key = TEST + key,
       times = stageMap[ Key ].length,
       failure = 0;
 
@@ -86,20 +83,16 @@ function EvDa (map) {
   }
 
   function run ( keyList, value, meta ) {
-    var result = {};
-
     each ( flatten([ keyList ]), function ( key ) {
       if ( ! keyCheck[key] ) {
       
         keyCheck[key] = 1;
 
-        result[key] = stageMap[T + key] ?
+        stageMap[TEST + key] ?
           Test ( key, value, meta ) :
           Invoke ( key, value, meta );
       }
     });
-
-    return result;
   }
 
   function del ( handle ) {
@@ -173,7 +166,7 @@ function EvDa (map) {
   });
 
   // remove the test
-  hook.shift();
+  hook.pop();
 
   return extend(pub, {
 
@@ -220,14 +213,12 @@ function EvDa (map) {
       return key in data;
     },
 
-    on: pub,
-
     set: function(k, v, m) {
       // If v is not supplied, then we default with the
       // value 1, which degrades to true.  In order to
       // save a byte from ==, we swap the args in the
       // tri-state operator. 
-      return run ( k, arguments.length - 1 ? v : 1, m );
+      run ( k, arguments.length - 1 ? v : 1, m );
     },
 
     // unset doesn't hook

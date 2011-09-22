@@ -1,6 +1,6 @@
 ## A JS event system
 
-Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in under 1.3KB.
+Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces, Recursion protection and a Debugger in 1.2KB.
 
 ### Usage
 
@@ -75,8 +75,6 @@ be run if there are things blocked on it.
 
  * Run when the key is set.
  * Gets the meta information, the old value, a remove hook, the new value, and the key affected.
-
-*on(key, [callback])* Alias of when
 
 *after(key, [callback])* 
 
