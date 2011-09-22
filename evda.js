@@ -80,7 +80,7 @@ function EvDa (map) {
       if( _.isObject(scope) ) {
 
         each( scope, function( _value, _key ) {
-          scope[_key] = pub ( _key, _value );
+          scope[_key] = pub ( _key, _value, meta );
         });
 
         return scope;
