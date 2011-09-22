@@ -3,95 +3,58 @@ function EvDa (map) {
     // Underscore shortcuts ... pleases the minifier
     each = _.each,
     extend = _.extend,
-    flatten = _.flatten,
+    size = _.size,
+    clone = _.clone,
+
+    // Constants
+    TEST = 'test',
+    WHEN = 'when',
+    AFTER = 'after',
 
     // Internals
     data = map || {},
-
     setterMap = {},
-    TEST = 'test',
-    hook = [/* 'before', */ 'when', 'after' /*, 'finally' */, TEST ],
-    stageMap = {},
-    keyCheck = {};
+    stageMap = {};
 
   function Invoke ( key, value, meta ) {
-    var 
-      oldValue = data[key],
-      runList;
-
+    // Set the key to the new value.
+    // The old value is beind passed in
+    // through the meta
     data[key] = value;
 
-    each( hook, function(stage) {
-      runList = stageMap[stage + key];
+    each([WHEN, AFTER], function(stage) {
 
-      // Runlist is an array
-      each(runList, function(callback) {
-        callback ( value, {
-          meta: meta,
-          old: oldValue,
-          now: value,
-          key: key,
-          del: function () {
-            // we just set a flag here to
-            // maintain index integrity
-            callback.X = 1;
-          }
+      // Clone the array so that we can do in-place modification
+      // of it while we iterate over it.
+      each(clone(stageMap[stage + key]), function(callback) {
 
-        });
-      });
+        callback ( value, meta );
 
-      each(runList, function(callback) {
         if ( callback.X ) {
           del ( callback );
         }
       });
     });
-
-    keyCheck[key] = 0;
   }
 
   function Test ( key, value, meta ) {
     var  
       Key = TEST + key,
-      times = stageMap[ Key ].length,
+      times = size(stageMap[ Key ]),
       failure = 0;
 
     function check ( ok ) {
-      times --;
       failure += (ok === false);
 
-      if ( ! times ) {
+      if ( ! --times ) {
         if ( ! failure ) { 
           Invoke ( key, value, meta );
         }
-
-        keyCheck[key] = 0;
       }
     }
 
     each ( stageMap[ Key ], function ( callback ) {
-      callback ( value, {
-        meta: meta,
-        old: data[key],
-        done: check,
-        key: key,
-        del: function () {
-          del ( callback );
-        }
-      });
-    });
-  }
-
-  function run ( keyList, value, meta ) {
-    each ( flatten([ keyList ]), function ( key ) {
-      if ( ! keyCheck[key] ) {
-      
-        keyCheck[key] = 1;
-
-        stageMap[TEST + key] ?
-          Test ( key, value, meta ) :
-          Invoke ( key, value, meta );
-      }
+      callback ( value, extend(meta, { done: check }));
     });
   }
 
@@ -102,9 +65,7 @@ function EvDa (map) {
   }
 
   function pub ( scope, value, meta ) {
-    var 
-      len = arguments.length,
-      context = {};
+    var len = size(arguments);
 
     // If there was one argument, then this is
     // either a getter or the object style
@@ -119,63 +80,47 @@ function EvDa (map) {
       if( _.isObject(scope) ) {
 
         each( scope, function( _value, _key ) {
-          context[_key] = pub ( _key, _value );
+          scope[_key] = pub ( _key, _value );
         });
 
-        return context;
-      }
-
-      if( scope.search(/[*?]/) + 1 ) {
-        return _.select( _.keys(data), function(toTest) {
-          return toTest.match(scope);
-        });
+        return scope;
       }
 
       return data[ scope ];
     } 
 
-    return len ? 
-      // If there were two arguments and if one of them was a function, then
-      // this needs to be registered.  Otherwise, we are setting a value.
-      pub [ _.isFunction ( value ) ? 'when' : 'set' ] ( scope, value, meta ) : 
-
-      // If there were no arguments (!len) then we should just return crap
-      // as if we were debugging.
-      { data: data, events: stageMap };
+    // If there were two arguments and if one of them was a function, then
+    // this needs to be registered.  Otherwise, we are setting a value.
+    return pub [ _.isFunction ( value ) ? WHEN : 'set' ] ( scope, value, meta );
   }
 
   // Register callbacks for
   // test, when, and after.
-  each ( hook, function ( stage ) {
+  each ( [WHEN, AFTER, TEST], function ( stage ) {
 
     // register the function
-    pub[stage] = function ( keyList, callback ) {
+    pub[stage] = function ( key, callback ) {
 
       // This is the back-reference map to this callback
       // so that we can unregister it in the future.
-      callback.$ || (callback.$ = []);
+      (callback.$ || (callback.$ = [])).push ( stage + key );
 
-      each ( flatten([ keyList ]), function ( key ) {
-        (stageMap[stage + key] || (stageMap[stage + key] = [])).push(callback);
-
-        callback.$.push ( stage + key );
-      });
+      (stageMap[stage + key] || (stageMap[stage + key] = [])).push ( callback );
 
       return callback;
     }
   });
 
-  // remove the test
-  hook.pop();
-
   return extend(pub, {
+    data: data,
+    events: stageMap,
 
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
     // that we ought to remove the function.
     once: function ( key, callback ) {
       return extend(
-        pub.when ( key, callback ),
+        pub[WHEN] ( key, callback ),
         { X: 1 }
       );
     },
@@ -213,12 +158,24 @@ function EvDa (map) {
       return key in data;
     },
 
-    set: function(k, v, m) {
+    set: function(key, value, meta) {
       // If v is not supplied, then we default with the
       // value 1, which degrades to true.  In order to
       // save a byte from ==, we swap the args in the
       // tri-state operator. 
-      run ( k, arguments.length - 1 ? v : 1, m );
+      value = size(arguments) - 1 ? value : 1;
+
+      meta = {
+        meta: meta,
+        old: data[key],
+        key: key
+      };
+
+      stageMap[TEST + key] ?
+        Test ( key, value, meta ) :
+        Invoke ( key, value, meta );
+
+      return value;
     },
 
     // unset doesn't hook

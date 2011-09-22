@@ -6,6 +6,7 @@
   <script src="http://code.jquery.com/jquery-latest.js"></script>
   <script src=underscore.js > </script>
   <script src=../evda.js > </script>
+  <script src=../evda-extra.js > </script>
   <script src=qunit.js > </script>
 </head>
 <body>
@@ -21,19 +22,19 @@ $(function(){
 module("Initialization");
   test("No arguments", function(){
     var ev = EvDa();
-    equal(_.keys(ev()).join(' '), 'data events', "Initialized");
+    equal(typeof ev, 'function', "Initialized");
   });
 
   test("K/V pair", function(){
     var ev = EvDa({key: 'value'});
-    equal(ev().data.key, 'value', "Initialized");
+    equal(ev.data.key, 'value', "Initialized");
   });
 
 module("Basic");
   test("Set a key", function(){
     var ev = EvDa();
     ev('key', 'value');
-    equal(ev().data.key, 'value', "Initialized");
+    equal(ev.data.key, 'value', "Initialized");
   });
 
   test("Get a key", function(){
@@ -45,9 +46,9 @@ module("Basic");
   test("Unset a key", function(){
     var ev = EvDa();
     ev('key', 'value');
-    equal(ev().data.key, 'value', "Initialized");
+    equal(ev.data.key, 'value', "Initialized");
     ev.unset('key')
-    equal(_.keys(ev().data).join(''), '', "Removed");
+    equal(_.keys(ev.data).join(''), '', "Removed");
   });
 
 module("Callbacks on set");
@@ -73,24 +74,12 @@ module("Callbacks on set");
     ev('key', 'value');
   });
 
-  test("register a callback, list style", function(){
-    expect(1);
-    var ev = EvDa();
-
-    ev(['key'], function(value) {
-      equal(value, 'value', 'Callback triggered');
-    });
-
-    ev('key', 'value');
-  });
-
   test("register a callback, expect meta information", function(){
     var ev = EvDa();
 
-    ev(['key'], function(value, meta) {
-      equal(_.keys(meta).join(' '), 'meta old now key del', 'Meta information there');
+    ev('key', function(value, meta) {
+      equal(_.keys(meta).join(' '), 'meta old key', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
-      equal(meta.now, 'value', 'Now value correct');
       equal(meta.key, 'key', 'key correct');
     });
 
@@ -121,7 +110,64 @@ module("Onetime callbacks on set");
     ev('key', 'value');
   });
 
+  test("register a one time callback in the middle of many, make sure they are all called", function(){
+    var ev = EvDa(), index = 0;
+
+    for(var i = 0; i < 3; i++) {
+      with({
+        internal: i
+      }) {
+        
+        ev.when('key', function() {
+          equal(index, internal, "Called correctly");
+          index++;
+        });
+      }
+    }
+
+    ev.once('key', function(value) {
+      equal(value, 'value', 'one time call');
+    });
+
+    for(; i < 5; i++) {
+      with({
+        internal: i
+      }) {
+        
+        ev.when('key', function() {
+          equal(index, internal, "Called correctly");
+          index++;
+        });
+      }
+    }
+
+    index = 0;
+    ev('key', 'value');
+
+    index = 0;
+    ev('key', 'value');
+  });
+
 module("Callbacks after set");
+  test("Register two callbacks, check their execution order", function(){
+    expect(2);
+
+    var 
+      ev = EvDa(),
+      order = 0;
+
+    ev.when('key', function(value) {
+      equal(order, 0, 'Order correct');
+      order++;
+    });
+
+    ev.after('key', function(value) {
+      equal(order, 1, 'Order correct');
+    });
+
+    ev('key', 'value');
+  });
+
 module("Test callbacks on set");
 module("Avoiding recursion");
 module("Defining a setter");

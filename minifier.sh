@@ -1,10 +1,14 @@
-in=evda.js
-out=evda.min.js
+#!/bin/bash
 
-curl -s \
-        -d compilation_level=SIMPLE_OPTIMIZATIONS \
-        -d output_format=text \
-        -d output_info=compiled_code \
-        --data-urlencode "js_code@${in}" \
-        http://closure-compiler.appspot.com/compile \
-        > $out
+minify () {
+  curl -s \
+    -d compilation_level=SIMPLE_OPTIMIZATIONS \
+    -d output_format=text \
+    -d output_info=compiled_code \
+    --data-urlencode "js_code@${1}.js" \
+    http://closure-compiler.appspot.com/compile \
+    > "${1}.min.js"
+}
+
+minify evda
+minify evda-extra
