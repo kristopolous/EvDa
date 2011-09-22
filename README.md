@@ -73,7 +73,7 @@ be run if there are things blocked on it.
  * Must use a supplied callback function, callback(true) says go ahead, callback(false) says don't do the function
  * Gets the meta information, the old value, a remove hook, the callback function, the new value, and the key affected.
 
-*when(key, [callback])*
+*on(key, [callback])*
 
  * Run when the key is set.
  * Gets the meta information, the old value, a remove hook, the new value, and the key affected.

@@ -8,7 +8,7 @@ function EvDa (map) {
 
     // Constants
     TEST = 'test',
-    WHEN = 'when',
+    ON = 'on',
     AFTER = 'after',
 
     // Internals
@@ -22,7 +22,7 @@ function EvDa (map) {
     // through the meta
     data[key] = value;
 
-    each([WHEN, AFTER], function(stage) {
+    each([ON, AFTER], function(stage) {
 
       // Clone the array so that we can do in-place modification
       // of it while we iterate over it.
@@ -91,12 +91,12 @@ function EvDa (map) {
 
     // If there were two arguments and if one of them was a function, then
     // this needs to be registered.  Otherwise, we are setting a value.
-    return pub [ _.isFunction ( value ) ? WHEN : 'set' ] ( scope, value, meta );
+    return pub [ _.isFunction ( value ) ? ON : 'set' ] ( scope, value, meta );
   }
 
   // Register callbacks for
-  // test, when, and after.
-  each ( [WHEN, AFTER, TEST], function ( stage ) {
+  // test, on, and after.
+  each ( [ON, AFTER, TEST], function ( stage ) {
 
     // register the function
     pub[stage] = function ( key, callback ) {
@@ -120,7 +120,7 @@ function EvDa (map) {
     // that we ought to remove the function.
     once: function ( key, callback ) {
       return extend(
-        pub[WHEN] ( key, callback ),
+        pub[ON] ( key, callback ),
         { X: 1 }
       );
     },
