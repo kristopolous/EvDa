@@ -96,6 +96,16 @@ module("Callbacks on set");
 
     ev('key', 'value', 'meta');
   });
+  test("register a callback, pass meta object information", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', function(value, meta) {
+      equal(meta.meta.key, 'value', 'meta info correct');
+    });
+
+    ev('key', 'value', {key: 'value'});
+  });
 
 module("Onetime callbacks on set");
   test("register a one time callback, set twice", function(){

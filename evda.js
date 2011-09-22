@@ -166,7 +166,7 @@ function EvDa (map) {
       value = size(arguments) - 1 ? value : 1;
 
       meta = {
-        meta: meta,
+        meta: meta || {},
         old: data[key],
         key: key
       };
