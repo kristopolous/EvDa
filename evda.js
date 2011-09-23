@@ -4,7 +4,6 @@ function EvDa (map) {
     each = _.each,
     extend = _.extend,
     size = _.size,
-    clone = _.clone,
 
     // Constants
     TEST = 'test',
@@ -22,11 +21,10 @@ function EvDa (map) {
     // through the meta
     data[key] = value;
 
-    each([ON, AFTER], function(stage) {
-
-      // Clone the array so that we can do in-place modification
-      // of it while we iterate over it.
-      each(clone(stageMap[stage + key]), function(callback) {
+    each(
+      (stageMap[ON + key] || []).concat
+      (stageMap[AFTER + key] || []), 
+      function(callback) {
 
         callback ( value, meta );
 
@@ -34,28 +32,6 @@ function EvDa (map) {
           del ( callback );
         }
       });
-    });
-  }
-
-  function Test ( key, value, meta ) {
-    var  
-      Key = TEST + key,
-      times = size(stageMap[ Key ]),
-      failure = 0;
-
-    function check ( ok ) {
-      failure += (ok === false);
-
-      if ( ! --times ) {
-        if ( ! failure ) { 
-          Invoke ( key, value, meta );
-        }
-      }
-    }
-
-    each ( stageMap[ Key ], function ( callback ) {
-      callback ( value, extend(meta, { done: check }));
-    });
   }
 
   function del ( handle ) {
@@ -112,6 +88,8 @@ function EvDa (map) {
   });
 
   return extend(pub, {
+    // Exposing the internal variables so that
+    // extensions can be made.
     data: data,
     events: stageMap,
 
@@ -131,7 +109,7 @@ function EvDa (map) {
       setterMap[key] = callback;
 
       if (key in data) {
-        pub.isset(key);
+        pub.isset( key );
       }
     },
 
@@ -159,21 +137,38 @@ function EvDa (map) {
     },
 
     set: function(key, value, meta) {
-      // If v is not supplied, then we default with the
-      // value 1, which degrades to true.  In order to
-      // save a byte from ==, we swap the args in the
-      // tri-state operator. 
-      value = size(arguments) - 1 ? value : 1;
+      var 
+        Key = TEST + key,
+        times = size(stageMap[ Key ]),
+        failure = 0;
 
+      function check ( ok ) {
+        failure += (ok === false);
+
+        if ( ! --times ) {
+          if ( ! failure ) { 
+            Invoke ( key, value, meta );
+          }
+        }
+      }
+
+      // Invoke will also get done
+      // but it will have no semantic
+      // meaning, so it's fine.
       meta = {
         meta: meta || {},
         old: data[key],
+        done: check,
         key: key
       };
 
-      stageMap[TEST + key] ?
-        Test ( key, value, meta ) :
+      if (times) {
+        each ( stageMap[ Key ], function ( callback ) {
+          callback ( value, meta );
+        });
+      } else {
         Invoke ( key, value, meta );
+      }
 
       return value;
     },
