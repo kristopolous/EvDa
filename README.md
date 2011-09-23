@@ -1,6 +1,6 @@
 ## A JS contingency system
 
-This adds a contingency abstraction to JS in about 0.8KB.
+This adds a contingency abstraction to JS in 0.8KB.
 
 Oftentimes, you may 
 
@@ -16,7 +16,7 @@ This is what contingency enables you to do with expressiveness and ease.
 You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
 having business logic changes require editing multiple files.
 
-This library gives this all to you in under 900 bytes.
+This library gives all this to you in under 890 bytes.
 
 Underscore.js is required.
 
@@ -55,7 +55,7 @@ Looking at the last style, one can do the following:
     });
 
     _.each(handleList, function(handle) {
-      ev.remove(handle);
+      ev.del(handle);
     });
 
     ev({
@@ -63,9 +63,11 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-**[value] ev.set(key, value)** 
+**[value] ev.set(key, value, meta, bypass)** 
 
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
+ * Passes the meta information if supplied to the registered functions.
+ * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
 
 **ev.unset(key)** 
 
@@ -142,3 +144,7 @@ These functions are available in evda-extra.js
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
+
+### Examples
+
+ * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.

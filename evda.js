@@ -6,7 +6,6 @@ function EvDa (map) {
     size = _.size,
 
     // Constants
-    TEST = 'test',
     ON = 'on',
     AFTER = 'after',
 
@@ -14,25 +13,6 @@ function EvDa (map) {
     data = map || {},
     setterMap = {},
     stageMap = {};
-
-  function Invoke ( key, value, meta ) {
-    // Set the key to the new value.
-    // The old value is beind passed in
-    // through the meta
-    data[key] = value;
-
-    each(
-      (stageMap[ON + key] || []).concat
-      (stageMap[AFTER + key] || []), 
-      function(callback) {
-
-        callback ( value, meta );
-
-        if ( callback.X ) {
-          del ( callback );
-        }
-      });
-  }
 
   function del ( handle ) {
     each ( handle.$, function ( stagekey ) {
@@ -72,7 +52,7 @@ function EvDa (map) {
 
   // Register callbacks for
   // test, on, and after.
-  each ( [ON, AFTER, TEST], function ( stage ) {
+  each ( [ON, AFTER, 'test'], function ( stage ) {
 
     // register the function
     pub[stage] = function ( key, callback ) {
@@ -98,7 +78,7 @@ function EvDa (map) {
     // that we ought to remove the function.
     once: function ( key, callback ) {
       return extend(
-        pub[ON] ( key, callback ),
+        pub ( key, callback ),
         { X: 1 }
       );
     },
@@ -136,36 +116,51 @@ function EvDa (map) {
       return key in data;
     },
 
-    set: function(key, value, meta) {
+    set: function(key, value, _meta, pass) {
       var 
-        Key = TEST + key,
+        Key = 'test' + key,
         times = size(stageMap[ Key ]),
-        failure;
+        failure,
 
-      // Invoke will also get done
-      // but it will have no semantic
-      // meaning, so it's fine.
-      meta = {
-        meta: meta || {},
-        old: data[key],
-        key: key,
-        done: function ( ok ) {
-          failure |= (ok === false);
+        // Invoke will also get done
+        // but it will have no semantic
+        // meaning, so it's fine.
+        meta = {
+          meta: _meta || {},
+          old: data[key],
+          key: key,
+          done: function ( ok ) {
+            failure |= (ok === false);
 
-          if ( ! --times ) {
-            if ( ! failure ) { 
-              Invoke ( key, value, meta );
+            if ( ! --times ) {
+              if ( ! failure ) { 
+                pub.set ( key, value, _meta, 1 );
+              }
             }
           }
-        }
-      };
+        };
 
-      if (times) {
+      if (times && !pass) {
         each ( stageMap[ Key ], function ( callback ) {
           callback ( value, meta );
         });
       } else {
-        Invoke ( key, value, meta );
+        // Set the key to the new value.
+        // The old value is beind passed in
+        // through the meta
+        data[key] = value;
+
+        each(
+          (stageMap[ON + key] || []).concat
+          (stageMap[AFTER + key] || []), 
+          function(callback) {
+
+            callback ( value, meta );
+
+            if ( callback.X ) {
+              del ( callback );
+            }
+          });
       }
 
       return value;
