@@ -27,14 +27,14 @@ module("Initialization");
 
   test("K/V pair", function(){
     var ev = EvDa({key: 'value'});
-    equal(ev.data.key, 'value', "Initialized");
+    equal(ev.db.key, 'value', "Initialized");
   });
 
 module("Basic");
   test("Set a key", function(){
     var ev = EvDa();
     ev('key', 'value');
-    equal(ev.data.key, 'value', "Initialized");
+    equal(ev.db.key, 'value', "Initialized");
   });
 
   test("Get a key", function(){
@@ -46,9 +46,9 @@ module("Basic");
   test("Unset a key", function(){
     var ev = EvDa();
     ev('key', 'value');
-    equal(ev.data.key, 'value', "Initialized");
+    equal(ev.db.key, 'value', "Initialized");
     ev.unset('key')
-    equal(_.keys(ev.data).join(''), '', "Removed");
+    equal(_.keys(ev.db).join(''), '', "Removed");
   });
 
 module("Callbacks on set");
