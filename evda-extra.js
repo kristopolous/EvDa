@@ -6,7 +6,7 @@ self.EvDa = function(){
     incr: function ( key ) {
       // we can't use the same trick here because if we
       // hit 0, it will auto-increment to 1
-      return E.set ( key, _.isNumber(E.data[key]) ? (E.data[key] + 1) : 1 );
+      return E.set ( key, _.isNumber(E.db[key]) ? (E.db[key] + 1) : 1 );
     },
 
     decr: function ( key ) {
@@ -14,7 +14,7 @@ self.EvDa = function(){
       // if key is in data but isn't a number, it returns NaN and sets it
       // if key is 1, then it gets reduced to 0, getting 0,
       // if key is any other number, than it gets set
-      return E.set ( key, E.data[key] - 1 || 0 );
+      return E.set ( key, E.db[key] - 1 || 0 );
     },
 
     // If we are pushing and popping a non-array then
@@ -23,21 +23,21 @@ self.EvDa = function(){
     // Therein, we don't try to handle input validation
     // and just try it anyway
     push: function ( key, value ) {
-      E.data[key] = E.data[key] || [];
-      E.data[key].current = E.data[key].push ( value );
+      E.db[key] = E.db[key] || [];
+      E.db[key].current = E.db[key].push ( value );
       
-      return E.set ( key, E.data[key] );
+      return E.set ( key, E.db[key] );
     },
 
     pop: function ( key ) {
-      E.data[key].pop ();
-      E.data[key].current = _.last(E.data[key]);
+      E.db[key].pop ();
+      E.db[key].current = _.last(E.db[key]);
 
-      return E.set ( key, E.data[key] );
+      return E.set ( key, E.db[key] );
     },
 
     find: function ( regex ) {
-      return _.select( _.keys(E.data), function(toTest) {
+      return _.select( _.keys(E.db), function(toTest) {
         return toTest.match(regex);
       });
     }

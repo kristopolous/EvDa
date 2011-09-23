@@ -70,7 +70,7 @@ function EvDa (map) {
   return extend(pub, {
     // Exposing the internal variables so that
     // extensions can be made.
-    data: data,
+    db: data,
     events: stageMap,
 
     // The one time callback gets a property to

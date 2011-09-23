@@ -4,7 +4,7 @@ This adds a contingency abstraction to JS in 0.8KB.
 
 Oftentimes, you may 
 
- * Need to do a number of things when a value is set,
+ * Need to do a number of things when a value is set.
  * Only want to do something if a value has been set; otherwise, delay that thing until the value is set.  
  * Want to be able to invalidate the process of settings a value; for instance, if the user attemps to change a context without saving things first.
  * Want to define how to get a value, but not actually do the process until something else needs it. 
@@ -13,6 +13,7 @@ For example, pretend you have a site where people can see the content, but once 
 say, some guidelines based on the content; or you want to pop up a captcha prior to submission.
 
 This is what contingency enables you to do with expressiveness and ease.  
+
 You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
 having business logic changes require editing multiple files.
 
@@ -36,11 +37,11 @@ You can also seed it with initialization values by passing in an object, for ins
 ### Manipulation
 **[handle | value] ev(key | hash, value | lambda, meta)**
 
- * If value and lambda are absent, this is a getter
+ * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
  * If value is not a function, then it's a setter. If meta is set, then 
    this object gets passed around to the trigger functions.
- * If value is a function, this registers a callback.
- * If value is in object, it's keys and values are run through the handler again, following the above rules.
+ * If value is a function, this registers a callback in the "ON" block.
+ * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
 
 Looking at the last style, one can do the following:
 
@@ -71,20 +72,28 @@ Looking at the last style, one can do the following:
 
 **ev.unset(key)** 
 
- * Deletes the key from the db. 
+ * Deletes the key, meaning the isset('key') will return false henceforth
  * No events are fired.
+
+**ev.db**
+
+ * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
+
+**ev.events**
+
+ * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
 
 ### Triggers
 
 **[handle] ev.on(key, lambda ( value, { key, old, meta } ) )**
 
- * Run every time the key is set.
- * Returns a handle that can be passed into del to deregister.
+ * Runs every time the key is set.
+ * Returns a handle that can be passed into ev.del to deregister.
 
 **[handle] ev.after(key, lambda ( value, { key, old, meta } ) )**
 
  * Runs after a key has been set
- * Returns a handle that can be passed into del to deregister.
+ * Returns a handle that can be passed into ev.del to deregister.
 
 **[handle] ev.test(key, lambda ( value, { key, old, done, meta } ))**
 
@@ -110,16 +119,13 @@ Looking at the last style, one can do the following:
  * If lambda is not set, returns true if key exists, false if it is not
  * If lambda is set,
 
-   * A handle is returned to deregister it.
-   * If the key is set, the lambda will run immediately and in the "ON" block.
-   * If the key is not set, execution will be deferred until it is set.
-   * undefined is returned.
+   * If the key is set, the lambda will run immediately and in the "ON" block. `undefined` is returned.
+   * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
 
 
 
 ### Extras
-There is an add-on file too for higher-order abstractions, which includes regex finding of keys, set operations, and atomic incrementers and decrementers, that clocks in at under 0.5KB.
-These functions are available in evda-extra.js
+There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js
 
 **[number] ev.incr(key)**
 
