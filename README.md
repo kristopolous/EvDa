@@ -1,8 +1,22 @@
-## A JS event system
+## A JS contingency system
 
-Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces and a Debugger in about 0.8KB.
+This adds a contingency abstraction to JS in about 0.8KB.
 
-There is an add-on file too for higher-order abstractions, which includes regex finding of keys, set operations, and atomic incrementers and decrementers, that clocks in at under 0.5KB.
+Oftentimes, you may 
+
+ * Need to do a number of things when a value is set,
+ * Only want to do something if a value has been set; otherwise, delay that thing until the value is set.  
+ * Want to be able to invalidate the process of settings a value; for instance, if the user attemps to change a context without saving things first.
+ * Want to define how to get a value, but not actually do the process until something else needs it. 
+
+For example, pretend you have a site where people can see the content, but once they want to vote on something or leave a comment or do one of countless other things, they need to log in. And then before they submit a comment, you want to check it for
+say, some guidelines based on the content; or you want to pop up a captcha prior to submission.
+
+This is what contingency enables you to do with expressiveness and ease.  
+You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
+having business logic changes require editing multiple files.
+
+This library gives this all to you in under 900 bytes.
 
 Underscore.js is required.
 
@@ -102,6 +116,7 @@ Looking at the last style, one can do the following:
 
 
 ### Extras
+There is an add-on file too for higher-order abstractions, which includes regex finding of keys, set operations, and atomic incrementers and decrementers, that clocks in at under 0.5KB.
 These functions are available in evda-extra.js
 
 **[number] ev.incr(key)**
