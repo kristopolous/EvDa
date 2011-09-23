@@ -17,7 +17,7 @@ This is what contingency enables you to do with expressiveness and ease.
 You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
 having business logic changes require editing multiple files.
 
-This library gives all this to you in under 890 bytes.
+This library gives all this to you in under 880 bytes.
 
 Underscore.js is required.
 
