@@ -9,6 +9,11 @@ function EvDa (map) {
     ON = 'on',
     AFTER = 'after',
 
+    // The one time callback gets a property to
+    // the end of the object to notify our future-selfs
+    // that we ought to remove the function.
+    ONCE = {once:1},
+
     // Internals
     data = map || {},
     setterMap = {},
@@ -47,7 +52,7 @@ function EvDa (map) {
   each ( [ON, AFTER, 'test'], function ( stage ) {
 
     // register the function
-    pub[stage] = function ( key, callback ) {
+    pub[stage] = function ( key, callback, meta ) {
 
       // This is the back-reference map to this callback
       // so that we can unregister it in the future.
@@ -55,7 +60,7 @@ function EvDa (map) {
 
       (eventMap[stage + key] || (eventMap[stage + key] = [])).push ( callback );
 
-      return callback;
+      return extend(callback, meta);
     }
   });
 
@@ -64,16 +69,6 @@ function EvDa (map) {
       eventMap[ stagekey ] = _.without( eventMap[ stagekey ], handle );
     });
   }
-
-  // The one time callback gets a property to
-  // the end of the object to notify our future-selfs
-  // that we ought to remove the function.
-  function once ( key, callback ) {
-    return extend(
-      pub ( key, callback ),
-      { X: 1 }
-    );
-  };
 
   function isset ( key, callback ) {
     // If I know how to set this key but
@@ -92,7 +87,7 @@ function EvDa (map) {
     if ( callback ) {
       return key in data ?
         callback ( data[key] ) :
-        once ( key, callback );
+        pub ( key, callback, ONCE );
     }
 
     return key in data;
@@ -106,7 +101,7 @@ function EvDa (map) {
 
     unset: function(key) { delete data[key]; },
     del: del,
-    once: once, 
+
     isset: isset,
 
     // Unlike much of the reset of the code,
@@ -119,7 +114,7 @@ function EvDa (map) {
       }
     },
 
-    set: function set (key, value, _meta, bypass) {
+    set: function (key, value, _meta, bypass) {
       var 
         Key = 'test' + key,
         times = size(eventMap[ Key ]),
@@ -160,7 +155,7 @@ function EvDa (map) {
 
             callback ( value, meta );
 
-            if ( callback.X ) {
+            if ( callback.once ) {
               del ( callback );
             }
           });

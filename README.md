@@ -17,7 +17,7 @@ This is what contingency enables you to do with expressiveness and ease.
 You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
 having business logic changes require editing multiple files.
 
-This library gives all this to you in under 880 bytes.
+This library gives all this to you in under 860 bytes.
 
 Underscore.js is required.
 
@@ -41,6 +41,10 @@ You can also seed it with initialization values by passing in an object, for ins
  * If value is not a function, then it's a setter. If meta is set, then 
    this object gets passed around to the trigger functions.
  * If value is a function, this registers a callback in the "ON" block.
+ * If value is a function and meta is {once: true} then it will only be run once.
+   
+   * Since the handle is itself, a decorated callback, then you can simply run handle.once = true at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
+
  * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
 
 Looking at the last style, one can do the following:
@@ -126,6 +130,10 @@ Looking at the last style, one can do the following:
 
 ### Extras
 There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js
+
+**[handle] ev.once(key, lambda)**
+
+ * A syntactic sugar form of ev(key, lambda, {once: true});
 
 **[number] ev.incr(key)**
 

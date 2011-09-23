@@ -36,6 +36,10 @@ self.EvDa = function(){
       return E.set ( key, E.db[key] );
     },
 
+    once: function ( key, lambda ) {
+      return E ( key, lambda, { once: true } );
+    },
+
     find: function ( regex ) {
       return _.select( _.keys(E.db), function(toTest) {
         return toTest.match(regex);
