@@ -20,10 +20,11 @@ You can also seed it with initialization values by passing in an object, for ins
 ## API
 
 ### Manipulation
-*ev(key, value | lambda)* 
+**[handle | value] ev(key | hash, value | lambda, meta)**
 
  * If value and lambda are absent, this is a getter
- * If value is not a function, then it's a setter
+ * If value is not a function, then it's a setter. If meta is set, then 
+   this object gets passed around to the trigger functions.
  * If value is a function, this registers a callback.
  * If value is in object, it's keys and values are run through the handler again, following the above rules.
 
@@ -48,62 +49,80 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-*ev.set(key, value)* Sets [key] to [value] or 1 (number) if a value is omitted.
+**[value] ev.set(key, value)** 
 
-*ev.unset(key)* Deletes the key from the db. No events are fired.
+ * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
+
+**ev.unset(key)** 
+
+ * Deletes the key from the db. 
+ * No events are fired.
 
 ### Triggers
 
-*setter(key, [callback])* State that the setter for a key is a callback. This will
-be run if there are things blocked on it.
+**[handle] ev.on(key, lambda ( value, { key, old, meta } ) )**
 
-*isset(key, [callback])* 
+ * Run every time the key is set.
+ * Returns a handle that can be passed into del to deregister.
 
- * If a callback is not set, returns true if key is in the database, false if it is not
- * If a callback is set,
-
-   * The handle is returned.
-   * It will be fired once.  
-   * If the key is set, the callback will fire immediately.  
-   * If the key is not set, it will be fired when it is.
-
-*test(key, [callback])* 
-
- * Can invalidate a key changing value
- * Must use a supplied callback function, callback(true) says go ahead, callback(false) says don't do the function
- * Gets the meta information, the old value, a remove hook, the callback function, the new value, and the key affected.
-
-*on(key, [callback])*
-
- * Run when the key is set.
- * Gets the meta information, the old value, a remove hook, the new value, and the key affected.
-
-*after(key, [callback])* 
+**[handle] ev.after(key, lambda ( value, { key, old, meta } ) )**
 
  * Runs after a key has been set
- * Gets the meta information, the old value, the new value, a remove hook, and the key affected
+ * Returns a handle that can be passed into del to deregister.
+
+**[handle] ev.test(key, lambda ( value, { key, old, done, meta } ))**
+
+ * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
+ * If the test succeeds, then the function must call a supplied callback function, named 
+   done and supplied in an object in the second argument. Calling the function with anything
+   other then the boolean false signals that the check succeeded. That means that calling
+   done() means "go ahead".
+
+**ev.del(handle)**
+
+ * Deregisters a hooked function from running.
+
+**ev.setter(key, lambda)** 
+
+ * State that the setter for a key is a callback. 
+   This will be run if there are things blocked on it.
+ * Useful for asynchronous operations, such as a login screen; wherein you only
+   want to give it to the user when applicable
+
+**[boolean | undefined] ev.isset(key, lambda)**
+
+ * If lambda is not set, returns true if key exists, false if it is not
+ * If lambda is set,
+
+   * A handle is returned to deregister it.
+   * If the key is set, the lambda will run immediately and in the "ON" block.
+   * If the key is not set, execution will be deferred until it is set.
+   * undefined is returned.
+
 
 
 ### Extras
-*incr(key)*
+These functions are available in evda-extra.js
+
+**[number] ev.incr(key)**
 
  * Atomically (in the JS sense) increments a key's value. 
  * It will initialize the key to the numeric value 1 if it's not a number
  * Returns the result of the set event.
 
-*decr(key)*
+**[number] ev.decr(key)**
 
  * Atomically (in the JS sense) decrements a key's value. 
  * It will initialize the key to the numeric value 0 if it's not a number
  * Returns the result of the set event.
 
-*push(key, value)* 
+**[value] ev.push(key, value)**
 
  * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
-*pop(key)* 
+**[value] ev.pop(key)**
 
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
