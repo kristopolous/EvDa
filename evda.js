@@ -14,19 +14,11 @@ function EvDa (map) {
     setterMap = {},
     eventMap = {};
 
-  function del ( handle ) {
-    each ( handle.$, function ( stagekey ) {
-      eventMap[ stagekey ] = _.without( eventMap[ stagekey ], handle );
-    });
-  }
-
   function pub ( scope, value, meta ) {
-    var len = size(arguments);
-
     // If there was one argument, then this is
     // either a getter or the object style
     // invocation.
-    if ( len == 1 ) {
+    if ( size(arguments) == 1 ) {
 
       // The object style invocation will return
       // handles associated with all the keys that
@@ -67,56 +59,67 @@ function EvDa (map) {
     }
   });
 
+  function del ( handle ) {
+    each ( handle.$, function ( stagekey ) {
+      eventMap[ stagekey ] = _.without( eventMap[ stagekey ], handle );
+    });
+  }
+
+  // The one time callback gets a property to
+  // the end of the object to notify our future-selfs
+  // that we ought to remove the function.
+  function once ( key, callback ) {
+    return extend(
+      pub ( key, callback ),
+      { X: 1 }
+    );
+  };
+
+  function isset ( key, callback ) {
+    // If I know how to set this key but
+    // I just haven't done it yet, run through
+    // those functions now.
+    if( setterMap[key] ) {
+      setterMap[key]();
+
+      // This is functionally the same as a delete
+      // for our purposes.  Also, this should not
+      // grow enormous so it's an inexpensive 
+      // optimization.
+      setterMap[key] = 0;
+    }
+
+    if ( callback ) {
+      return key in data ?
+        callback ( data[key] ) :
+        once ( key, callback );
+    }
+
+    return key in data;
+  };
+
   return extend(pub, {
     // Exposing the internal variables so that
     // extensions can be made.
     db: data,
     events: eventMap,
 
-    // The one time callback gets a property to
-    // the end of the object to notify our future-selfs
-    // that we ought to remove the function.
-    once: function ( key, callback ) {
-      return extend(
-        pub ( key, callback ),
-        { X: 1 }
-      );
-    },
+    unset: function(key) { delete data[key]; },
+    del: del,
+    once: once, 
+    isset: isset,
 
     // Unlike much of the reset of the code,
     // setters have single functions.
     setter: function ( key, callback ) {
       setterMap[key] = callback;
 
-      if (key in data) {
-        pub.isset( key );
+      if (eventMap['on' + key]) {
+        isset( key );
       }
     },
 
-    isset: function ( key, callback ) {
-      // If I know how to set this key but
-      // I just haven't done it yet, run through
-      // those functions now.
-      if( setterMap[key] ) {
-        setterMap[key]();
-
-        // This is functionally the same as a delete
-        // for our purposes.  Also, this should not
-        // grow enormous so it's an inexpensive 
-        // optimization.
-        setterMap[key] = 0;
-      }
-
-      if ( callback ) {
-        return key in data ?
-          callback ( data[key] ) :
-          pub.once ( key, callback );
-      }
-
-      return key in data;
-    },
-
-    set: function(key, value, _meta, pass) {
+    set: function set (key, value, _meta, bypass) {
       var 
         Key = 'test' + key,
         times = size(eventMap[ Key ]),
@@ -134,13 +137,13 @@ function EvDa (map) {
 
             if ( ! --times ) {
               if ( ! failure ) { 
-                pub.set ( key, value, _meta, 1 );
+                set ( key, value, _meta, 1 );
               }
             }
           }
         };
 
-      if (times && !pass) {
+      if (times && !bypass) {
         each ( eventMap[ Key ], function ( callback ) {
           callback ( value, meta );
         });
@@ -164,11 +167,6 @@ function EvDa (map) {
       }
 
       return value;
-    },
-
-    // unset doesn't hook
-    unset: function(key) { delete data[key]; },
-
-    del: del
+    }
   });
 }

@@ -5,7 +5,7 @@
   <link rel=stylesheet href=qunit.css>
   <script src="http://code.jquery.com/jquery-latest.js"></script>
   <script src=underscore.js > </script>
-  <script src=../evda.min.js > </script>
+  <script src=../evda.js > </script>
   <script src=../evda-extra.js > </script>
   <script src=qunit.js > </script>
 </head>
@@ -181,6 +181,35 @@ module("Callbacks after set");
 module("Test callbacks on set");
 module("Avoiding recursion");
 module("Defining a setter");
+  test("Defining a setter, then probing it with isset", function(){
+    expect(2);
+    var ev = EvDa(), order = 1;
+
+    ev.setter('key', function() {
+      equal(order, 2, 'Order correct');
+      ev('key', 'value');
+    });
+
+    equal(order, 1, 'Order correct');
+    order++;
+    ev.isset('key');
+  });
+
+  test("Defining a setter after a probing with isset", function(){
+    expect(2);
+    var ev = EvDa(), order = 1;
+
+    ev.isset('key', function() {
+      equal(order, 2, 'Order correct');
+    });
+
+    ev.setter('key', function() {
+      equal(order, 1, 'Order correct');
+      order++;
+      ev('key', 'value');
+    });
+
+  });
 
 });
 </script>
