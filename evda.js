@@ -12,11 +12,11 @@ function EvDa (map) {
     // Internals
     data = map || {},
     setterMap = {},
-    stageMap = {};
+    eventMap = {};
 
   function del ( handle ) {
     each ( handle.$, function ( stagekey ) {
-      stageMap[ stagekey ] = _.without( stageMap[ stagekey ], handle );
+      eventMap[ stagekey ] = _.without( eventMap[ stagekey ], handle );
     });
   }
 
@@ -61,7 +61,7 @@ function EvDa (map) {
       // so that we can unregister it in the future.
       (callback.$ || (callback.$ = [])).push ( stage + key );
 
-      (stageMap[stage + key] || (stageMap[stage + key] = [])).push ( callback );
+      (eventMap[stage + key] || (eventMap[stage + key] = [])).push ( callback );
 
       return callback;
     }
@@ -71,7 +71,7 @@ function EvDa (map) {
     // Exposing the internal variables so that
     // extensions can be made.
     db: data,
-    events: stageMap,
+    events: eventMap,
 
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
@@ -119,7 +119,7 @@ function EvDa (map) {
     set: function(key, value, _meta, pass) {
       var 
         Key = 'test' + key,
-        times = size(stageMap[ Key ]),
+        times = size(eventMap[ Key ]),
         failure,
 
         // Invoke will also get done
@@ -141,7 +141,7 @@ function EvDa (map) {
         };
 
       if (times && !pass) {
-        each ( stageMap[ Key ], function ( callback ) {
+        each ( eventMap[ Key ], function ( callback ) {
           callback ( value, meta );
         });
       } else {
@@ -151,8 +151,8 @@ function EvDa (map) {
         data[key] = value;
 
         each(
-          (stageMap[ON + key] || []).concat
-          (stageMap[AFTER + key] || []), 
+          (eventMap[ON + key] || []).concat
+          (eventMap[AFTER + key] || []), 
           function(callback) {
 
             callback ( value, meta );
