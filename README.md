@@ -1,6 +1,6 @@
 ## A JS event system
 
-Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces and a Debugger in about 0.9KB.
+Setters, Getters, Message Passing, Value Checking, Testers, Before, After, One-Shot, Namespaces and a Debugger in about 0.8KB.
 
 There is an add-on file too for higher-order abstractions, which includes regex finding of keys, set operations, and atomic incrementers and decrementers, that clocks in at under 0.5KB.
 

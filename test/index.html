@@ -78,7 +78,7 @@ module("Callbacks on set");
     var ev = EvDa();
 
     ev('key', function(value, meta) {
-      equal(_.keys(meta).join(' '), 'meta old done key', 'Meta information there');
+      equal(_.keys(meta).join(' '), 'meta old key done', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
       equal(meta.key, 'key', 'key correct');
     });

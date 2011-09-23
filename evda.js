@@ -140,17 +140,7 @@ function EvDa (map) {
       var 
         Key = TEST + key,
         times = size(stageMap[ Key ]),
-        failure = 0;
-
-      function check ( ok ) {
-        failure += (ok === false);
-
-        if ( ! --times ) {
-          if ( ! failure ) { 
-            Invoke ( key, value, meta );
-          }
-        }
-      }
+        failure;
 
       // Invoke will also get done
       // but it will have no semantic
@@ -158,8 +148,16 @@ function EvDa (map) {
       meta = {
         meta: meta || {},
         old: data[key],
-        done: check,
-        key: key
+        key: key,
+        done: function ( ok ) {
+          failure |= (ok === false);
+
+          if ( ! --times ) {
+            if ( ! failure ) { 
+              Invoke ( key, value, meta );
+            }
+          }
+        }
       };
 
       if (times) {
