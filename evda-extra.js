@@ -10,10 +10,11 @@ EvDa = function(){
     },
 
     sniff: function () {
+      E.set_ = E.set;
       E.set = function() {
         var args = _.toArray(arguments);
         console.log (args);
-        E.set.call (0, args);
+        E.set_.call (0, args);
       }
 
       // neuter this function but don't populate
