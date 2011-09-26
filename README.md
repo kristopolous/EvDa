@@ -159,6 +159,10 @@ There is an addon file for set, collection, and counter abstractions; these incl
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
+**ev.sniff()**
+
+ * wraps set in a console.log abstraction
+
 ### Examples
 
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.

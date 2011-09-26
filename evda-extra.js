@@ -9,6 +9,14 @@ self.EvDa = function(){
       return E.set ( key, _.isNumber(E.db[key]) ? (E.db[key] + 1) : 1 );
     },
 
+    sniff: function () {
+      E.set = function() {
+        var args = _.toArray(arguments);
+        console.log(args);
+        Evda_.set.call(this, args);
+      }
+    },
+
     decr: function ( key ) {
       // if key isn't in data, it returns 0 and sets it
       // if key is in data but isn't a number, it returns NaN and sets it
