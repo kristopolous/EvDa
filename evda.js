@@ -39,8 +39,7 @@ function EvDa (map) {
         return scope;
       }
 
-      // Return a manipulable copy
-      return _.clone(data[ scope ]);
+      return data[ scope ];
     } 
 
     // If there were two arguments and if one of them was a function, then
