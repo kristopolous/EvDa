@@ -11,15 +11,26 @@ EvDa = function(){
 
     sniff: function () {
       E.set_ = E.set;
+      var ignoreMap = {};
+
       E.set = function() {
-        var args = _.toArray(arguments);
-        console.log (args);
-        E.set_.call (0, args);
+        var args = Array.prototype.slice.call(arguments);
+        if(!ignoreMap[args[0]]) {
+          console.log(+new Date(), args);
+        }
+        E.set_.apply (this, args);
       }
 
       // neuter this function but don't populate
       // the users keyspace.
-      E.sniff = _.clone;
+      E.sniff = function(key) {
+        if(key) {
+          ignoreMap[key] = !ignoreMap[key];
+          return "[Un]ignoring " + key;
+        } else {
+          console.log(_.keys(ignoreMap));
+        }
+      }
     },
 
     decr: function ( key ) {
