@@ -1,5 +1,5 @@
-var Evda_ = self.EvDa;
-self.EvDa = function(){
+var Evda_ = EvDa;
+EvDa = function(){
   var E = Evda_.apply(0, _.toArray(arguments));
 
   return _.extend(E, {
@@ -12,9 +12,13 @@ self.EvDa = function(){
     sniff: function () {
       E.set = function() {
         var args = _.toArray(arguments);
-        console.log(args);
-        Evda_.set.call(this, args);
+        console.log (args);
+        E.set.call (0, args);
       }
+
+      // neuter this function but don't populate
+      // the users keyspace.
+      E.sniff = _.clone;
     },
 
     decr: function ( key ) {
