@@ -19,7 +19,35 @@ having business logic changes require editing multiple files.
 
 This library gives all this to you in under 860 bytes.
 
-Underscore.js is required.
+### Dynamic function composition
+
+#### The scaling deficiencies
+Encapsulation efforts usually work best when you can separate your concerns via some
+single lens upon which you view your project.  Oftentimes, real-world objects are used
+to justify the OO style of design; say "dog" extends from "animals" but, then is quickly
+pointed out may also be classified under "pets" and "things that need to be fed". 
+
+Then multiple inheritance is touched upon; where you do meta-programming, defining
+the abstract concept of "things that require food" and then make sure that all systems
+somehow feed back to that that are relevant etc.
+
+The reality is that multi-dimensional design breaks the simple OO abstractions in that
+they complexify quickly.  Separation of concerns is very hard with vertical integration
+efforts which yield multi-disciplinary abstractions.
+
+#### Composable functions
+What if you could have an abstract definition of a function, say "initialize X" and
+then compose it indirectly throughout your application so that you can dynamically 
+redefine it as necessary, removing and adding sections.  You can put in conditionals,
+loops, callers, and all the things as if you had carefully designed the interface
+and abstraction in a more formal manner; but at the same time do not actually need to
+do so.
+
+You have data that is publically accessible; they have getters and setters; which can
+hook; you can pass arbitrary information into them via regular parameters, and can then
+have trace functions; very much like in a more traditional model.  That is what you will
+find here; compactly and succinctly.
+
 
 ### Usage
 
