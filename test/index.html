@@ -179,7 +179,86 @@ module("Callbacks after set");
   });
 
 module("Test callbacks on set");
-module("Avoiding recursion");
+  test("Register an on handler, stop it from happening with a test", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(false);
+    });
+
+    ev.on('key', function() {
+      equal(true, false, 'This should never be hit');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("Register an on handler, let it happen with a test", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+
+    ev.on('key', function(value) {
+      equal(value, 'value', 'This should be hit');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("Register an on handler, have 3 tests with the middle one failing", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(false);
+    });
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+
+    ev.on('key', function(value) {
+      equal(true, false, 'This should never be hit');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("Register an on handler, have 3 tests with all passing", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+    ev.test('key', function(value, meta) {
+      equal(value, 'value', 'Inside the tester');
+      meta.done(true);
+    });
+
+    ev.on('key', function(value) {
+      equal(value, 'value', 'This should be hit');
+    });
+
+    ev('key', 'value');
+  });
+
 module("Defining a setter");
   test("Defining a setter, then probing it with isset", function(){
     expect(2);

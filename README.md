@@ -187,6 +187,11 @@ There is an addon file for set, collection, and counter abstractions; these incl
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
+**ev.unset(argList)**
+
+ * A wrapper to the regular ev.set
+ * Allows an argument list to be passed in
+
 **ev.sniff()**
 
  * wraps set in a console.log abstraction
