@@ -4,7 +4,6 @@ EvDa = function(){
     E = Evda_.apply(0, _.toArray(arguments)),
     List = {};
 
-  self.List = List;
   E.unset_ = E.unset;
 
   return _.extend(E, {
@@ -34,11 +33,9 @@ EvDa = function(){
         list = opts.shift(),
         ret = E.apply(0, opts);
 
-      console.log(ret, opts);
       ( List[list] || (List[list] = []) );
 
       if(_.isFunction(ret)) {
-        console.log("FUNCTION");
         List[list].push(ret);
       } else {
         _.each(ret, function(value, key) {
