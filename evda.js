@@ -151,10 +151,12 @@ function EvDa (map) {
           (eventMap[AFTER + key] || []), 
           function(callback) {
 
-            callback ( value, meta );
+            if(!callback.S) {
+              callback ( value, meta );
 
-            if ( callback.once ) {
-              del ( callback );
+              if ( callback.once ) {
+                del ( callback );
+              }
             }
           });
       }
