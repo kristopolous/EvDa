@@ -3,6 +3,7 @@ function EvDa (map) {
     // Underscore shortcuts ... pleases the minifier
     each = _.each,
     extend = _.extend,
+    isObject = _.isObject,
     size = _.size,
 
     // Constants
@@ -30,7 +31,7 @@ function EvDa (map) {
       // went in. There *could* be a mix and match
       // of callbacks and setters, but that would
       // be fine I guess...
-      if( _.isObject(scope) ) {
+      if( isObject(scope) ) {
 
         each( scope, function( _value, _key ) {
           scope[_key] = pub ( _key, _value, meta );
@@ -71,9 +72,19 @@ function EvDa (map) {
   }
 
   function isset ( key, callback ) {
+    if( isObject(key) ) {
+
+      each( key, function( _value, _key ) {
+        key[_key] = isset( _key, _value );
+      });
+
+      return key;
+    }
+
     // If I know how to set this key but
     // I just haven't done it yet, run through
     // those functions now.
+
     if( setterMap[key] ) {
       setterMap[key]();
 

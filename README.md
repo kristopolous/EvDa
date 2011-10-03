@@ -1,6 +1,6 @@
 ## A JS contingency system
 
-This adds a contingency abstraction to JS in 0.8KB.
+This adds a contingency abstraction to JS.
 
 Oftentimes, you may 
 
@@ -16,8 +16,6 @@ This is what contingency enables you to do with expressiveness and ease.
 
 You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
 having business logic changes require editing multiple files.
-
-This library gives all this to you in under 860 bytes.
 
 ### Dynamic function composition
 
@@ -146,7 +144,7 @@ Looking at the last style, one can do the following:
  * Useful for asynchronous operations, such as a login screen; wherein you only
    want to give it to the user when applicable
 
-**[boolean | undefined] ev.isset(key, lambda)**
+**[boolean | undefined] ev.isset(key | object, lambda)**
 
  * If lambda is not set, returns true if key exists, false if it is not
  * If lambda is set,
@@ -154,6 +152,7 @@ Looking at the last style, one can do the following:
    * If the key is set, the lambda will run immediately and in the "ON" block. `undefined` is returned.
    * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
 
+ * You can pass in K/V object style arguments similar to the ev() notation above.
 
 
 ### Extras
