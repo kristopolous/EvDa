@@ -158,12 +158,13 @@ Looking at the last style, one can do the following:
 ### Extras
 There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js
 
-**ev.list(list, params)**
+**[setter] ev.group(list, params)**
 
  * Identical to an ev() command as documented above, except for the first parameter
  * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk
  * A disabled lambda retains its position in the chain but is simply skipped.
  * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again
+ * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
 
 **ev.enable( list )**
 

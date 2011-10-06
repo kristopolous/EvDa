@@ -19,6 +19,7 @@
 </body>
 <script>
 $(function(){
+  
 module("Initialization");
   test("No arguments", function(){
     var ev = EvDa();
@@ -67,11 +68,11 @@ module("Callbacks on set");
     expect(1);
     var ev = EvDa();
 
-    ev({key: function(value) {
+    ev({keyobj: function(value) {
       equal(value, 'value', 'Callback triggered');
     }});
 
-    ev('key', 'value');
+    ev('keyobj', 'value');
   });
 
   test("register a callback, expect meta information", function(){
