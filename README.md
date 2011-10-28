@@ -61,12 +61,13 @@ You can also seed it with initialization values by passing in an object, for ins
 ## API
 
 ### Manipulation
-**[handle | value] ev(key | hash, value | lambda, meta)**
+**[handle | value] ev(key | hash | array, value | lambda, meta)**
 
  * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
  * If value is not a function, then it's a setter. If meta is set, then 
    this object gets passed around to the trigger functions.
  * If value is a function, this registers a callback in the "ON" block.
+ * If the first argument an array then each element of the array is ran on the rest of the arguments.
  * If value is a function and meta is {once: true} then it will only be run once.
    
    * Since the handle is itself, a decorated callback, then you can simply run handle.once = true at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.

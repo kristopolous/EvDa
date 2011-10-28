@@ -48,6 +48,10 @@ function EvDa (map) {
         });
 
         return scope;
+      } else if (_.isArray(scope)) {
+        return _.map(scope, function(which) {
+          return pub(which, value, meta);
+        });
       }
 
       return data[ scope ];
