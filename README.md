@@ -156,7 +156,8 @@ Looking at the last style, one can do the following:
 
 
 ### Extras
-There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js
+There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js.
+They are currently not covered in the test cases.
 
 **[setter] ev.group(list, params)**
 
@@ -211,7 +212,19 @@ There is an addon file for set, collection, and counter abstractions; these incl
 
 **ev.sniff()**
 
- * wraps set in a console.log abstraction
+ * Wraps set in a console.log abstraction
+
+**ev.setadd(key, value)**
+
+ * Creates key if it doesn't exist, as an array
+ * Adds value to the array if it's not already there.
+ * Returns set.
+
+**ev.setdel(key, value)**
+
+ * Creates key if it doesn't exist, as an array
+ * Removes value from it's already there.
+ * Returns set.
 
 ### Examples
 

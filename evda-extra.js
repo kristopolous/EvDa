@@ -107,6 +107,14 @@ EvDa = function(){
       return E ( key, lambda, { once: true } );
     },
 
+    setadd: function ( key, value ) {
+      return E ( key, _.uniq(( E.db[key] || [] ).concat([value])) );
+    },
+
+    setdel: function ( key, value ) {
+      return E ( key, _.without(( E.db[key] || [] ), value) );
+    },
+
     find: function ( regex ) {
       return _.select( _.keys(E.db), function(toTest) {
         return toTest.match(regex);
