@@ -11,4 +11,3 @@ minify () {
 }
 
 minify evda
-minify evda-extra

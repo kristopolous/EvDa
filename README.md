@@ -156,10 +156,6 @@ Looking at the last style, one can do the following:
  * You can pass in K/V object style arguments similar to the ev() notation above.
 
 
-### Extras
-There is an addon file for set, collection, and counter abstractions; these includes regex finding of keys, push, pop, and atomic incrementers and decrementers. They are available in evda-extra.js.
-They are currently not covered in the test cases.
-
 **[setter] ev.group(list, params)**
 
  * Identical to an ev() command as documented above, except for the first parameter
@@ -230,3 +226,4 @@ They are currently not covered in the test cases.
 ### Examples
 
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
+ * There is an examples directory in the github repo

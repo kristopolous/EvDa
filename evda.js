@@ -420,7 +420,9 @@ function EvDa (imported) {
     },
 
     unset: function () { 
-      for(var i = 0; i < arguments.length; delete data[arguments[i++]]); 
+      each(arguments, function(which) {
+        delete data[which];
+      });
     },
 
     find: function ( regex ) {
@@ -472,10 +474,9 @@ function EvDa (imported) {
           console.log(keys(ignoreMap));
         }
       }
-    },
+    }
   });
 
-  self.pub = pub;
   pub.change = pub.on;
   pub.add = pub.push;
 
