@@ -50,12 +50,9 @@ function EvDa (imported) {
 
 
     last = function(obj) {
-      if(obj.length ) { 
-        return obj[obj.length - 1];
-      } else {
-        throw new TypeError();
-      }
+      return obj.length ? obj[obj.length - 1] : undefined;
     },
+
     keys = ({}).keys || function (obj) {
       if(isArray(obj)) { 
         return obj;
@@ -104,6 +101,7 @@ function EvDa (imported) {
     size = function(obj) {
       return (obj && 'length' in obj) ? obj.length : 0;
     },
+
     map = [].map ?
       function(array, cb) { 
         return array.map(cb) 
@@ -259,7 +257,6 @@ function EvDa (imported) {
     db: data,
     events: eventMap,
     del: del,
-    setters: setterMap,
     isset: isset,
 
     // Unlike much of the reset of the code,
