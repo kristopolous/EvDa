@@ -266,11 +266,11 @@ module("Defining a setter");
     var ev = EvDa(), order = 1;
 
     ev.setter('key', function() {
-      equal(order, 2, 'Order correct');
+      equal(order, 2, 'Order correct - setter run');
       ev('key', 'value');
     });
 
-    equal(order, 1, 'Order correct');
+    equal(order, 1, 'Order correct - setter not run yet');
     order++;
     ev.isset('key');
   });

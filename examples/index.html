@@ -1,0 +1,21 @@
+<!doctype html>
+<div id=list-container>
+  <ul id=list>
+  </ul>
+  <input id=item-text><button id=add-item onclick=addItem()>Add Item</button>
+</div>
+<script src=../evda.js></script>
+<script>
+var List = EvDa();
+
+function addItem() {
+  List.add(document.getElementById('item-text').value);
+}
+
+List.added(function(data) {
+  document.body.appendChild(document.createElement('li')).innerHTML = data;
+  document.getElementById('item-text').value = '';
+  document.getElementById('item-text').focus();
+});
+
+</script>
