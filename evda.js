@@ -7,18 +7,21 @@
 //
 function EvDa (imported) {
   var 
+    BASE = '__base',
     slice = Array.prototype.slice,  
     toString = Object.prototype.toString,
     isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
     isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
     isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
     isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
-    isObject = function( obj ){
+    isObject = function(obj) {
       if(isString(obj)) {
         return false;
-      } else return obj == null ? 
-          String( obj ) == 'object' : 
-          toString.call(obj) === '[object Object]' || true ;
+      }
+
+      return obj == null ? 
+        String( obj ) == 'object' : 
+        toString.call(obj) === '[object Object]' || true ;
     },
 
     toArray = function(obj) {
@@ -196,9 +199,9 @@ function EvDa (imported) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
-      if (arguments.length == 1) {
+      if ( !callback ) {
         callback = key;
-        key = EvDa._BASE_;
+        key = BASE;
       }
 
       // This is the back-reference map to this callback
@@ -291,18 +294,14 @@ function EvDa (imported) {
     push: function ( key, value ) {
       if (size(arguments) == 1) {
         value = key;
-        key = EvDa._BASE_;
+        key = BASE;
       }
 
       return pub.set ( key, [].concat(data[key] || [], [value]) );
     },
 
     pop: function ( key ) {
-      if (arguments.length == 1) {
-        key = EvDa._BASE_;
-      }
-
-      return pub.set ( key, data[key].slice(0, -1) );
+      return pub.set ( key || BASE, data[key].slice(0, -1) );
     },
 
     group: function ( list ) {
@@ -429,15 +428,15 @@ function EvDa (imported) {
     },
 
     added: function(key, callback) {
-      if( arguments.length == 1 ) {
+      if( !callback ) {
         callback = key;
-        key = EvDa._BASE_;
+        key = BASE;
       }
 
       pub.on(key, function(value, meta) {
         var 
-          newlen = toArray(value).length,
-          oldlen = meta.old ? meta.old.length : 0;
+          newlen = size(value),
+          oldlen = size(meta.old);
         
         if(newlen - oldlen == 1) {
           callback(last(value));
@@ -479,4 +478,3 @@ function EvDa (imported) {
 
   return pub;
 }
-EvDa._BASE_ = '_base_' + Math.random().toString().substr(2);
