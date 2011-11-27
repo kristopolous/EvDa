@@ -6,7 +6,6 @@
   <script src="http://code.jquery.com/jquery-latest.js"></script>
   <script src=underscore.js > </script>
   <script src=../evda.js > </script>
-  <script src=../evda-extra.js > </script>
   <script src=qunit.js > </script>
 </head>
 <body>
@@ -15,7 +14,6 @@
   <div id="qunit-testrunner-toolbar"></div>
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
-  <div id="qunit-fixture">test markup, will be hidden</div>
 </body>
 <script>
 $(function(){
@@ -36,6 +34,42 @@ module("Basic");
     var ev = EvDa();
     ev('key', 'value');
     equal(ev.db.key, 'value', "Initialized");
+  });
+
+  test("Set a key, object style", function(){
+    expect(1);
+    var ev = EvDa();
+    ev({key: 'value'});
+    equal(ev.db.key, 'value', "Initialized");
+  });
+
+  test("Set 3 keys, object style", function(){
+    expect(6);
+    var ev = EvDa();
+
+    ev({key0: function(){
+        equal(_.keys(ev.db).length, 3, '3 Keys exist before first callback is run');
+      }
+    });
+
+    ev({
+      key2: function(){
+        equal(ev.db.key1, 1, 'Keys appear to have the correct value');
+      },
+      key1: function(){
+        equal(_.keys(ev.db).length, 3, 'All 3 callbacks are run');
+      }
+    });
+
+    ev({
+      key0: 'value0',
+      key1: 1,
+      key2: true
+    });
+
+    equal(ev.db.key0, 'value0', "Initialized key0");
+    equal(ev.db.key1, 1, "Initialized key1");
+    equal(ev.db.key2, true, "Initialized key2");
   });
 
   test("Get a key", function(){
@@ -72,6 +106,29 @@ module("Callbacks on set");
       equal(value, 'value', 'Callback triggered');
     }});
 
+    ev('keyobj', 'value');
+  });
+
+  test("register multiple callbacks, make sure they all are hit", function(){
+    expect(6);
+    var ev = EvDa();
+
+    ev('keyobj', function(value) {
+      equal(value, 'value', 'arglist Callback triggered');
+    });
+
+    ev({keyobj: function(value) {
+      equal(value, 'value', 'object (1) Callback triggered');
+    }});
+
+    ev({
+      nothere: function(value) {},
+      keyobj: function(value) {
+        equal(value, 'value', 'object (2) Callback triggered');
+      }
+    });
+
+    ev('keyobj', 'value');
     ev('keyobj', 'value');
   });
 
@@ -258,6 +315,26 @@ module("Test callbacks on set");
     });
 
     ev('key', 'value');
+  });
+
+module("Running a setter");
+  test("Setting a variable, checking to see if it's been set", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.set('key', 'value');
+    ev.isset('key', function(value) {
+      equal(value, 'value', 'Key set to value');
+    });
+  });
+  test("Registering a setter, then Setting a variable", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.isset('key', function(value) {
+      equal(value, 'value', 'Key set to value');
+    });
+    ev.set('key', 'value');
   });
 
 module("Defining a setter");
