@@ -165,7 +165,7 @@ function EvDa (imported) {
       // went in. There *could* be a mix and match
       // of callbacks and setters, but that would
       // be fine I guess...
-      if( isObject(scope) && !isString(scope)) {
+      if( isObject(scope) ) {
         var ret = {};
 
         // Object style should be executed as a transaction
@@ -230,7 +230,7 @@ function EvDa (imported) {
   function isset ( key, callback ) {
     if( isObject(key) ) {
 
-      each( key, function( _value, _key ) {
+      each( key, function( _key, _value ) {
         key[_key] = isset( _key, _value );
       });
 

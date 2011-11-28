@@ -327,7 +327,7 @@ module("Running a setter");
       equal(value, 'value', 'Key set to value');
     });
   });
-  test("Registering a setter, then Setting a variable", function(){
+  test("Registering a setter arglist style, then Setting a variable", function(){
     expect(1);
     var ev = EvDa();
 
@@ -336,9 +336,41 @@ module("Running a setter");
     });
     ev.set('key', 'value');
   });
+  test("Registering a setter kv style, then Setting a variable", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.isset({
+      key: function(value) {
+        equal(value, 'value', 'Key set to value');
+      }
+    });
+    ev.set('key', 'value');
+  });
+
+  test("Registering three setters kv style, then Setting a variable", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev.isset({
+      key0: function(value) {
+        equal(value, 'value0', 'Key set to value');
+      },
+      key1: function(value) {
+        equal(value, 'value1', 'Key set to value');
+      },
+      key2: function(value) {
+        equal(value, 'value2', 'Key set to value');
+      }
+    });
+
+    for(var i = 0; i < 3; i++) {
+      ev.set('key' + i, 'value' + i);
+    }
+  });
 
 module("Defining a setter");
-  test("Defining a setter, then probing it with isset", function(){
+  test("Defining a setter arglist style, then probing it with isset", function(){
     expect(2);
     var ev = EvDa(), order = 1;
 
