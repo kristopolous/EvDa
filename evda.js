@@ -51,7 +51,6 @@ function EvDa (imported) {
         }
       },
 
-
     last = function(obj) {
       return obj.length ? obj[obj.length - 1] : undefined;
     },
@@ -144,7 +143,7 @@ function EvDa (imported) {
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
     // that we ought to remove the function.
-    ONCE = {once:1},
+    ONCE = {once: 1},
 
     // Internals
     data = imported || {},
@@ -274,7 +273,7 @@ function EvDa (imported) {
     setter: function ( key, callback ) {
       setterMap[key] = callback;
 
-      if (eventMap['on' + key]) {
+      if (eventMap[ON + key]) {
         isset( key );
       }
     },
