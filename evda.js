@@ -5,92 +5,130 @@
 // Copyright 2011, Chris McKenzie
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
+var 
+  slice = Array.prototype.slice,  
+  toString = Object.prototype.toString,
+  isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
+  isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
+  isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
+  isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
+  isObject = function(obj) {
+    if(isString(obj)) {
+      return false;
+    }
+
+    return obj == null ? 
+      String( obj ) == 'object' : 
+      toString.call(obj) === '[object Object]' || true ;
+  },
+
+  toArray = function(obj) {
+    return slice.call(obj);
+  },
+
+  each = [].forEach ?
+    function (obj, cb) {
+      if (isArray(obj) || obj.length) { 
+        toArray(obj).forEach(cb);
+      } else {
+        for( var key in obj ) {
+          cb(key, obj[key]);
+        }
+      }
+    } :
+
+    function (obj, cb) {
+      if (isArray(obj)) {
+        for ( var i = 0, len = obj.length; i < len; i++ ) { 
+          cb(obj[i], i);
+        }
+      } else {
+        for( var key in obj ) {
+          cb(key, obj[key]);
+        }
+      }
+    },
+
+  last = function(obj) {
+    return obj.length ? obj[obj.length - 1] : undefined;
+  },
+
+  keys = ({}).keys || function (obj) {
+    if(isArray(obj)) { 
+      return obj;
+    }
+    var ret = [];
+
+    for(var key in obj) {
+      ret.push(key);
+    }
+
+    return ret;
+  },
+
+  without = function(collection, item) {
+    var ret = [];
+    each(collection, function(which) {
+      if(which !== item) {
+        ret.push(which);
+      }
+    });
+    return ret;
+  },
+
+  uniq = function(obj) {
+    var 
+      old, 
+      ret = [];
+
+    each(keys(obj).sort(), function(which) {
+      if(which != old) {
+        old = which;
+        ret.push(which);
+      }
+    });
+    return ret;
+  },
+
+  size = function(obj) {
+    return (obj && 'length' in obj) ? obj.length : 0;
+  },
+
+  map = [].map ?
+    function(array, cb) { 
+      return array.map(cb) 
+    } : 
+
+    function(array, cb) {
+      var ret = [];
+
+      for ( var i = 0, len = array.length; i < len; i++ ) { 
+        ret.push(cb(array[i], i));
+      }
+
+      return ret;
+    },
+
+  clone = function(obj) {
+    if(isArray(obj)) { return slice.call(obj); }
+    if(isObject(obj)) { return extend(obj, {}); }
+    return obj;
+  },
+
+  extend = function(obj) {
+    each(slice.call(arguments, 1), function(source) {
+      for (var prop in source) {
+        if (source[prop] !== void 0) {
+          obj[prop] = source[prop];
+        }
+      }
+    });
+    return obj;
+  };
+
 function EvDa (imported) {
   var 
     BASE = '__base',
-    slice = Array.prototype.slice,  
-    toString = Object.prototype.toString,
-    isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
-    isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
-    isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
-    isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
-    isObject = function(obj) {
-      if(isString(obj)) {
-        return false;
-      }
-
-      return obj == null ? 
-        String( obj ) == 'object' : 
-        toString.call(obj) === '[object Object]' || true ;
-    },
-
-    toArray = function(obj) {
-      return slice.call(obj);
-    },
-
-    each = [].forEach ?
-      function (obj, cb) {
-        if (isArray(obj) || obj.length) { 
-          toArray(obj).forEach(cb);
-        } else {
-          for( var key in obj ) {
-            cb(key, obj[key]);
-          }
-        }
-      } :
-
-      function (obj, cb) {
-        if (isArray(obj)) {
-          for ( var i = 0, len = obj.length; i < len; i++ ) { 
-            cb(obj[i], i);
-          }
-        } else {
-          for( var key in obj ) {
-            cb(key, obj[key]);
-          }
-        }
-      },
-
-    last = function(obj) {
-      return obj.length ? obj[obj.length - 1] : undefined;
-    },
-
-    keys = ({}).keys || function (obj) {
-      if(isArray(obj)) { 
-        return obj;
-      }
-      var ret = [];
-
-      for(var key in obj) {
-        ret.push(key);
-      }
-
-      return ret;
-    },
-
-    without = function(collection, item) {
-      var ret = [];
-      each(collection, function(which) {
-        if(which !== item) {
-          ret.push(which);
-        }
-      });
-      return ret;
-    },
-
-    uniq = function(obj) {
-      var 
-        old, 
-        ret = [];
-
-      each(keys(obj).sort(), function(which) {
-        if(which != old) {
-          old = which;
-          ret.push(which);
-        }
-      });
-      return ret;
-    },
 
     select = function(obj, test) {
       var ret = [];
@@ -100,41 +138,6 @@ function EvDa (imported) {
       return ret;
     },
 
-    size = function(obj) {
-      return (obj && 'length' in obj) ? obj.length : 0;
-    },
-
-    map = [].map ?
-      function(array, cb) { 
-        return array.map(cb) 
-      } : 
-
-      function(array, cb) {
-        var ret = [];
-
-        for ( var i = 0, len = array.length; i < len; i++ ) { 
-          ret.push(cb(array[i], i));
-        }
-
-        return ret;
-      },
-
-    clone = function(obj) {
-      if(isArray(obj)) { return slice.call(obj); }
-      if(isObject(obj)) { return extend(obj, {}); }
-      return obj;
-    },
-
-    extend = function(obj) {
-      each(slice.call(arguments, 1), function(source) {
-        for (var prop in source) {
-          if (source[prop] !== void 0) {
-            obj[prop] = source[prop];
-          }
-        }
-      });
-      return obj;
-    },
 
     // Constants
     ON = 'on',
@@ -457,7 +460,7 @@ function EvDa (imported) {
       var ignoreMap = {};
 
       pub.set = function() {
-        var args = Array.prototype.slice.call(arguments);
+        var args = slice(arguments);
 
         if(!ignoreMap[args[0]]) {
           console.log(+new Date(), args);
