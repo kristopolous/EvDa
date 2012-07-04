@@ -210,6 +210,8 @@ Looking at the last style, one can do the following:
 **ev.sniff()**
 
  * Wraps set in a console.log abstraction
+ * ev.traceList is also exposed. It's an
+   array and run every time.
 
 **ev.setadd(key, value)**
 

@@ -369,6 +369,19 @@ module("Running a setter");
     }
   });
 
+module("Tracing");
+  test("Tracing function execution", function() {
+    expect(1);
+
+    var ev = EvDa(); 
+    ev.traceList.push(function(args) {
+      equal(args[0], 'key', 'Trace called, args correct');
+    });
+
+    ev('key', 'value');
+  });
+
+
 module("Defining a setter");
   test("Defining a setter arglist style, then probing it with isset", function(){
     expect(2);

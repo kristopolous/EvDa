@@ -310,6 +310,8 @@ function EvDa (imported) {
       return pub.set ( key || BASE, data[key].slice(0, -1) );
     },
 
+    traceList: [],
+
     group: function ( list ) {
       var 
         opts = toArray(arguments),
@@ -333,6 +335,7 @@ function EvDa (imported) {
     set: function (key, value, _meta, bypass, _noexecute) {
       var 
         testKey = 'test' + key,
+        args = slice.call(arguments),
         times = size(eventMap[ testKey ]),
         failure,
 
@@ -353,6 +356,10 @@ function EvDa (imported) {
             }
           }
         };
+
+      each ( pub.traceList, function ( callback ) {
+        callback ( args );
+      });
 
       if (times && !bypass) {
         each ( eventMap[ testKey ], function ( callback ) {
