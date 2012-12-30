@@ -86,6 +86,31 @@ module("Basic");
     equal(_.keys(ev.db).join(''), '', "Removed");
   });
 
+module("sniff");
+  test("register object callbacks, set from object, make sure they all are hit", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev.sniff();
+    ev({
+      b: function(value) { equal(value, 'b', 'object (b) Callback triggered'); },
+      a: function(value) { equal(value, 'a', 'object (a) Callback triggered'); },
+      c: function(value) { equal(value, 'c', 'object (c) Callback triggered'); },
+
+      // Shouldn't hit
+      d: function(value) { equal(value, 'd', 'object (d) Callback triggered'); }
+    });
+
+    ev({
+      a: 'a',
+      b: 'b',
+      c: 'c',
+
+      // Has nothing associated with it
+      e: 'e'
+    });
+  });
+
 module("Callbacks on set");
   test("register a callback, arglist style", function(){
     expect(1);
@@ -130,6 +155,29 @@ module("Callbacks on set");
 
     ev('keyobj', 'value');
     ev('keyobj', 'value');
+  });
+
+  test("register object callbacks, set from object, make sure they all are hit", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev({
+      b: function(value) { equal(value, 'b', 'object (b) Callback triggered'); },
+      a: function(value) { equal(value, 'a', 'object (a) Callback triggered'); },
+      c: function(value) { equal(value, 'c', 'object (c) Callback triggered'); },
+
+      // Shouldn't hit
+      d: function(value) { equal(value, 'd', 'object (d) Callback triggered'); }
+    });
+
+    ev({
+      a: 'a',
+      b: 'b',
+      c: 'c',
+
+      // Has nothing associated with it
+      e: 'e'
+    });
   });
 
   test("register a callback, expect meta information", function(){

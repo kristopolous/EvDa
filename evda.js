@@ -460,28 +460,24 @@ function EvDa (imported) {
     },
 
     sniff: function () {
-      pub.set_ = pub.set;
-      var ignoreMap = {};
+      var 
+        ignoreMap = {},
+        startTime = +new Date();
 
-      pub.set = function() {
-        var args = Array.prototype.slice.call(arguments);
-
+      pub.traceList.unshift(function(args){
         if(!ignoreMap[args[0]]) {
-          console.log(+new Date(), args);
+          console.log((+new Date()) - startTime, args);
         }
-
-        pub.set_.apply (this, args);
-      }
-
+      });
+         
       // neuter this function but don't populate
       // the users keyspace.
       pub.sniff = function(key) {
         if(key) {
           ignoreMap[key] = !ignoreMap[key];
           return "[Un]ignoring " + key;
-        } else {
-          console.log(keys(ignoreMap));
-        }
+        } 
+        return keys(ignoreMap);
       }
     }
   });
