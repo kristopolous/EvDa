@@ -146,19 +146,19 @@ Looking at the last style, one can do the following:
    want to give it to the user when applicable
  * The lambda function may have a function that it runs when its ready.  That's to say something like this:
 
-    ev.setter("username", function(done) {
-      $.get("/whoami", done);
-    }); 
+      ev.setter("username", function(done) {
+        $.get("/whoami", done);
+      }); 
 
  Now in some template I'm doing something like this
 
-    ev.isset('username', function(who){
-      $("#header").html(
-        template({
-          username: who
-        })
-      );
-    });
+      ev.isset('username', function(who){
+        $("#header").html(
+          template({
+            username: who
+          })
+        );
+      });
       
 **[boolean | undefined] ev.isset(key | object, lambda)**
 
