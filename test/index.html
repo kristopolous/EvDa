@@ -445,6 +445,20 @@ module("Defining a setter");
     ev.isset('key');
   });
 
+  test("Defining a setter arglist style asynchronously, then probing it with isset", function(){
+    var ev = EvDa(), key = Math.random();
+
+    ev.setter('key', function(done) {
+      setTimeout(function(){
+        done(key);
+      }, 10);
+    });
+
+    ev.isset('key', function(value) {
+      equal(value, key, 'Asynchronously right. Woohoo');
+    });
+  });
+
   test("Defining a setter after a probing with isset", function(){
     expect(2);
     var ev = EvDa(), order = 1;

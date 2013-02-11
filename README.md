@@ -144,7 +144,22 @@ Looking at the last style, one can do the following:
    This will be run if there are things blocked on it.
  * Useful for asynchronous operations, such as a login screen; wherein you only
    want to give it to the user when applicable
+ * The lambda function may have a function that it runs when its ready.  That's to say something like this:
 
+    ev.setter("username", function(done) {
+      $.get("/whoami", done);
+    }); 
+
+ Now in some template I'm doing something like this
+
+    ev.isset('username', function(who){
+      $("#header").html(
+        template({
+          username: who
+        })
+      );
+    });
+      
 **[boolean | undefined] ev.isset(key | object, lambda)**
 
  * If lambda is not set, returns true if key exists, false if it is not
