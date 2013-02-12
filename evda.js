@@ -492,6 +492,8 @@ function EvDa (imported) {
     }
   });
 
+  // alias get
+  pub.get = pub;
   pub.change = pub.on;
   pub.add = pub.push;
 
