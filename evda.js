@@ -284,8 +284,16 @@ function EvDa (imported) {
       // a function is already waiting on it,
       // then run it now.
       if (eventMap[ON + key]) {
-        isset( key );
+        return isset( key );
       }
+    },
+
+    when: function ( key, toTest, lambda ) {
+      return pub(key, function(value) {
+        if(value === toTest) {
+          lambda(value);
+        }
+      });
     },
 
     incr: function ( key ) {

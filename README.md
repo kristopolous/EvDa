@@ -60,6 +60,35 @@ You can also seed it with initialization values by passing in an object, for ins
 
 ## API
 
+### Functions
+
+ * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below.
+ * [value] .set(key, value, meta, bypass) - set a key
+ * [void] .unset(key, ...) - delete a set of keys
+ * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run when key is set
+ * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key is a certain value
+ * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run after key is set
+ * [handle] .test(key, lambda ( value, { key, old, done, meta } )) - register lambda to run as a condition OF setting a key
+ * [void] .del(handle) - delete a handle returned by on, after, or test
+ * [boolean] .setter(key, lambda) - define a way to set a key if requested
+ * [boolean | undefined] .isset(key | object, lambda) - see if a key or a group of keys have been set
+ * [handle] .once(key, lambda) - do something only once
+ * [number] .incr(key) - increment a key's value
+ * [number] .decr(key) - decrement a key's value
+ * [value] .push(key, value) - push a value on a stack
+ * [value] .pop(key) - pop a value off a stack
+ * [setter] .group(list, params) - TODO
+ * [void] .disable(list) - TODO
+ * [void] .enable(list) - TODO
+ * [void] .sniff() - enable a debugger
+ * [set] .setadd(key, value) - add to a set
+ * [set] .setdel(key, value) - delete from a set
+
+### Variables
+
+ * db - The current database
+ * events - Registered events
+
 ### Manipulation
 **[handle | value] ev(key | hash | array, value | lambda, meta)**
 
@@ -101,7 +130,11 @@ Looking at the last style, one can do the following:
  * Passes the meta information if supplied to the registered functions.
  * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
 
-**ev.unset(key)** 
+**ev.when(key, value, lambda)** 
+
+ * Executes lambda when `key === value`
+
+**ev.unset(key, ...)** 
 
  * Deletes the key, meaning the isset('key') will return false henceforth
  * No events are fired.
@@ -179,14 +212,14 @@ Looking at the last style, one can do the following:
  * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again
  * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
 
-**ev.enable( list )**
+**ev.enable( handle )**
 
- * Enables a list of lambdas previously disabled and set up through the ev.list() call
+ * Enables a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
 
-**ev.disable( list )**
+**[handle] ev.disable( list )**
 
- * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.list() call
+ * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
 
 **[handle] ev.once(key, lambda)**
@@ -216,11 +249,6 @@ Looking at the last style, one can do the following:
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
-
-**ev.unset(argList)**
-
- * A wrapper to the regular ev.set
- * Allows an argument list to be passed in
 
 **ev.sniff()**
 
