@@ -25,7 +25,7 @@ You can also seed it with initialization values by passing in an object, for ins
 
 ##### Stacks
 
- * [value] .push(key, value) - push a value on a stack
+ * [array] .push(key, value) - push a value on a stack
  * [value] .pop(key) - pop a value off a stack
 
 ##### Sets
@@ -116,7 +116,7 @@ Looking at the last style, one can do the following:
 
 #### Stacks
 
-**[value] .push(key, value)**
+**[array] .push(key, value)**
 
  * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
  * Updates the 'current' pointer to the last item on the array. 
