@@ -1,4 +1,257 @@
-## A JS contingency system
+# IoC, Events, and Data.
+
+## Usage
+
+    var ev = EvDa();
+
+creates an event namespace, ev. You can use one for the entire app, that's fine.
+
+You can also seed it with initialization values by passing in an object, for instance:
+
+    var ev = EvDa({key: 'value'});
+
+
+## API
+
+### Functions
+
+#### Manipulation
+
+##### Base
+
+ * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below.
+ * [value] .set(key, value, meta, bypass) - set a key
+ * [void] .unset(key, ...) - delete a set of keys
+
+##### Stacks
+
+ * [value] .push(key, value) - push a value on a stack
+ * [value] .pop(key) - pop a value off a stack
+
+##### Sets
+
+ * [set] .setadd(key, value) - add to a set
+ * [set] .setdel(key, value) - delete from a set
+
+##### Values
+
+ * [value] .incr(key) - increment a key's value 
+ * [value] .decr(key) - decrement a key's value
+
+#### Triggers
+
+ * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run when key is set
+ * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run after key is set
+ * [handle] .test(key, lambda ( value, { key, old, done, meta } )) - register lambda to run as a condition OF setting a key
+ * [handle] .once(key, lambda) - do something only once
+ * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key is a certain value
+ * [boolean] .setter(key, lambda) - define a way to set a key if requested
+ * [boolean | undefined] .isset(key | object, lambda) - see if a key or a group of keys have been set
+ * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set.
+ * [void] .del(handle) - delete a handle returned by on, after, or test
+
+#### Miscellaneous
+
+ * [object] .db - The current database
+ * [object] .events - Registered events
+ * [setter] .group(list, params) - TODO
+ * [void] .disable(list) - TODO
+ * [void] .enable(list) - TODO
+ * [void] .sniff() - enable a debugger
+
+
+### Manipulation
+**[handle | value] ev(key | hash | array, value | lambda, meta)**
+
+ * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
+ * If value is not a function, then it's a setter. If meta is set, then 
+   this object gets passed around to the trigger functions.
+ * If value is a function, this registers a callback in the "ON" block.
+ * If the first argument an array then each element of the array is ran on the rest of the arguments.
+ * If value is a function and meta is {once: true} then it will only be run once.
+   
+   * Since the handle is itself, a decorated callback, then you can simply run handle.once = true at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
+
+ * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
+
+Looking at the last style, one can do the following:
+
+    var handleList = ev({
+      a: function(value) { console.log(value) },
+      b: function(value) { console.log(value) }
+    });
+
+    ev({
+      a: 1,
+      b: 2
+    });
+
+    _.each(handleList, function(handle) {
+      ev.del(handle);
+    });
+
+    ev({
+      a: 1,
+      b: 2
+    });
+
+**[value] ev.set(key, value, meta, bypass)** 
+
+ * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
+ * Passes the meta information if supplied to the registered functions.
+ * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
+
+**.unset(key, ...)** 
+
+ * Deletes the key, meaning the isset('key') will return false henceforth
+ * No events are fired.
+
+**[number] .incr(key)**
+
+ * Atomically (in the JS sense) increments a key's value. 
+ * It will initialize the key to the numeric value 1 if it's not a number
+ * Returns the result of the set event.
+
+**[number] .decr(key)**
+
+ * Atomically (in the JS sense) decrements a key's value. 
+ * It will initialize the key to the numeric value 0 if it's not a number
+ * Returns the result of the set event.
+
+**[value] .push(key, value)**
+
+ * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
+ * Updates the 'current' pointer to the last item on the array. 
+ * Returns the result of the set event.
+
+**[value] .pop(key)**
+
+ * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
+ * Updates the 'current' pointer to the last item on the array. 
+ * Returns the result of the set event.
+
+**[set] .setadd(key, value)**
+
+ * Creates key if it doesn't exist, as an array
+ * Adds value to the array if it's not already there.
+ * Returns set.
+
+**[set] .setdel(key, value)**
+
+ * Creates key if it doesn't exist, as an array
+ * Removes value from the set if it is there.
+ * Returns set.
+
+### Triggers
+
+**[handle] ev.on(key, lambda ( value, { key, old, meta } ) )**
+
+ * Runs every time the key is set.
+ * Returns a handle that can be passed into ev.del to deregister.
+
+**[handle] ev.after(key, lambda ( value, { key, old, meta } ) )**
+
+ * Runs after a key has been set
+ * Returns a handle that can be passed into ev.del to deregister.
+
+**[handle] ev.test(key, lambda ( value, { key, old, done, meta } ))**
+
+ * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
+ * If the test succeeds, then the function must call a supplied callback function, named 
+   done and supplied in an object in the second argument. Calling the function with anything
+   other then the boolean false signals that the check succeeded. That means that calling
+   done() means "go ahead".
+
+**[handle] .when(key, value, lambda)** 
+
+ * Executes lambda when `key === value`
+
+**[void] .del(handle)**
+
+ * Deregisters a hooked function from running.
+
+**[bolean] .setter(key, lambda)** 
+
+ * State that the setter for a key is a callback. 
+   This will be run if there are things blocked on it.
+ * Returns whether it was run immediately or not.
+ * Useful for asynchronous operations, such as a login screen; wherein you only
+   want to give it to the user when applicable
+ * The lambda function may have a function that it runs when its ready.  That's to say something like this:
+
+      ev.setter("username", function(done) {
+        $.get("/whoami", done);
+      }); 
+
+ Now in some template I'm doing something like this
+
+      ev.isset('username', function(who){
+        $("#header").html(
+          template({
+            username: who
+          })
+        );
+      });
+      
+**[boolean | undefined] .isset(key | object, lambda)**
+
+ * If lambda is not set, returns true if key exists, false if it is not
+ * If lambda is set,
+
+   * If the key is set, the lambda will run immediately and in the "ON" block. `undefined` is returned.
+   * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
+
+ * You can pass in K/V object style arguments similar to the ev() notation above.
+
+**[boolean | undefined] ev.whenSet(key | object, lambda)**
+
+ * An alias to `.isset` for syntactic sugar.
+
+**[setter] .group(list, params)**
+
+ * Identical to an ev() command as documented above, except for the first parameter
+ * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk
+ * A disabled lambda retains its position in the chain but is simply skipped.
+ * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again
+ * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
+
+**[void] .enable( handle )**
+
+ * Enables a list of lambdas previously disabled and set up through the ev.group() call
+ * Does not work for test cases
+
+**[handle] .disable( list )**
+
+ * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
+ * Does not work for test cases
+
+**[handle] .once(key, lambda)**
+
+ * A syntactic sugar form of ev(key, lambda, {once: true});
+
+**.sniff()**
+
+ * Wraps set in a console.log abstraction
+ * ev.traceList is also exposed. It's an
+   array and run every time.
+
+## Misc
+
+**ev.db**
+
+ * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
+
+**ev.events**
+
+ * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
+
+
+### Examples
+
+ * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
+ * There is an examples directory in the github repo
+
+### More Theory
 
 This adds a contingency abstraction to JS.
 
@@ -47,228 +300,3 @@ have trace functions; very much like in a more traditional model.  That is what 
 find here; compactly and succinctly.
 
 
-### Usage
-
-    var ev = EvDa();
-
-creates an event namespace, ev. You can use one for the entire app, that's fine.
-
-You can also seed it with initialization values by passing in an object, for instance:
-
-    var ev = EvDa({key: 'value'});
-
-
-## API
-
-### Functions
-
- * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below.
- * [value] .set(key, value, meta, bypass) - set a key
- * [void] .unset(key, ...) - delete a set of keys
- * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run when key is set
- * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key is a certain value
- * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run after key is set
- * [handle] .test(key, lambda ( value, { key, old, done, meta } )) - register lambda to run as a condition OF setting a key
- * [void] .del(handle) - delete a handle returned by on, after, or test
- * [boolean] .setter(key, lambda) - define a way to set a key if requested
- * [boolean | undefined] .isset(key | object, lambda) - see if a key or a group of keys have been set
- * [handle] .once(key, lambda) - do something only once
- * [number] .incr(key) - increment a key's value
- * [number] .decr(key) - decrement a key's value
- * [value] .push(key, value) - push a value on a stack
- * [value] .pop(key) - pop a value off a stack
- * [setter] .group(list, params) - TODO
- * [void] .disable(list) - TODO
- * [void] .enable(list) - TODO
- * [void] .sniff() - enable a debugger
- * [set] .setadd(key, value) - add to a set
- * [set] .setdel(key, value) - delete from a set
-
-### Variables
-
- * db - The current database
- * events - Registered events
-
-### Manipulation
-**[handle | value] ev(key | hash | array, value | lambda, meta)**
-
- * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
- * If value is not a function, then it's a setter. If meta is set, then 
-   this object gets passed around to the trigger functions.
- * If value is a function, this registers a callback in the "ON" block.
- * If the first argument an array then each element of the array is ran on the rest of the arguments.
- * If value is a function and meta is {once: true} then it will only be run once.
-   
-   * Since the handle is itself, a decorated callback, then you can simply run handle.once = true at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
-
- * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
-
-Looking at the last style, one can do the following:
-
-    var handleList = ev({
-      a: function(value) { console.log(value) },
-      b: function(value) { console.log(value) }
-    });
-
-    ev({
-      a: 1,
-      b: 2
-    });
-
-    _.each(handleList, function(handle) {
-      ev.del(handle);
-    });
-
-    ev({
-      a: 1,
-      b: 2
-    });
-
-**[value] ev.set(key, value, meta, bypass)** 
-
- * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
- * Passes the meta information if supplied to the registered functions.
- * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
-
-**ev.when(key, value, lambda)** 
-
- * Executes lambda when `key === value`
-
-**ev.unset(key, ...)** 
-
- * Deletes the key, meaning the isset('key') will return false henceforth
- * No events are fired.
-
-**ev.db**
-
- * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
-
-**ev.events**
-
- * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
-
-### Triggers
-
-**[handle] ev.on(key, lambda ( value, { key, old, meta } ) )**
-
- * Runs every time the key is set.
- * Returns a handle that can be passed into ev.del to deregister.
-
-**[handle] ev.after(key, lambda ( value, { key, old, meta } ) )**
-
- * Runs after a key has been set
- * Returns a handle that can be passed into ev.del to deregister.
-
-**[handle] ev.test(key, lambda ( value, { key, old, done, meta } ))**
-
- * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
- * If the test succeeds, then the function must call a supplied callback function, named 
-   done and supplied in an object in the second argument. Calling the function with anything
-   other then the boolean false signals that the check succeeded. That means that calling
-   done() means "go ahead".
-
-**ev.del(handle)**
-
- * Deregisters a hooked function from running.
-
-**ev.setter(key, lambda)** 
-
- * State that the setter for a key is a callback. 
-   This will be run if there are things blocked on it.
- * Useful for asynchronous operations, such as a login screen; wherein you only
-   want to give it to the user when applicable
- * The lambda function may have a function that it runs when its ready.  That's to say something like this:
-
-      ev.setter("username", function(done) {
-        $.get("/whoami", done);
-      }); 
-
- Now in some template I'm doing something like this
-
-      ev.isset('username', function(who){
-        $("#header").html(
-          template({
-            username: who
-          })
-        );
-      });
-      
-**[boolean | undefined] ev.isset(key | object, lambda)**
-
- * If lambda is not set, returns true if key exists, false if it is not
- * If lambda is set,
-
-   * If the key is set, the lambda will run immediately and in the "ON" block. `undefined` is returned.
-   * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
-
- * You can pass in K/V object style arguments similar to the ev() notation above.
-
-
-**[setter] ev.group(list, params)**
-
- * Identical to an ev() command as documented above, except for the first parameter
- * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk
- * A disabled lambda retains its position in the chain but is simply skipped.
- * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again
- * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
-
-**ev.enable( handle )**
-
- * Enables a list of lambdas previously disabled and set up through the ev.group() call
- * Does not work for test cases
-
-**[handle] ev.disable( list )**
-
- * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
- * Does not work for test cases
-
-**[handle] ev.once(key, lambda)**
-
- * A syntactic sugar form of ev(key, lambda, {once: true});
-
-**[number] ev.incr(key)**
-
- * Atomically (in the JS sense) increments a key's value. 
- * It will initialize the key to the numeric value 1 if it's not a number
- * Returns the result of the set event.
-
-**[number] ev.decr(key)**
-
- * Atomically (in the JS sense) decrements a key's value. 
- * It will initialize the key to the numeric value 0 if it's not a number
- * Returns the result of the set event.
-
-**[value] ev.push(key, value)**
-
- * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
- * Updates the 'current' pointer to the last item on the array. 
- * Returns the result of the set event.
-
-**[value] ev.pop(key)**
-
- * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
- * Updates the 'current' pointer to the last item on the array. 
- * Returns the result of the set event.
-
-**ev.sniff()**
-
- * Wraps set in a console.log abstraction
- * ev.traceList is also exposed. It's an
-   array and run every time.
-
-**ev.setadd(key, value)**
-
- * Creates key if it doesn't exist, as an array
- * Adds value to the array if it's not already there.
- * Returns set.
-
-**ev.setdel(key, value)**
-
- * Creates key if it doesn't exist, as an array
- * Removes value from it's already there.
- * Returns set.
-
-### Examples
-
- * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
- * There is an examples directory in the github repo

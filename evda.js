@@ -273,6 +273,7 @@ function EvDa (imported) {
     db: data,
     events: eventMap,
     del: del,
+    whenSet: isset,
     isset: isset,
 
     // Unlike much of the reset of the code,
