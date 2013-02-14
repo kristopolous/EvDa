@@ -376,6 +376,8 @@ function EvDa (imported) {
           }
         };
 
+      meta.result = meta.done;
+
       each ( pub.traceList, function ( callback ) {
         callback ( args );
       });
