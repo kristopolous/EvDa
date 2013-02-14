@@ -431,6 +431,7 @@ function EvDa (imported) {
           delete callback.S;
         }
       });
+      return pub.list[listName];
     },
 
     setadd: function ( key, value ) {
@@ -445,6 +446,7 @@ function EvDa (imported) {
       each(pub.list[listName], function(callback) {
         ( callback.S || (callback.S = {}) ) [ listName ] = true;
       });
+      return pub.list[listName];
     },
 
     unset: function () { 
@@ -459,13 +461,13 @@ function EvDa (imported) {
       });
     },
 
-    added: function(key, callback) {
+    changed: function(key, callback) {
       if( !callback ) {
         callback = key;
         key = BASE;
       }
 
-      pub.on(key, function(value, meta) {
+      return pub.on(key, function(value, meta) {
         var 
           newlen = size(value),
           oldlen = size(meta.old);

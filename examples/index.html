@@ -12,7 +12,7 @@ function addItem() {
   List.add(document.getElementById('item-text').value);
 }
 
-List.added(function(data) {
+List.changed(function(data) {
   document.body.appendChild(document.createElement('li')).innerHTML = data;
   document.getElementById('item-text').value = '';
   document.getElementById('item-text').focus();

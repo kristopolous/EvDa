@@ -40,23 +40,26 @@ You can also seed it with initialization values by passing in an object, for ins
 
 #### Triggers
 
- * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run when key is set
- * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run after key is set
- * [handle] .test(key, lambda ( value, { key, old, done, meta } )) - register lambda to run as a condition OF setting a key
- * [handle] .once(key, lambda) - do something only once
- * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key is a certain value
+ * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **when** key is set.
+ * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **after** key is set.
+ * [handle] .test(key, lambda ( value, { key, old, done, meta } )) - register lambda to run as **a condition OF** setting a key.
+ * [handle] .once(key, lambda) - run an on, but only once.
+ * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
  * [boolean] .setter(key, lambda) - define a way to set a key if requested
- * [boolean | undefined] .isset(key | object, lambda) - see if a key or a group of keys have been set
- * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set.
- * [void] .del(handle) - delete a handle returned by on, after, or test
+ * [boolean | undefined] .isset(key | object) - see if a key or a group of keys have been set, **firing a setter if necessary**.
+ * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set, **firing a setter if necessary**.
+ * [void] .del(handle) - delete a handle returned by on, after, or test.
+
+##### Grouping
+
+ * [setter] .group(name, lambda) - Register a set of triggers under a common name.
+ * [list] .disable(name) - Disable all the triggers of that name.
+ * [list] .enable(name) - Enable all the triggers of that name.
 
 #### Miscellaneous
 
  * [object] .db - The current database
  * [object] .events - Registered events
- * [setter] .group(list, params) - TODO
- * [void] .disable(list) - TODO
- * [void] .enable(list) - TODO
  * [void] .sniff() - enable a debugger
 
 
@@ -209,18 +212,18 @@ Looking at the last style, one can do the following:
 
 **[setter] .group(list, params)**
 
- * Identical to an ev() command as documented above, except for the first parameter
- * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk
+ * Identical to an ev() command as documented above, except for the first parameter.
+ * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk.
  * A disabled lambda retains its position in the chain but is simply skipped.
- * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again
+ * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again.
  * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
 
-**[void] .enable( handle )**
+**[list] .enable( list )**
 
  * Enables a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
 
-**[handle] .disable( list )**
+**[list] .disable( list )**
 
  * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
