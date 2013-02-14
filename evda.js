@@ -450,9 +450,12 @@ function EvDa (imported) {
     },
 
     unset: function () { 
+      var bool = true;
       each(arguments, function(which) {
+        bool &= (which in data);
         delete data[which];
       });
+      return bool;
     },
 
     find: function ( regex ) {
@@ -503,7 +506,10 @@ function EvDa (imported) {
     }
   });
 
-  // alias get
+  pub.setAdd = pub.setadd;
+  pub.setDel = pub.setdel;
+  pub.isSet = pub.isset;
+
   pub.get = pub;
   pub.change = pub.on;
   pub.add = pub.push;
