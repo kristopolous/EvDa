@@ -416,7 +416,11 @@ function EvDa (imported) {
         }
       }
 
-      return value;
+      // Don't return the value...
+      // return the current value of that key.
+      // 
+      // This is because keys can be denied
+      return data[key];
     },
 
     once: function ( key, lambda ) {
