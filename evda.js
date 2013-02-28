@@ -244,7 +244,7 @@ function EvDa (imported) {
       // If someone explicitly sets the k/v in the setter
       // that is fine, that means this function isn't run.
       setterMap[key](function(value) {
-        pub(key, value);
+        pub.set(key, value);
       });
 
       delete setterMap[key];
