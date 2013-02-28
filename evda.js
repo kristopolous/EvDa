@@ -271,6 +271,7 @@ function EvDa (imported) {
     // extensions can be made.
     list: {},
     db: data,
+    setterMap: setterMap,
     events: eventMap,
     del: del,
     whenSet: isset,

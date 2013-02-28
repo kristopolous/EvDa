@@ -191,6 +191,7 @@ Looking at the last style, one can do the following:
  * Returns whether it was run immediately or not.
  * Useful for asynchronous operations, such as a login screen; wherein you only
    want to give it to the user when applicable
+ * The list of setters are in `ev.setterMap`
  * The lambda function may have a function that it runs when its ready.  That's to say something like this:
 
       ev.setter("username", function(done) {
@@ -250,6 +251,10 @@ Looking at the last style, one can do the following:
 **.db**
 
  * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
+
+**.setterMap**
+
+ * The map of K/V setters
 
 **.events**
 
