@@ -243,7 +243,13 @@ function EvDa (imported) {
     if( setterMap[key] ) {
       // If someone explicitly sets the k/v in the setter
       // that is fine, that means this function isn't run.
-      setterMap[key](function(value) {
+      //
+      // NOTE: using the return value as the thing to be set is a bad idea
+      // because things can be done asynchronously.  So there is no way to
+      // reliably check if the code explicitly set things after the function
+      // returns.
+      
+      /* var ThisIsWorthless = */ setterMap[key](function(value) {
         pub.set(key, value);
       });
 
