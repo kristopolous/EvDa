@@ -499,20 +499,36 @@ function EvDa (imported) {
     sniff: function () {
       var 
         ignoreMap = {},
-        startTime = +new Date();
+        startTime = +new Date(),
+        // Use a few levels of indirection to be
+        // able to toggle the sniffing on or off.
+        sniff = function(args) {
+          if(!ignoreMap[args[0]]) {
+            console.log((+new Date()) - startTime, args);
+          }
+        },
+        dummy = function() {},
+        sniffProxy = sniff;
 
       pub.traceList.unshift(function(args){
-        if(!ignoreMap[args[0]]) {
-          console.log((+new Date()) - startTime, args);
-        }
+        sniffProxy(args);
       });
          
       // neuter this function but don't populate
       // the users keyspace.
       pub.sniff = function(key) {
-        if(key) {
-          ignoreMap[key] = !ignoreMap[key];
-          return "[Un]ignoring " + key;
+        if(arguments.length > 0) {
+          if(isString(key)) {
+            ignoreMap[key] = !ignoreMap[key];
+            return "[Un]ignoring " + key;
+          } else {
+            // If the key is true then we turn sniffing "on"
+            // by linking the proxy to the real sniff function.
+            //
+            // Otherwise, we link the proxy to a dummy function
+            sniffProxy = key ? sniff : dummy;
+            return key;
+          }
         } 
         return keys(ignoreMap);
       }
