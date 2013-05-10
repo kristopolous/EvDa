@@ -260,11 +260,16 @@ Looking at the last style, one can do the following:
 
  * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
 
-**.sniff()**
+**.sniff(arg)**
 
  * Wraps set in a console.log abstraction
  * ev.traceList is also exposed. It's an
    array and run every time.
+ * if arg is
+   * a string - that event is excluded from being logged
+   * empty - the current set of excluded events are returned
+   * FALSE - this feature is disabled
+   * TRUE - the feature is enabled
 
 ### Examples
 
