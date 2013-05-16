@@ -1,4 +1,5 @@
-# IoC, Events, and Data.
+# A Generic Controller
+## IoC, Events, and Data.
 
 ## Usage
 
@@ -10,6 +11,11 @@ You can also seed it with initialization values by passing in an object, for ins
 
     var ev = EvDa({key: 'value'});
 
+There's a section far down at the bottom that discusses what this API is from a theoretical
+standpoint. You can view it as a generic controller in the traditional MVC sense that has some
+hooks for a model, but that's only because that acronym seems to help things gain traction.
+
+It's really, actually, something quite different and quite a bit more useful than that.
 
 ## API
 
@@ -19,24 +25,24 @@ You can also seed it with initialization values by passing in an object, for ins
 
 ##### Base
 
- * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below.
+ * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below
  * [value] .set(key, value, meta, bypass) - set a key
  * [boolean] .unset(key, ...) - delete a set of keys
 
 ##### Stacks
 
- * [array] .push(key, value) - push a value on a stack
- * [value] .pop(key) - pop a value off a stack
+ * [array] .push(key, value) - push a value on a stack at `key`
+ * [value] .pop(key) - pop a value off a stack at `key`
 
 ##### Sets
 
- * [set] .setAdd(key, value) - add to a set
- * [set] .setDel(key, value) - delete from a set
+ * [set] .setAdd(key, value) - add value to a set at `key`
+ * [set] .setDel(key, value) - delete value from a set at `key`
 
 ##### Values
 
- * [value] .incr(key) - increment a key's value 
- * [value] .decr(key) - decrement a key's value
+ * [value] .incr(key) - increment a key's value - returning the new value.
+ * [value] .decr(key) - decrement a key's value - returning the new value.
 
 #### Triggers
 
@@ -276,7 +282,7 @@ Looking at the last style, one can do the following:
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
  * There is an examples directory in the github repo
 
-### More Theory
+### What this is
 
 This adds a contingency abstraction to JS.
 
