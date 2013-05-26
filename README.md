@@ -185,6 +185,9 @@ Looking at the last style, one can do the following:
 **[handle] .when(key, value, lambda)** 
 
  * Executes lambda when `key === value`
+ * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
+
+    ev.when('key', 'value', callback).once = true;
 
 **[void] .del(handle)**
 
