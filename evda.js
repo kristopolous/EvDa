@@ -157,6 +157,11 @@ function EvDa (imported) {
     // If there was one argument, then this is
     // either a getter or the object style
     // invocation.
+    if (isArray(scope)) {
+      return map(scope, function(which) {
+        return pub(which, value, meta);
+      });
+    }
     if ( arguments.length == 1 ) {
 
       // The object style invocation will return
@@ -185,10 +190,6 @@ function EvDa (imported) {
         });
 
         return scope;
-      } else if (isArray(scope)) {
-        return map(scope, function(which) {
-          return pub(which, value, meta);
-        });
       }
 
       return data[ scope ];
@@ -543,5 +544,6 @@ function EvDa (imported) {
   pub.change = pub.on;
   pub.add = pub.push;
 
+  pub.isArray = isArray;
   return pub;
 }

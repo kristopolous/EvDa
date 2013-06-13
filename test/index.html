@@ -157,6 +157,24 @@ module("Callbacks on set");
     ev('keyobj', 'value');
   });
 
+  test("register array callbacks, make sure they all are hit", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev(['a', 'b', 'c', 'd'], function(value, meta) {
+      equal(meta.key, value, 'object Callback triggered');
+    });
+
+    ev({
+      a: 'a',
+      b: 'b',
+      c: 'c',
+
+      // Has nothing associated with it
+      e: 'e'
+    });
+  });
+
   test("register object callbacks, set from object, make sure they all are hit", function(){
     expect(3);
     var ev = EvDa();
@@ -202,6 +220,7 @@ module("Callbacks on set");
 
     ev('key', 'value', 'meta');
   });
+
   test("register a callback, pass meta object information", function(){
     expect(1);
     var ev = EvDa();
