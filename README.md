@@ -28,6 +28,54 @@ Along with things that you can do before they are cool. Like this:
 
 What do those things do? I mean I'd tell you, but really, you just wouldn't get it. /arrogant-jerk.
 
+### Be years ahead of those low-contrast hard-to read blog articles with curvy custom hairline fonts.
+
+Watch this. Pretend I know how to get something, like say, a user profile, but I don't want to load it
+unnecessarily.
+
+For example:
+
+    ev.setter('user.profile', function(trigger) {
+      $.get("/user/profile", function(data) {
+        trigger(data);
+      });
+    });
+
+Then later on I can call this:
+
+    viewProfile: function(){
+      ev.whenSet('user.profile', function(profile) {
+        TheLatestFadInTemplating( profile );
+      });
+    }
+
+Here, the request for the data user.profile inside of viewProfile made evda say "hrmm, I don't have it, do I know how to get it?"
+
+And sure enough it does.  It runs the callback which sets user.profile, and then runs the templating code and there you go. Let me
+do some kind of weird oroborous diagram because I like to waste my time:
+
+
+                                  /-> no? -> Run code whenever it's set then.
+                                 /
+                     /-> no? -> Do I have a setter? 
+                    /                        \
+                   /                          \-> yes? Run the setter. Then Run the code.
+    viewProfile -> Does user.profile exist? 
+                    \                               
+                     \_> yes? run code immediately.
+
+Oh but what if you declare the two things in the reverse order? That works. Sure.  What about this?
+
+    viewProfile: function(){
+      if (var profile = ev.isset('user.profile')) { 
+        TheLatestFadInTemplating( profile );
+      };
+    }
+
+Yep. more trivial stuff also works; who'd think that? Nobody really does this yet. I don't know why.
+
+I invent things. That's what I do.
+
 ## API
 
 ### Functions
