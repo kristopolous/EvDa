@@ -84,20 +84,25 @@ and then I do
 
     this.trigger("something");
 
-That's wonderful. Totally asynchronous. No. That's so wrong. That's so silly.  
+That's wonderful. Totally asynchronous, right? 
+
+Nope. That's so wrong. That's so silly. This isn't asynchronous at all. It's "deferred". There's a difference.
+
 What if the trigger runs BEFORE I register the handler?  Then the trigger falls on the floor and the handler goes 
 into neverland.  That's not asynchronous.  
 
-I still have to know what will load before what; that's what synchronous is. Like, that is its definition.  Something that's really
-Asynchronous would be something like:
+I still have to know what will load before what; that's what synchronous is. Like, that is synchronous's definition.  Something that's really
+*Asynchronous* would be something like:
 
-    this.trigger("something"); << It could run here
+    this.trigger("something"); << the trigger could run here
 
     this.whenSet("something", function(){}); << This will run after trigger.
 
     this.trigger("something"); << OR here, it doesn't matter.
 
-Well, this library does that. It actually does. Fancy that. We aren't just pretending here.
+Well, this library does that. It actually does. Fancy that. We aren't just pretending to be asynchronous here and then spending all our time taking instagram like pics for gravatar with a $5,000 camera.
+
+I'm doing actual work. I know, what the fuck, right?
 
 ## API
 
