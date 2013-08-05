@@ -1,5 +1,5 @@
 # A Generic Controller
-## IoC, Events, and Data.
+## IoC, Events, Data, Promises, all the buzzwords.
 
 ## Usage
 
@@ -16,6 +16,17 @@ standpoint. You can view it as a generic controller in the traditional MVC sense
 hooks for a model, but that's only because that acronym seems to help things gain traction.
 
 It's really, actually, something quite different and quite a bit more useful than that.
+
+You have hipster promises like this:
+
+    ev.isset('key', function() { });
+
+Along with things that you can do before they are cool. Like this:
+
+    ev.after('key', function() { });
+    ev.test('key', function() { return false; });
+
+What do those things do? I mean I'd tell you, but really, you just wouldn't get it. /arrogant-jerk.
 
 ## API
 
@@ -187,7 +198,7 @@ Looking at the last style, one can do the following:
  * Executes lambda when `key === value`
  * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
 
-    ev.when('key', 'value', callback).once = true;
+    `ev.when('key', 'value', callback).once = true;`
 
 **[void] .del(handle)**
 
