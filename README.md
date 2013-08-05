@@ -28,6 +28,29 @@ Along with things that you can do before they are cool. Like this:
 
 What do those things do? I mean I'd tell you, but really, you just wouldn't get it. /arrogant-jerk.
 
+Ok, I'll show you, just this once:
+
+    each ( [ON, AFTER, 'test'], function ( stage ) {
+
+      // register the function
+      pub[stage] = function ( key, callback, meta ) {
+        if ( !callback ) {
+          callback = key;
+          key = BASE;
+        }
+
+        // This is the back-reference map to this callback
+        // so that we can unregister it in the future.
+        (callback.$ || (callback.$ = [])).push ( stage + key );
+
+        (eventMap[stage + key] || (eventMap[stage + key] = [])).push ( callback );
+
+        return extend(callback, meta);
+      }
+    });
+
+
+
 ### Be years ahead of those low-contrast hard-to read blog articles with curvy custom hairline fonts.
 
 Watch this. Pretend I know how to get something, like say, a user profile, but I don't want to load it
