@@ -52,7 +52,7 @@ Then later on I can call this:
 Here, the request for the data user.profile inside of viewProfile made evda say "hrmm, I don't have it, do I know how to get it?"
 
 And sure enough it does.  It runs the callback which sets user.profile, and then runs the templating code and there you go. Let me
-do some kind of weird oroborous diagram because I like to waste my time:
+do some kind of weird diagram because I like to waste my time:
 
 
                                   /-> no? -> Run code whenever it's set then.
@@ -74,7 +74,30 @@ Oh but what if you declare the two things in the reverse order? That works. Sure
 
 Yep. more trivial stuff also works; who'd think that? Nobody really does this yet. I don't know why.
 
-I invent things. That's what I do.
+### Doesn't backbone have these things?
+
+Oh right. Here's one for you.  Let's say that we have a function:
+
+    this.once("something", function(){});
+
+and then I do
+
+    this.trigger("something");
+
+That's wonderful. Totally asynchronous. No. That's so wrong. That's so silly.  
+What if the trigger runs BEFORE I register the handler?  Then the trigger falls on the floor and the handler goes 
+into neverland.  That's not asynchronous.  
+
+I still have to know what will load before what; that's what synchronous is. Like, that is its definition.  Something that's really
+Asynchronous would be something like:
+
+    this.trigger("something"); << It could run here
+
+    this.whenSet("something", function(){}); << This will run after trigger.
+
+    this.trigger("something"); << OR here, it doesn't matter.
+
+Well, this library does that. It actually does. Fancy that. We aren't just pretending here.
 
 ## API
 
