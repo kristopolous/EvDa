@@ -159,7 +159,7 @@ function EvDa (imported) {
     // invocation.
     if (isArray(scope)) {
       return map(scope, function(which) {
-        return pub(which, value, meta);
+        return pub.call(pub.context, which, value, meta);
       });
     }
     if ( arguments.length == 1 ) {
@@ -176,7 +176,7 @@ function EvDa (imported) {
         // to avoid ordinals of the keys making a substantial
         // difference in the existence of the values
         each( scope, function( _key, _value ) {
-          ret[_key] = pub ( _key, _value, meta, 0, 1 );
+          ret[_key] = pub.call ( pub.context, _key, _value, meta, 0, 1 );
         });
 
         // After the callbacks has been bypassed, then we
@@ -251,7 +251,7 @@ function EvDa (imported) {
       // returns.
       
       /* var ThisIsWorthless = */ setterMap[key](function(value) {
-        pub.set(key, value);
+        pub.set.call(pub.context, key, value);
       });
 
       delete setterMap[key];
@@ -266,7 +266,7 @@ function EvDa (imported) {
       // the execution of this function is continued to be
       // blocked until the key is set.
       return key in data ?
-        callback ( data[key] ) :
+        callback.call ( pub.context, data[key] ) :
         pub ( key, callback, ONCE );
     }
 
@@ -276,6 +276,7 @@ function EvDa (imported) {
   extend(pub, {
     // Exposing the internal variables so that
     // extensions can be made.
+    context: self,
     list: {},
     db: data,
     setterMap: setterMap,
@@ -300,7 +301,7 @@ function EvDa (imported) {
     when: function ( key, toTest, lambda ) {
       return pub(key, function(value) {
         if(value === toTest) {
-          lambda(value);
+          lambda.call(pub.context, value);
         }
       });
     },
@@ -387,12 +388,12 @@ function EvDa (imported) {
       meta.result = meta.done;
 
       each ( pub.traceList, function ( callback ) {
-        callback ( args );
+        callback.call ( pub.context, args );
       });
 
       if (times && !bypass) {
         each ( eventMap[ testKey ], function ( callback ) {
-          callback ( value, meta );
+          callback.call ( pub.context, value, meta );
         });
       } else {
         // Set the key to the new value.
@@ -407,7 +408,7 @@ function EvDa (imported) {
             function(callback) {
 
               if(!callback.S) {
-                callback ( value, meta );
+                callback.call ( pub.context, value, meta );
 
                 if ( callback.once ) {
                   del ( callback );
@@ -418,7 +419,7 @@ function EvDa (imported) {
         }
 
         if(!_noexecute) {
-          return cback();
+          return cback.call(pub.context);
         } else {
           return cback;
         }
@@ -460,6 +461,7 @@ function EvDa (imported) {
       each(pub.list[listName], function(callback) {
         ( callback.S || (callback.S = {}) ) [ listName ] = true;
       });
+
       return pub.list[listName];
     },
 
@@ -490,9 +492,9 @@ function EvDa (imported) {
           oldlen = size(meta.old);
         
         if(newlen - oldlen == 1) {
-          callback(last(value));
+          callback.call( pub.context, last(value) );
         } else if (newlen > oldlen) { 
-          callback(toArray(value).slice(oldlen));
+          callback.call( pub.context, toArray(value).slice(oldlen) );
         }
       });
     },

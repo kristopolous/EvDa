@@ -86,6 +86,25 @@ module("Basic");
     equal(_.keys(ev.db).join(''), '', "Removed");
   });
 
+module("OO binding");
+  test("Set a key", function() {
+    expect(2);
+    function m() {
+      var ev = EvDa();
+      ev.context = this;
+
+      ev.isset('key', function() {
+        equal(this.value, 123, "binding done");
+        equal(typeof(self.value), 'undefined', "right scope");
+      });
+
+      this.value = 123;
+
+      ev.set('key');
+    }
+    new m();
+  });
+
 module("sniff");
   test("register object callbacks, set from object, make sure they all are hit", function(){
     expect(3);
