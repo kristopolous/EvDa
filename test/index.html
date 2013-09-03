@@ -88,14 +88,19 @@ module("Basic");
 
 module("OO binding");
   test("Set a key", function() {
-    expect(2);
+    expect(3);
     function m() {
       var ev = EvDa();
       ev.context = this;
 
+      this.callback = function() {
+        equal(1, 1, "binding done");
+      }
+
       ev.isset('key', function() {
         equal(this.value, 123, "binding done");
         equal(typeof(self.value), 'undefined', "right scope");
+        this.callback();
       });
 
       this.value = 123;
