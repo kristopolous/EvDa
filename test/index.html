@@ -90,8 +90,7 @@ module("OO binding");
   test("Set a key", function() {
     expect(3);
     function m() {
-      var ev = EvDa();
-      ev.context = this;
+      var ev = EvDa.call(this);
 
       this.callback = function() {
         equal(1, 1, "binding done");

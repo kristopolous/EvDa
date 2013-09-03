@@ -176,7 +176,7 @@ function EvDa (imported) {
         // to avoid ordinals of the keys making a substantial
         // difference in the existence of the values
         each( scope, function( _key, _value ) {
-          ret[_key] = pub.call ( pub.context, _key, _value, meta, 0, 1 );
+          ret[_key] = pub ( _key, _value, meta, 0, 1 );
         });
 
         // After the callbacks has been bypassed, then we
@@ -276,7 +276,7 @@ function EvDa (imported) {
   extend(pub, {
     // Exposing the internal variables so that
     // extensions can be made.
-    context: self,
+    context: this,
     list: {},
     db: data,
     setterMap: setterMap,
