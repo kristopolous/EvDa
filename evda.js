@@ -370,22 +370,23 @@ function EvDa (imported) {
         // Invoke will also get done
         // but it will have no semantic
         // meaning, so it's fine.
-        meta = {
-          meta: _meta || {},
-          old: clone(data[key]),
-          key: key,
-          done: function ( ok ) {
-            failure |= (ok === false);
+        meta = function ( ok ) {
+          failure |= (ok === false);
 
-            if ( ! --times ) {
-              if ( ! failure ) { 
-                pub.set ( key, value, _meta, 1 );
-              }
+          if ( ! --times ) {
+            if ( ! failure ) { 
+              pub.set ( key, value, _meta, 1 );
             }
           }
         };
 
-      meta.result = meta.done;
+      meta.old = clone(data[key]);
+      extend(meta, {
+        meta: _meta || {},
+        done: meta, 
+        result: meta,
+        key: key
+      });
 
       each ( pub.traceList, function ( callback ) {
         callback.call ( pub.context, args );

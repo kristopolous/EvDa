@@ -225,7 +225,7 @@ module("Callbacks on set");
     var ev = EvDa();
 
     ev('key', function(value, meta) {
-      equal(_.keys(meta).join(' '), 'meta old key done result', 'Meta information there');
+      equal(_.keys(meta).sort().join(' '), 'done key meta old result', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
       equal(meta.key, 'key', 'key correct');
     });
@@ -316,6 +316,22 @@ module("Tests");
 
       // deny it the pleasure.
       meta.done(false);
+    });
+
+    equal(ev.incr("key"), 1, "Key never incremented");
+    equal(ev.get("key"), 1, "Key never incremented");
+
+  });
+
+  test("Set a key to a value, register a test, deny the set, and check the keys value", function() {
+    var ev = EvDa();
+
+    equal(ev.incr("key"), 1, "Key initialized to 1");
+    ev.test("key", function(value, meta) {
+      equal(value, 2, "Key is attempting to be set to 2");
+
+      // deny it the pleasure.
+      meta(false);
     });
 
     equal(ev.incr("key"), 1, "Key never incremented");
