@@ -160,7 +160,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **after** key is set.
  * [handle] .test(key, lambda ( value, { key, old, result, meta } )) - register lambda to run as **a condition OF** setting a key.
  * [handle] .once(key, lambda) - run an on, but only once.
- * [handle] .when(key, value, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
+ * [handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
  * [boolean] .setter(key, lambda) - define a way to set a key if requested
  * [boolean | undefined] .isSet(key | object) - see if a key or a group of keys have been set, **firing a setter if necessary**.
  * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set, **firing a setter if necessary**.

@@ -300,7 +300,11 @@ function EvDa (imported) {
 
     when: function ( key, toTest, lambda ) {
       return pub(key, function(value) {
-        if(value === toTest) {
+        if(
+          ( isArray(toTest)    && toTest.sort().join('') === value.sort().join('') ) ||
+          ( isFunction(toTest) && toTest(value) ) ||
+          ( value === toTest ) 
+        ) {
           lambda.call(pub.context, value);
         }
       });

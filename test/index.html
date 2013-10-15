@@ -255,6 +255,47 @@ module("Callbacks on set");
     ev('key', 'value', {key: 'value'});
   });
 
+module("when");
+  test("run if something is set (literal)", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when("key", "value", function(value) {
+      equal(value, 'value', 'Callback triggered');
+    });
+    ev.when("key", "!value", function(value) {
+      equal(value, 'value', 'bad Callback triggered');
+    });
+    ev('key','value');
+  });
+  test("run if something is set (array)", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when("key", [1,2,3], function(value) {
+      equal(value.join(''), "123", 'Callback triggered');
+    });
+
+    ev.when("key", "value", function(value) {
+      equal(value, 'value', 'bad Callback triggered');
+    });
+    ev('key',[1,2,3]);
+  });
+
+  test("run if something is set (functional)", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when("key", function(test) { return test === "value" }, function(value) {
+      equal(value, "value", 'Callback triggered');
+    });
+
+    ev.when("key", "!value", function(value) {
+      equal(value, 'value', 'bad Callback triggered');
+    });
+    ev('key',"value");
+  });
+
 module("Onetime callbacks on set");
   test("register a one time callback, set twice", function(){
     expect(1);
