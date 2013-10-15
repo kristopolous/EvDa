@@ -292,9 +292,9 @@ Looking at the last style, one can do the following:
    other then the boolean false signals that the check succeeded. That means that calling
    `.result()` means "go ahead".
 
-**[handle] .when(key, value, lambda)** 
+**[handle] .when(key, value | test, lambda)** 
 
- * Executes lambda when `key === value`
+ * Executes lambda when `key === value` OR `test(value) == true`
  * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
 
     `ev.when('key', 'value', callback).once = true;`
