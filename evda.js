@@ -9,6 +9,11 @@ function EvDa (imported) {
   var 
     BASE = '__base',
     slice = Array.prototype.slice,  
+
+    // This is mostly underscore functions here. But they are included to make sure that
+    // they are supported here without requiring an additional library. 
+    //
+    // underscore {
     toString = Object.prototype.toString,
     isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
     isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
@@ -135,6 +140,7 @@ function EvDa (imported) {
       });
       return obj;
     },
+    // } end of underscore style functions.
 
     // Constants
     ON = 'on',
@@ -235,22 +241,25 @@ function EvDa (imported) {
     // what order we trigger things in.  We don't have to do any crazy
     // accounting, just cascading should do fine.
     if ( isArray(key) ) {
-      return isset(key.pop(), isset( 
-        (
-          (key.length == 1) ?
-          key[0] : key
-        ), callback)
-      );
+      return isset(key.pop(), function() {
+        return isset( 
+          (
+            (key.length == 1) ?
+            key[0] : key
+          ), callback);
+      });
       // ^^ this should recurse nicely.
       // although it won't return all 
       // the values in a nice set.
       
+    } 
+
     // This supports the style of 
     // ev.isset({
     //   key1: something,
     //   key2: something
     // })
-    } else if( isObject(key) ) {
+    if( isObject(key) ) {
 
       each( key, function( _key, _value ) {
         key[_key] = isset( _key, _value );
@@ -324,8 +333,13 @@ function EvDa (imported) {
     when: function ( key, toTest, lambda ) {
       return pub(key, function(value) {
         if(
+          // Look for identical arrays by comparing their string values.
           ( isArray(toTest)    && toTest.sort().join('') === value.sort().join('') ) ||
+
+          // otherwise, Run a tester if that is defined
           ( isFunction(toTest) && toTest(value) ) ||
+
+          // Otherwise, try a triple equals.
           ( value === toTest ) 
         ) {
           lambda.call(pub.context, value);
