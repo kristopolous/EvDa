@@ -302,13 +302,26 @@ module("Onetime callbacks on set");
     var ev = EvDa();
 
     ev.once('key', function(value) {
-      equal(value, 'value', 'Callback triggered');
+      equal(value, 'value1', 'Callback triggered');
     });
 
-    ev('key', 'value');
-    ev('key', 'value');
+    ev('key', 'value1');
+    ev('key', 'value3');
   });
 
+  test("register a one time callback after initial set, set thrice twice", function(){
+    expect(2);
+    var ev = EvDa();
+
+    var handle = ev('key', function(value) {
+      equal(value, 'value1', 'Callback triggered');
+    });
+
+    ev('key', 'value1');
+    ev.once(handle);
+    ev('key', 'value1');
+    ev('key', 'value3');
+  });
   test("register a one time callback in the middle of many, make sure they are all called", function(){
     var ev = EvDa(), index = 0;
 

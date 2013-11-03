@@ -190,9 +190,8 @@ I'm doing actual work. I know, what the fuck, right?
    this object gets passed around to the trigger functions.
  * If value is a function, this registers a callback in the "ON" block.
  * If the first argument an array then each element of the array is ran on the rest of the arguments.
- * If value is a function and meta is {once: true} then it will only be run once.
    
-   * Since the handle is itself, a decorated callback, then you can simply run handle.once = true at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
+   * Since the handle is itself, a decorated callback, then you can simply run ev.once(handle) at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
 
  * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
 
@@ -297,7 +296,7 @@ Looking at the last style, one can do the following:
  * Executes lambda when `key === value` OR `test(value) == true`
  * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
 
-    `ev.when('key', 'value', callback).once = true;`
+    `ev.once(ev.when('key', 'value', callback))`
 
 **[void] .del(handle)**
 
@@ -336,7 +335,7 @@ Looking at the last style, one can do the following:
    * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
 
  * You can pass in K/V object style arguments similar to the ev() notation above.
- * You can also pass an array of things ... all of them need to be set for the lambda to run.
+ * You can also pass an array of things ... all of them need to be set for the lambda to run. The values of the things will be stored in the meta on the final return.
 
 **[boolean | undefined] .whenSet(key | object, lambda)**
 
@@ -344,7 +343,7 @@ Looking at the last style, one can do the following:
 
 **[handle] .once(key, lambda)**
 
- * A syntactic sugar form of ev(key, lambda, {once: true});
+ * Flag a function for running only once
 
 #### Grouping
 
