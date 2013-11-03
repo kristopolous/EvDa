@@ -228,7 +228,29 @@ function EvDa (imported) {
   }
 
   function isset ( key, callback ) {
-    if( isObject(key) ) {
+    // This supports the style
+    // ev.isset(['key1', 'key2'], something).
+    //
+    // Since they all need to be set, then it doesn't really matter
+    // what order we trigger things in.  We don't have to do any crazy
+    // accounting, just cascading should do fine.
+    if ( isArray(key) ) {
+      return isset(key.pop(), isset( 
+        (
+          (key.length == 1) ?
+          key[0] : key
+        ), callback)
+      );
+      // ^^ this should recurse nicely.
+      // although it won't return all 
+      // the values in a nice set.
+      
+    // This supports the style of 
+    // ev.isset({
+    //   key1: something,
+    //   key2: something
+    // })
+    } else if( isObject(key) ) {
 
       each( key, function( _key, _value ) {
         key[_key] = isset( _key, _value );
@@ -236,7 +258,8 @@ function EvDa (imported) {
 
       // Return the entire object as the result
       return key;
-    }
+
+    } 
 
     // If I know how to set this key but
     // I just haven't done it yet, run through

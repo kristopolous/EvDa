@@ -500,6 +500,17 @@ module("Running a setter");
     });
     ev.set('key', 'value');
   });
+  test("Array style isset", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.isset(['k','j'], function(){
+      equal(1, 1, "done");
+    });
+
+    ev('k', 1);
+    ev('j', 2);
+  });
   test("Registering a setter kv style, then Setting a variable", function(){
     expect(1);
     var ev = EvDa();
