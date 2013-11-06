@@ -166,6 +166,17 @@ function EvDa (imported) {
   // you declare an instance and call that instance
   // as a function, this is what gets run.
   function pub ( scope, value, meta ) {
+
+    // If there are no arguments, and this is useful in the browser
+    // debug console, return all the internal data structures.
+    if (arguments.length == 0) {
+      return {
+        data: data, 
+        setters: setterMap, 
+        events: eventMap
+      };
+    }
+
     // If there was one argument, then this is
     // either a getter or the object style
     // invocation.
