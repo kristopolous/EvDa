@@ -9,7 +9,7 @@ function EvDa (imported) {
   var 
     BASE = '__base',
     slice = Array.prototype.slice,  
-    onceKey = "__once__lGx9BTY0Qf78CgAAsNdlZQik3bFlhvTISBLwAAaUasKQ",
+    onceKey = "__once__lGx9BTY0Qf78CgAAsNdlZQik",
 
     // This is mostly underscore functions here. But they are included to make sure that
     // they are supported here without requiring an additional library. 
@@ -141,6 +141,7 @@ function EvDa (imported) {
       });
       return obj;
     },
+    
     // } end of underscore style functions.
 
     // Constants
@@ -169,7 +170,7 @@ function EvDa (imported) {
 
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
-    if (arguments.length == 0) {
+    if (! scope) {
       return {
         data: data, 
         setters: setterMap, 
