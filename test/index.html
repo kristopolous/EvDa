@@ -537,12 +537,12 @@ module("Running a setter");
     ev('j', 2);
   });
   test("Array style isset meta test", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa();
 
     ev.isset(['k','j'], function(arg, meta){
-      equal(meta.k, 1, "should have k == 1");
-      equal(meta.j, 2, "should have j == 2");
+      equal(ev('k'), 1, "should have k == 1");
+      equal(ev('j'), 2, "should have j == 2");
     });
 
     ev('k', 1);

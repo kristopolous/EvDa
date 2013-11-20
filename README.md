@@ -326,7 +326,7 @@ Looking at the last style, one can do the following:
         );
       });
       
-**[boolean | undefined] .isSet(key | object | array, lambda)**
+**[boolean | undefined] .is[sS]et(key | object | array, lambda)**
 
  * If lambda is not set, returns true if key exists, false if it is not
  * If lambda is set,
@@ -335,7 +335,7 @@ Looking at the last style, one can do the following:
    * If the key is not set, execution will be deferred until it is set.  A handle is returned to deregister it.
 
  * You can pass in K/V object style arguments similar to the ev() notation above.
- * You can also pass an array of things ... all of them need to be set for the lambda to run. The values of the things will be stored in the meta on the final return.
+ * You can also pass an array of things ... all of them need to be set for the lambda to run. 
 
 **[boolean | undefined] .whenSet(key | object, lambda)**
 
