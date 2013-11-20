@@ -536,6 +536,18 @@ module("Running a setter");
     ev('k', 1);
     ev('j', 2);
   });
+  test("Array style isset meta test", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.isset(['k','j'], function(arg, meta){
+      equal(meta.k, 1, "should have k == 1");
+      equal(meta.j, 2, "should have j == 2");
+    });
+
+    ev('k', 1);
+    ev('j', 2);
+  });
 
   test("Registering a setter kv style, then Setting a variable", function(){
     expect(1);
