@@ -395,6 +395,7 @@ Looking at the last style, one can do the following:
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
  * There is an examples directory in the github repo
 
+<!--
 ### What this is
 
 This adds a contingency abstraction to JS.
@@ -443,4 +444,4 @@ hook; you can pass arbitrary information into them via regular parameters, and c
 have trace functions; very much like in a more traditional model.  That is what you will
 find here; compactly and succinctly.
 
-
+-->
