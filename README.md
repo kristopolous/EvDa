@@ -151,8 +151,8 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Values
 
- * [value] .incr(key) - increment a key's value - returning the new value.
- * [value] .decr(key) - decrement a key's value - returning the new value.
+ * [value] .incr(key, [ amount ] ) - increment a key's value - returning the new value.
+ * [value] .decr(key, [ amount ] ) - decrement a key's value - returning the new value.
 
 #### Triggers
 
@@ -259,15 +259,15 @@ Looking at the last style, one can do the following:
 
 #### Values
 
-**[number] .incr(key)**
+**[number] .incr(key, [ amount ] )**
 
  * Atomically (in the JS sense) increments a key's value. 
- * It will initialize the key to the numeric value 1 if it's not a number
+ * It will initialize the key to the numeric value amount or 1 if it's not a number
  * Returns the result of the set event.
 
-**[number] .decr(key)**
+**[number] .decr(key, [ amount ] )**
 
- * Atomically (in the JS sense) decrements a key's value. 
+ * Atomically (in the JS sense) decrements a key's value by an amount or 1 if not specified. 
  * It will initialize the key to the numeric value 0 if it's not a number
  * Returns the result of the set event.
 
