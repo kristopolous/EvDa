@@ -344,6 +344,20 @@ function EvDa (imported) {
     },
 
     when: function ( key, toTest, lambda ) {
+      // See if toTest makes sense as a block of code
+      if ( isString(toTest) ) {
+        try {
+          var attempt = new Function("x", "return x" + toTest);
+
+          // If this doesn't through an exception,
+          // we'll call it gold and then make the function
+          // our test case
+          attempt();
+
+          toTest = attempt;
+        } catch (ex) { }
+      }
+
       return pub(key, function(value) {
         if(
           // Look for identical arrays by comparing their string values.
