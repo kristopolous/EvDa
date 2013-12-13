@@ -345,11 +345,12 @@ function EvDa (imported) {
 
     when: function ( key, toTest, lambda ) {
       // See if toTest makes sense as a block of code
+      // This may have some drastically unexpected side-effects.
       if ( isString(toTest) ) {
         try {
           var attempt = new Function("x", "return x" + toTest);
 
-          // If this doesn't through an exception,
+          // If this doesn't throw an exception,
           // we'll call it gold and then make the function
           // our test case
           attempt();
