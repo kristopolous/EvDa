@@ -446,26 +446,19 @@ function EvDa (imported) {
           function ( ok ) {
             failure |= (ok === false);
 
-            if ( ! --times ) {
-              each ( pub.traceList, function ( callback ) {
-                callback.call ( pub.context, [failure].concat( args ) );
-              });
-
-              failure || pub.set ( key, value, _meta, 1 );
+            if ( ! --times && ! failure) {
+              pub.set ( key, value, _meta, 1 );
             }
           }
         ) : {};
 
       meta.old = clone(data[key]);
+
       extend(meta, {
         meta: _meta || {},
         done: meta, 
         result: meta,
         key: key
-      });
-
-      each ( pub.traceList, function ( callback ) {
-        callback.call ( pub.context, args );
       });
 
       if (doTest) {
@@ -474,6 +467,11 @@ function EvDa (imported) {
           callback.call ( pub.context, value, meta );
         });
       } else {
+
+        each ( pub.traceList, function ( callback ) {
+          callback.call ( pub.context, args );
+        });
+
         // Set the key to the new value.
         // The old value is being passed in
         // through the meta
