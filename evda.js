@@ -446,8 +446,12 @@ function EvDa (imported) {
           function ( ok ) {
             failure |= (ok === false);
 
-            if ( ! --times && ! failure ) { 
-              pub.set ( key, value, _meta, 1 );
+            if ( ! --times ) {
+              each ( pub.traceList, function ( callback ) {
+                callback.call ( pub.context, [failure].concat( args ) );
+              });
+
+              failure || pub.set ( key, value, _meta, 1 );
             }
           }
         ) : {};

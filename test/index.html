@@ -400,6 +400,7 @@ module("Tests");
     });
 
     equal(ev.incr("key"), 1, "Key never incremented");
+    equal(ev.incr("key"), 1, "Key never incremented");
     equal(ev.get("key"), 1, "Key never incremented");
 
   });

@@ -158,7 +158,7 @@ I'm doing actual work. I know, what the fuck, right?
 
  * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **when** key is set.
  * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **after** key is set.
- * [handle] .test(key, lambda ( value, { key, old, result, meta } )) - register lambda to run as **a condition OF** setting a key.
+ * [handle] .test(key, lambda ( value, { key, old, result, meta } | cb )) - register lambda to run as **a condition OF** setting a key.
  * [handle] .once(key, lambda) - run an on, but only once.
  * [handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
  * [boolean] .setter(key, lambda) - define a way to set a key if requested
@@ -283,7 +283,7 @@ Looking at the last style, one can do the following:
  * Runs after a key has been set
  * Returns a handle that can be passed into ev.del to deregister.
 
-**[handle] .test(key, lambda ( value, { key, old, reulst, meta } ))**
+**[handle] .test(key, lambda ( value, { key, old, result, meta } ))**
 
  * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
  * If the test succeeds, then the function must call a supplied callback function, named 
