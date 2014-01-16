@@ -405,6 +405,26 @@ module("Tests");
 
   });
 
+module("Or");
+  test("Set a key to a value, register a test, deny the set, and try to run an or handler", function() {
+    expect(3);
+    var ev = EvDa();
+
+    equal(ev.incr("key"), 1, "Key initialized to 1");
+    ev.test("key", function(value, meta) {
+      equal(value, 2, "Key is attempting to be set to 2");
+
+      // deny it the pleasure.
+      meta(false);
+    });
+
+    ev.or('key', function(){
+      equal(true, true, "function ran");
+    });
+
+    ev.incr('key');
+
+  });
 module("Callbacks after set");
   test("Register two callbacks, check their execution order", function(){
     expect(2);

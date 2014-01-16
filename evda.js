@@ -219,8 +219,8 @@ function EvDa (imported) {
   }
 
   // Register callbacks for
-  // test, on, and after.
-  each ( [ON, AFTER, 'test'], function ( stage ) {
+  // test, on, after, and or.
+  each ( [ON, AFTER, 'test', 'or'], function ( stage ) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
@@ -317,6 +317,21 @@ function EvDa (imported) {
     // whether this key is defined or not.
     return key in data;
   };
+
+  function runCallback(callback, context, value, meta) {
+    if( ! callback.S) {
+      // our ingested meta was folded into our callback
+      callback.call ( 
+        context, 
+        value, 
+        meta
+      );
+
+      if ( callback.once ) {
+        del ( callback );
+      }
+    }
+  }
 
   extend(pub, {
     // Exposing the internal variables so that
@@ -446,8 +461,14 @@ function EvDa (imported) {
           function ( ok ) {
             failure |= (ok === false);
 
-            if ( ! --times && ! failure) {
-              pub.set ( key, value, _meta, 1 );
+            if ( ! --times ) { 
+              if ( failure ) { 
+                each ( eventMap[ "or" + key ] || [], function ( callback ) {
+                  runCallback ( callback, pub.context, value, _meta );
+                });
+              } else {
+                pub.set ( key, value, _meta, 1 );
+              }
             }
           }
         ) : {};
@@ -482,19 +503,7 @@ function EvDa (imported) {
             (eventMap[ON + key] || []).concat
             (eventMap[AFTER + key] || []), 
             function(callback) {
-
-              if( ! callback.S) {
-                // our ingested meta was folded into our callback
-                callback.call ( 
-                  pub.context, 
-                  value, 
-                  meta
-                );
-
-                if ( callback.once ) {
-                  del ( callback );
-                }
-              }
+              runCallback(callback, pub.context, value, meta);
             });
           return value;
         }
