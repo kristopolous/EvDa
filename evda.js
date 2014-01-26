@@ -175,9 +175,10 @@ function EvDa (imported) {
     // If there was one argument, then this is
     // either a getter or the object style
     // invocation.
-    if (isArray(scope)) {
+    if ( isArray(scope) ) {
+      var args = slice.call(arguments, 1);
       return map(scope, function(which) {
-        return pub.call(pub.context, which, value, meta);
+        return pub.apply(pub.context, [which].concat(args));
       });
     }
     if ( arguments.length == 1 ) {
