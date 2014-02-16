@@ -133,6 +133,27 @@ module("sniff");
       e: 'e'
     });
   });
+ 
+module("Pausing");
+  test("pause responding to a callback until a variable is set, then play it", function(){
+    expect(1);
+    var ev = EvDa(), flag = false;
+
+    ev('key', function() {
+      equal(flag, true, 'callback successfully paused');
+    });
+
+    ev.pause(); 
+
+      ev('key', 'value');
+      ev.set('key', 'value1');
+      ev({key: 'value2'});
+      flag = true;
+
+    ev.play();
+
+  });
+
 
 module("Callbacks on set");
   test("register a callback, arglist style", function(){
