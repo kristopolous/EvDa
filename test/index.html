@@ -3,7 +3,7 @@
 <head>
   <title>EvDa test suite</title>
   <link rel=stylesheet href=qunit.css>
-  <script src="http://code.jquery.com/jquery-latest.js"></script>
+  <script src=jquery.js></script>
   <script src=underscore.js > </script>
   <script src=../evda.js > </script>
   <script src=qunit.js > </script>
@@ -136,11 +136,12 @@ module("sniff");
  
 module("Pausing");
   test("pause responding to a callback until a variable is set, then play it", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa(), flag = false;
 
-    ev('key', function() {
+    ev('key', function(val) {
       equal(flag, true, 'callback successfully paused');
+      equal(val, 'value2', 'making sure that the final value is the one we have');
     });
 
     ev.pause(); 
@@ -154,6 +155,54 @@ module("Pausing");
 
   });
 
+
+  test("Making sure pause can run multiple times without side-effects", function() {
+    expect(2);
+    var ev = EvDa(), flag = false;
+
+    ev('key', function(val) {
+      equal(flag, true, 'callback successfully paused');
+      equal(val, 'value1', 'making sure that the final value is the one we have');
+    });
+
+    ev.pause(); 
+    ev.pause(); 
+    ev.pause(); 
+    ev.pause(); 
+
+      // permuting the run order to also test that
+      ev('key', 'value');
+      ev({key: 'value2'});
+      ev.set('key', 'value1');
+      flag = true;
+
+    ev.play();
+
+  });
+
+  test("Making sure play can run multiple times without side-effects", function() {
+    expect(2);
+    var ev = EvDa(), flag = false;
+
+    ev('key', function(val) {
+      equal(flag, true, 'callback successfully paused');
+      equal(val, 'value', 'making sure that the final value is the one we have');
+    });
+
+    ev.pause(); 
+
+      // permuting the run order to also test that
+      ev.set('key', 'value1');
+      ev({key: 'value2'});
+      ev('key', 'value');
+      flag = true;
+
+    ev.play();
+    ev.play();
+    ev.play();
+    ev.play();
+
+  });
 
 module("Callbacks on set");
   test("register a callback, arglist style", function(){

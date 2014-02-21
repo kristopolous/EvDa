@@ -165,8 +165,8 @@ I'm doing actual work. I know, what the fuck, right?
  * [boolean | undefined] .isSet(key | object) - see if a key or a group of keys have been set, **firing a setter if necessary**.
  * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set, **firing a setter if necessary**.
  * [void] .del(handle) - delete a handle returned by on, after, or test.
- * pause() - stop running callbacks
- * play() - run the aggregate callbacks
+ * [boolean] pause() - stop running callbacks
+ * [boolean] play() - run the aggregate callbacks
 
 ##### Grouping
 
@@ -347,15 +347,19 @@ Looking at the last style, one can do the following:
 
  * Flag a function for running only once
 
-** pause() **
+**[boolean] pause() **
 
  * Prevents any values from being set and any callbacks from being registered.
+ * Returns true if it was not paused already, false otherwise.
  * This is useful if a group of values with elaborate triggers is expected to change rapidly
+ * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
-** play() **
+**[boolean] play() **
 
  * Aggregates all the key/value pairs that were requested to be set (by running the backlog on a mock instance)
+ * Returns true if it was paused, false otherwise.
  * Sets the new key/value pairs in a bulk execution - ignoring the interim values since the pause()
+ * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
 #### Grouping
 

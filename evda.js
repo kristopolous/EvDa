@@ -155,7 +155,6 @@ function EvDa (imported) {
     // Internals
     data = imported || {},
 
-    isPaused = false,
     // the backlog to execute if something is paused.
     backlog = [],
     setterMap = {},
@@ -174,12 +173,6 @@ function EvDa (imported) {
         setters: setterMap, 
         events: eventMap
       };
-    }
-
-    // If we are in a paused state, we don't do anything at all.
-    if (isPaused) {
-      backlog.push(['invoke', arguments]);
-      return;
     }
 
     // If there was one argument, then this is
@@ -351,40 +344,50 @@ function EvDa (imported) {
     _: {},
     context: this,
     list: {},
+    isPaused: false,
     db: data,
     setterMap: setterMap,
     events: eventMap,
     del: del,
     whenSet: isset,
-    invoke: pub,
     isset: isset,
 
     pause: function() {
-      if(!isPaused) {
-        isPaused = true;
+      if(!pub.isPaused) {
+        pub.isPaused = true;
         pub._.set = pub.set;
         pub.set = function() {
           backlog.push(['set', arguments]);
         }
+        return true;
       }
+      return false;
     }, 
 
     play: function() {
-      // first we take it off being paused
-      isPaused = false;
+      if(pub.isPaused) {
+        // first we take it off being paused
+        pub.isPaused = false;
 
-      // now we make a mock evda
-      var mock = EvDa();
+        // now we make a mock evda
+        var mock = EvDa();
 
-      // unswap out our dummy functions
-      pub.set = pub._.set;
+        // unswap out our dummy functions
+        pub.set = pub._.set;
 
-      // And we run the backlog on it (with no events firing of course)
-      each(backlog, function(row) {
-        mock[row[0]].apply(mock, row[1]);
-      });
-      // now we invoke the mock database over our own
-      pub(mock.db);
+        // And we run the backlog on it (with no events firing of course)
+        each(backlog, function(row) {
+          mock[row[0]].apply(mock, row[1]);
+        });
+        // clear the backlog
+        backlog = [];
+
+        // now we invoke the mock database over our own
+        pub(mock.db);
+
+        return true;
+      }
+      return false;
     },
 
     // Unlike much of the reset of the code,
