@@ -160,6 +160,36 @@ function EvDa (imported) {
     setterMap = {},
     eventMap = {};
 
+  // This looks to see if a key has a globbing parameter, such
+  // as ? or * and then return it
+  function glob(key, context) {
+    var isGlobbed = key.match(/[?*]/);
+
+    if(!isGlobbed) {
+      return key;
+    } else {
+      return select(keys(context ? context : data), function(what) {
+        return what.match(key);
+      });
+    }
+  }
+
+  // This uses the globbing feature and returns
+  // a "smart" map which is only one element if
+  // something matches, otherwise a map 
+  function smartMap(what, cback) {
+    var ret = {};
+    if(isArray(what)) {
+      each(what, function(field) {
+        ret[what] = cback(what);
+      });
+      return ret;
+
+    } else {
+      return cback(what);
+    }
+  }
+  
   // This is the main invocation function. After
   // you declare an instance and call that instance
   // as a function, this is what gets run.
@@ -215,7 +245,9 @@ function EvDa (imported) {
         return scope;
       }
 
-      return data[ scope ];
+      return smartMap(scope, function(what) { 
+        return data[ what ];
+      });
     } 
 
     // If there were two arguments and if one of them was a function, then
