@@ -158,20 +158,22 @@ function EvDa (imported) {
     // the backlog to execute if something is paused.
     backlog = [],
     setterMap = {},
+    globberMap = {},
     eventMap = {};
+
+  function isGlobbed(str) {
+    return str.match(/[?*]/);
+  }
 
   // This looks to see if a key has a globbing parameter, such
   // as ? or * and then return it
   function glob(key, context) {
-    var isGlobbed = key.match(/[?*]/);
-
-    if(!isGlobbed) {
-      return key;
-    } else {
+    if(isGlobbed(key)) {
       return select(keys(context ? context : data), function(what) {
         return what.match(key);
       });
     }
+    return key;
   }
 
   // This uses the globbing feature and returns
@@ -261,6 +263,8 @@ function EvDa (imported) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
+      var map = eventMap;
+
       if ( !callback ) {
         callback = key;
         key = BASE;
@@ -270,7 +274,11 @@ function EvDa (imported) {
       // so that we can unregister it in the future.
       (callback.$ || (callback.$ = [])).push ( stage + key );
 
-      (eventMap[stage + key] || (eventMap[stage + key] = [])).push ( callback );
+      if (isGlobbed(key)) {
+        map = globberMap;
+      }
+
+      (map[stage + key] || (map[stage + key] = [])).push ( callback );
 
       return extend(callback, meta);
     }
@@ -278,7 +286,8 @@ function EvDa (imported) {
 
   function del ( handle ) {
     each ( handle.$, function( stagekey ) {
-      eventMap[ stagekey ] = without( eventMap[ stagekey ], handle );
+      var map = isGlobbed(stagekey) ? globberMap : eventMap;
+      map[ stagekey ] = without( map[ stagekey ], handle );
     });
   }
 
