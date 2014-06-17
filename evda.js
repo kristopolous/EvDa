@@ -203,7 +203,8 @@ function EvDa (imported) {
       return {
         data: data, 
         setters: setterMap, 
-        events: eventMap
+        events: eventMap,
+        globs: globberMap
       };
     }
 
@@ -301,7 +302,7 @@ function EvDa (imported) {
     if ( isArray(key) ) {
       var myKey = key.pop();
 
-      return isset(myKey, function(data, meta) {
+      return isset(glob(myKey), function(data, meta) {
         var next = (key.length == 1) ? key[0] : key;
         return isset(next, callback, meta);
       }, meta);
@@ -319,7 +320,15 @@ function EvDa (imported) {
     if( isObject(key) ) {
 
       each( key, function( _key, _value ) {
-        key[_key] = isset( _key, _value, meta );
+        if(isGlobbed(_key)) {
+          extend(_key, 
+            smartMap(_key, function(_what){
+              return isset(_key, _value, meta);
+            })
+          );
+        } else {
+          key[_key] = isset( _key, _value, meta );
+        }
       });
 
       // Return the entire object as the result
@@ -530,6 +539,17 @@ function EvDa (imported) {
       return function() {
         return pub.group.apply(0, [list].concat(toArray(arguments)));
       }
+    },
+
+    extend: function (key, value) {
+      return put.set.apply(
+        pub.context, [
+          key, 
+          extend({}, data[key], value)
+        ].concat(
+          slice.call(arguments, 2)
+        )
+      );
     },
 
     set: function (key, value, _meta, bypass, _noexecute) {
