@@ -150,6 +150,7 @@ function EvDa (imported) {
     // } end of underscore style functions.
 
     // Constants
+    FIRST = 'first',
     ON = 'on',
     AFTER = 'after',
 
@@ -266,7 +267,7 @@ function EvDa (imported) {
 
   // Register callbacks for
   // test, on, after, and or.
-  each ( [ON, AFTER, 'test', 'or'], function ( stage ) {
+  each ( [FIRST, ON, AFTER, 'test', 'or'], function ( stage ) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
@@ -612,10 +613,12 @@ function EvDa (imported) {
 
         var cback = function(){
           each(
-            (eventMap[ON + key] || []).concat
-            (eventMap[AFTER + key] || []), 
+            (eventMap[FIRST + key] || []).concat(
+              (eventMap[ON + key] || []),
+              (eventMap[AFTER + key] || []) 
+            ),
             function(callback) {
-              runCallback(callback, pub.context, value, meta);
+              meta.last = runCallback(callback, pub.context, value, meta);
             });
           return value;
         }
