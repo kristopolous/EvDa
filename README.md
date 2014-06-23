@@ -167,6 +167,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [void] .del(handle) - delete a handle returned by on, after, or test.
  * [boolean] pause() - stop running callbacks
  * [boolean] play() - run the aggregate callbacks
+ * [void] fire(key) - runs the setter mechanics without changing any values
 
 ##### Grouping
 
@@ -360,6 +361,11 @@ Looking at the last style, one can do the following:
  * Returns true if it was paused, false otherwise.
  * Sets the new key/value pairs in a bulk execution - ignoring the interim values since the pause()
  * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
+
+** [void] fire(key) **
+
+ * Runs the setter mechanics without changing any values.
+ * Equivalent to `ev.set(key, ev(key))`.
 
 #### Grouping
 

@@ -637,6 +637,10 @@ function EvDa (imported) {
       return data[key];
     },
 
+    fire: function ( key ) {
+      pub.set ( key, data[key] );
+    },
+
     once: function ( key, lambda, meta ) {
       // If this is a callback, then we can register it to be called once.
       if(lambda) {
