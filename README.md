@@ -138,6 +138,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below
  * [value] .set(key, value, meta, bypass) - set a key
  * [boolean] .unset(key, ...) - delete a set of keys
+ * [value] .extend(key, obj) - extends the object value of a key.
 
 ##### Stacks
 
@@ -231,6 +232,12 @@ Looking at the last style, one can do the following:
  * Returns whether all the keys existed or not.
  * No events are fired.
 
+
+**[value] .extend(key, obj)**
+
+ * Runs an equivalent to `$.extend` or `_.extend` on the existing value, merging back in.
+ * Recurses down to the needed depth
+ * No way to un-extend without getting the value, manually removing it, and re-assigning.
 
 #### Stacks
 
