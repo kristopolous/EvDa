@@ -605,6 +605,24 @@ module("Adding elements to a set");
     equal(JSON.stringify(ev('s')), '[1]', 'Set exists');
   });
 
+/*
+  test("add a key to a set in a play/pause scenario", function() {
+    var ev = EvDa();
+    ev.pause();
+    ev.setAdd('s', 1);
+    ev.setAdd('s', 2);
+    ev.setAdd('s', 3);
+    ev.play();
+    equal(JSON.stringify(ev('s').sort()), '[1,2,3]', 'Set exists');
+  });
+  */
+
+  test("add a key to a set in an array invocation", function() {
+    var ev = EvDa();
+    ev.setAdd('s', [1, 2, 3]);
+    equal(JSON.stringify(ev('s').sort()), '[1,2,3]', 'Set exists');
+  });
+
   test("Add three unique elements to an undefined set", function(){
     expect(1);
     var ev = EvDa();

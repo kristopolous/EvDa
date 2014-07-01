@@ -671,7 +671,8 @@ function EvDa (imported) {
     },
 
     setadd: function ( key, value ) {
-      return pub ( key, uniq(( data[key] || [] ).concat([value])) );
+      value = isArray(value) ? value : [value];
+      return pub ( key, uniq(( data[key] || [] ).concat(value)) );
     },
 
     setdel: function ( key, value ) {
