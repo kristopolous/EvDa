@@ -614,6 +614,7 @@ function EvDa (imported) {
                 pub.set ( key, value, _meta, 1 );
               }
             }
+            return ok;
           }
         ) : {};
 
