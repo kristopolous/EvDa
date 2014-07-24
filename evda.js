@@ -20,7 +20,7 @@ function EvDa (imported) {
     isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
     isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
     isObject = function(obj) {
-      if(isString(obj)) {
+      if(isFunction(obj) || isString(obj) || isNumber(obj) || isArray(obj)) {
         return false;
       }
 
@@ -134,7 +134,13 @@ function EvDa (imported) {
       each(slice.call(arguments, 1), function(source) {
         for (var prop in source) {
           if (source[prop] !== void 0) {
-            obj[prop] = source[prop];
+
+            // This recursively assigns
+            if ( isObject(source[prop]) && isObject(obj[prop]) ) {
+              extend(obj[prop], source[prop]);
+            } else {
+              obj[prop] = source[prop];
+            }
           }
         }
       });
@@ -542,7 +548,7 @@ function EvDa (imported) {
     },
 
     extend: function (key, value) {
-      return put.set.apply(
+      return pub.set.apply(
         pub.context, [
           key, 
           extend({}, data[key], value)
