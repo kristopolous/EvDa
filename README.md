@@ -304,6 +304,7 @@ Looking at the last style, one can do the following:
    `result` and supplied in an object in the second argument. Calling the function with anything
    other then the boolean false signals that the check succeeded. That means that calling
    `.result()` means "go ahead".
+ * The return value of the callback that is passed in passed through the test function.
 
 **[handle] .when(key, value | test | eval string, lambda)** 
 
