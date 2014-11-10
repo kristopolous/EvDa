@@ -691,11 +691,29 @@ function EvDa (imported) {
 
     setadd: function ( key, value ) {
       value = isArray(value) ? value : [value];
-      return pub ( key, uniq(( data[key] || [] ).concat(value)) );
+
+      var 
+        before = data[key] || [],
+        after = uniq( before.concat(value) );
+
+      if ( before.length != after.length) {
+        return pub ( key, after );
+      }
+
+      return after;
     },
 
     setdel: function ( key, value ) {
-      return pub ( key, without(( data[key] || [] ), value) );
+
+      var
+        before = data[key] || [],
+        after = without( before, value);
+
+      if ( before.length != after.length) {
+        return pub ( key, after );
+      }
+
+      return after;
     },
 
     disable: function ( listName ) {
