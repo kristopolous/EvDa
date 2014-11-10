@@ -175,6 +175,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [setter] .group(name, lambda) - Register a set of triggers under a common name.
  * [list] .disable(name) - Disable all the triggers of that name.
  * [list] .enable(name) - Enable all the triggers of that name.
+ * Object Bubbling
 
 #### Miscellaneous
 
@@ -393,6 +394,12 @@ Looking at the last style, one can do the following:
 
  * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
+
+**Object Bubbling**
+
+ * When your key has a dot notation then events bubble up in a "dot-notation" style array hierarchy.
+ * Note that this is a proper "bubbling" and not "capturing".  For example, in "a.b", "a.b" events are ran before "a".
+ * The parent objects get key-wrapped versions of the sub-objects.  Although this sounds confusing, it's what you expect. For example, if you set `a.b = 3` and `a.c = 4`, then a's callback would get `{ b: 3, c: 4 }`.  For `a.b.c = 1`  you'll get '{ b: { c: 1 } }`.
 
 ### Miscellaneous
 
