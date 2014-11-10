@@ -206,7 +206,7 @@ function EvDa (imported) {
 
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
-    if (! scope) {
+    if ( arguments.length === 0 ) {
       return {
         data: data, 
         setters: setterMap, 
@@ -640,7 +640,7 @@ function EvDa (imported) {
       } 
 
       // After this, we bubble up if relevant.
-      if(parts.length > 1) {
+      if(key.length > 0) {
         // This means that the key called has some parent
         parts_key = parts.pop();
         parts_obj = [];
