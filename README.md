@@ -175,7 +175,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [setter] .group(name, lambda) - Register a set of triggers under a common name.
  * [list] .disable(name) - Disable all the triggers of that name.
  * [list] .enable(name) - Enable all the triggers of that name.
- * Object Bubbling
+ * Object Bubbling and Global Scope
 
 #### Miscellaneous
 
@@ -403,6 +403,13 @@ Looking at the last style, one can do the following:
  * Note that this is a proper "bubbling" and not "capturing".  For example, in `a.b`, `a.b` events are ran before `a`.
  * The parent objects get key-wrapped versions of the sub-objects.  Although this sounds confusing, it's what you expect. For example, if you set `a.b = 3` and `a.c = 4`, then a's callback would get `{ b: 3, c: 4 }`.  For `a.b.c = 1`  you'll get `{ b: { c: 1 } }`.
  * All logic applies to bubbling.  You can object-set it, have setters, after events, tests, etc.
+
+**Global Scope**
+
+ * Every operation bubbles to an empty-string global scope, `''`.
+ * You can set handlers here as a catch-all, after-all, or test-all.
+ * You can get the entire object space by querying it.
+ * Since it's a standard key, it supports all the operations associated with that.
 
 ### Miscellaneous
 
