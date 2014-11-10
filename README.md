@@ -260,12 +260,14 @@ Looking at the last style, one can do the following:
 
  * Creates key if it doesn't exist, as an array
  * Adds value to the array if it's not already there.
+ * If the set is not modified, events aren't run.
  * Returns set.
 
 **[set] .setDel(key, value)**
 
  * Creates key if it doesn't exist, as an array
  * Removes value from the set if it is there.
+ * If the set is not modified, events aren't run.
  * Returns set.
 
 #### Values
