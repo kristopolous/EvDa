@@ -204,6 +204,139 @@ module("Pausing");
 
   });
 
+module('Bubbling');
+  test("grouping events through dot notation", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('group', function(value) {
+      equal(value.key, 1, 'Callback triggered')
+    });
+    ev('group.key', 1);
+  });
+
+  test("grouping events through dot notation - multi-set", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev('group.key1', 1);
+
+    ev('group', function(value) {
+      equal(value.key1, 1, 'Callback triggered')
+      equal(value.key2, 2, 'Callback triggered')
+    });
+
+    ev('group.key2', 2);
+  });
+
+  test("grouping events through dot notation - cascaded callback", function(){
+    expect(4);
+    var ev = EvDa(), order = 0;
+
+    ev('group.key', function(value) {
+      equal(value, 1, 'Callback triggered')
+      equal(order, 0, 'Ran first');
+      order++;
+    });
+
+    ev('group', function(value) {
+      equal(value.key, 1, 'Callback triggered')
+      equal(order, 1, 'Ran second');
+    });
+
+    ev('group.key', 1);
+  });
+
+  test("grouping events through dot notation - multi-level", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('a', function(value) {
+      equal(value.b.c.d, 1, 'Callback triggered')
+    });
+
+    ev('a.b.c.d', 1);
+  });
+
+  test("grouping events through dot notation - multi-level cascaded", function(){
+    expect(6);
+    var ev = EvDa(), order = 0;
+
+    ev('a', function(value) {
+      equal(value.b.c.d, 1, 'Callback triggered')
+      equal(order, 2, 'Ran last');
+      order++;
+    });
+
+    ev('a.b', function(value) {
+      equal(value.c.d, 1, 'Callback triggered')
+      equal(order, 1, 'Ran second');
+      order++;
+    });
+
+    ev('a.b.c', function(value) {
+      equal(value.d, 1, 'Callback triggered')
+      equal(order, 0, 'Ran first');
+      order++;
+    });
+
+    ev('a.b.c.d', 1);
+  });
+
+  test("grouping events through dot notation - multi-level cascaded with group assign", function(){
+    expect(6);
+    var ev = EvDa(), order = 0;
+
+    ev({
+      'a': function(value) {
+        equal(value.b.c.d, 1, 'Callback triggered')
+        equal(order, 2, 'Ran last');
+        order++;
+      },
+
+      'a.b': function(value) {
+        equal(value.c.d, 1, 'Callback triggered')
+        equal(order, 1, 'Ran second');
+        order++;
+      },
+
+      'a.b.c': function(value) {
+        equal(value.d, 1, 'Callback triggered')
+        equal(order, 0, 'Ran first');
+        order++;
+      }
+    });
+
+    ev('a.b.c.d', 1);
+  });
+
+  test("grouping events through dot notation - multi-level cascaded with multi-object group assign", function(){
+    expect(6);
+    var ev = EvDa();
+
+    ev('a.b.e', 2);
+    ev('a.f', 3);
+
+    ev({
+      'a': function(value) {
+        equal(value.b.c.d, 1, 'Callback triggered');
+        equal(value.f, 3, 'object is there');
+        equal(value.b.e, 2, 'object is there');
+      },
+
+      'a.b': function(value) {
+        equal(value.c.d, 1, 'Callback triggered');
+        equal(value.e, 2, 'object is there');
+      },
+
+      'a.b.c': function(value) {
+        equal(value.d, 1, 'Callback triggered');
+      }
+    });
+
+    ev('a.b.c.d', 1);
+  });
+
 module("Callbacks on set");
   test("register a callback, arglist style", function(){
     expect(1);
