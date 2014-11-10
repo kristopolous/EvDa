@@ -247,6 +247,24 @@ module('Bubbling');
     ev('group.key', 1);
   });
 
+  test("grouping events through dot notation - sets", function(){
+    expect(6);
+    var ev = EvDa();
+
+    ev('a.b', function(value) {
+      equal(true, true, 'callback');
+    });
+
+    ev('a', function(value) {
+      equal(true, true, 'callback');
+    });
+
+    ev.setAdd('a.b', 1);
+    ev.setAdd('a.b', 2);
+    ev.setAdd('a.b', 1);
+
+  });
+
   test("grouping events through dot notation - multi-level", function(){
     expect(1);
     var ev = EvDa();
