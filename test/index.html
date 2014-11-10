@@ -248,7 +248,7 @@ module('Bubbling');
   });
 
   test("grouping events through dot notation - sets", function(){
-    expect(6);
+    expect(4);
     var ev = EvDa();
 
     ev('a.b', function(value) {
@@ -261,10 +261,29 @@ module('Bubbling');
 
     ev.setAdd('a.b', 1);
     ev.setAdd('a.b', 2);
-    ev.setAdd('a.b', 1);
 
   });
 
+  test("grouping events through dot notation - sets - unique list", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev('a.b', function(value) {
+      equal(true, true, 'callback');
+    });
+
+    ev('a', function(value) {
+      equal(true, true, 'callback');
+    });
+
+    ev.setAdd('a.b', 1);
+    ev.setAdd('a.b', 2);
+
+    // this shouldn't be run since
+    // the value is already in the set.
+    ev.setAdd('a.b', 1);
+  });
+  
   test("grouping events through dot notation - multi-level", function(){
     expect(1);
     var ev = EvDa();
