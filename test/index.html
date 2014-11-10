@@ -48,7 +48,7 @@ module("Basic");
     var ev = EvDa();
 
     ev({key0: function(){
-        equal(_.keys(ev.db).length, 3, '3 Keys exist before first callback is run');
+        equal(_.keys(ev.db).length, 3 + 1, '3 Keys exist before first callback is run');
       }
     });
 
@@ -57,7 +57,7 @@ module("Basic");
         equal(ev.db.key1, 1, 'Keys appear to have the correct value');
       },
       key1: function(){
-        equal(_.keys(ev.db).length, 3, 'All 3 callbacks are run');
+        equal(_.keys(ev.db).length, 3 + 1, 'All 3 callbacks are run');
       }
     });
 
@@ -261,6 +261,19 @@ module('Bubbling');
 
     ev.setAdd('a.b', 1);
     ev.setAdd('a.b', 2);
+
+  });
+
+  test("grouping events through dot notation - global scope", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('', function(value) {
+      equal(value.a, 1, 'callback');
+    });
+
+    ev('a', 1);
+    console.log(ev());
 
   });
 
@@ -925,11 +938,16 @@ module("Running a setter");
 
 module("Tracing");
   test("Tracing function execution", function() {
-    expect(1);
+    expect(2);
 
-    var ev = EvDa(); 
+    var ev = EvDa(), run = 0; 
     ev.traceList.push(function(args) {
-      equal(args[0], 'key', 'Trace called, args correct');
+      if(run === 0) {
+        equal(args[0], 'key', 'Trace called, args correct');
+      } else {
+        equal(args[0], '', 'Trace called, args correct');
+      }
+      run++;
     });
 
     ev('key', 'value');
