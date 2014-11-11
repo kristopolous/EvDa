@@ -109,6 +109,35 @@ module("OO binding");
     new m();
   });
 
+module("empty");
+  test("fill in an object and empty it", function() {
+    var ev = EvDa();
+    ev('key', 'value');
+    ev.empty();
+    equal(_.keys(ev.db).length, 0);
+  });
+
+  test("fill in an object and empty it, make sure callbacks aren't called", function() {
+    expect(0);
+    var ev = EvDa();
+    ev('key', 'value');
+    ev('key', function(){
+      equal(true, true, "don't call");
+    });
+    ev.empty();
+  });
+
+  test("fill in an object and empty it, make sure callbacks are registered upon refilling", function() {
+    expect(1);
+    var ev = EvDa();
+    ev('key', 'value');
+    ev('key', function(){
+      equal(true, true, "do call");
+    });
+    ev.empty();
+    ev('key', 'value');
+  });
+
 module("sniff");
   test("register object callbacks, set from object, make sure they all are hit", function(){
     expect(3);
@@ -586,6 +615,7 @@ module("Onetime callbacks on set");
     ev('key', 'value1');
     ev('key', 'value3');
   });
+
   test("register a one time callback in the middle of many, make sure they are all called", function(){
     var ev = EvDa(), index = 0;
 
