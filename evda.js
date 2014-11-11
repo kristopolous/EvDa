@@ -252,6 +252,9 @@ function EvDa (imported) {
           }
         });
 
+        // TODO: fix this
+        bubble( keys(ret)[0] );
+
         return scope;
       }
 
@@ -393,6 +396,26 @@ function EvDa (imported) {
         del ( callback );
       }
     }
+  }
+
+  function bubble(key) {
+    var
+      parts = key.split('.'),
+      parts_key = parts.pop();
+      parts_obj = [];
+
+    parts_obj[parts_key] = data[key];
+
+    // we then extend the value into the group.
+    pub.extend.apply(
+      pub.context,
+      [
+        parts.join('.'),
+        parts_obj
+      ].concat(
+        slice.call(arguments, 1)
+      )
+    );
   }
 
   extend(pub, {
@@ -570,9 +593,6 @@ function EvDa (imported) {
       var 
         testKey = 'test' + key,
         result,
-        parts = key.split('.'),
-        parts_key,
-        parts_obj,
         args = slice.call(arguments),
         times = size(eventMap[ testKey ]),
         doTest = (times && !bypass),
@@ -642,22 +662,16 @@ function EvDa (imported) {
         if(!_noexecute) {
           result = cback.call(pub.context);
         } else {
+          // if we are not executing this, then
+          // we return a set of functions that we
+          // would be executing.
           result = cback;
         }
       } 
 
       // After this, we bubble up if relevant.
       if(key.length > 0) {
-        // This means that the key called has some parent
-        parts_key = parts.pop();
-        parts_obj = [];
-        parts_obj[parts_key] = value;
-
-        // we then extend the value into the group.
-        pub.extend(
-          parts.join('.'),
-          parts_obj
-        );
+        bubble.apply(pub.context, [key].concat(slice.call(arguments, 2)));
       }
 
       return result;
