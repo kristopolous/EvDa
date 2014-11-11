@@ -293,6 +293,22 @@ module('Bubbling');
 
   });
 
+  test("grouping events through dot notation - global scope - object fire test", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev('', function(value) {
+      equal(value.a, 1, 'callback');
+      equal(value.b, 2, 'callback');
+    });
+
+    // this should only be run once.
+    ev({
+      a: 1,
+      b: 2
+    });
+  });
+
   test("grouping events through dot notation - global scope", function(){
     expect(1);
     var ev = EvDa();
@@ -302,8 +318,6 @@ module('Bubbling');
     });
 
     ev('a', 1);
-    console.log(ev());
-
   });
 
   test("grouping events through dot notation - sets - unique list", function(){
