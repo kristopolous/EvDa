@@ -182,6 +182,7 @@ I'm doing actual work. I know, what the fuck, right?
  * [object] .db - The current database.
  * [object] .events - The object of registered events.
  * [void] .sniff() - Enable a debugger.
+ * [void] .empty() - Resetting all values and keeping all triggers.
 
 
 ### Manipulation
@@ -435,6 +436,12 @@ Looking at the last style, one can do the following:
    * empty - the current set of excluded events are returned
    * FALSE - this feature is disabled
    * TRUE - the feature is enabled
+
+**.empty()**
+
+ * Removes all keys from the object
+ * Does not call any triggers during the removal
+ * Retains all hooks for re-population.
 
 ### Examples
 
