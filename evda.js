@@ -492,6 +492,13 @@ function EvDa (imported) {
       });
     },
 
+    empty: function() {
+      // we want to maintain references to the object itself
+      for (var key in data) {
+        delete data[key];
+      }
+    },
+
     incr: function ( key, amount ) {
       amount = amount || 1;
       // we can't use the same trick here because if we
