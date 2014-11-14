@@ -677,7 +677,8 @@ module("Tests");
       equal(value, 2, "Key is attempting to be set to 2");
 
       // deny it the pleasure.
-      meta.done(false);
+      var res = meta.done(false);
+      equal(res, false, 'Pass through value worked');
     });
 
     equal(ev.incr("key"), 1, "Key never incremented");
@@ -693,7 +694,8 @@ module("Tests");
       equal(value, 2, "Key is attempting to be set to 2");
 
       // deny it the pleasure.
-      meta(false);
+      var res = meta(false);
+      equal(res, false, 'Pass through value worked');
     });
 
     equal(ev.incr("key"), 1, "Key never incremented");
@@ -776,12 +778,13 @@ module("Test callbacks on set");
   });
 
   test("Register an on handler, have 3 tests with the middle one failing", function(){
-    expect(3);
+    expect(5);
     var ev = EvDa();
 
     ev.test('key', function(value, meta) {
       equal(value, 'value', 'Inside the tester');
-      meta.done(true);
+      var res = meta.done(true);
+      equal(res, true, 'Pass through value worked');
     });
     ev.test('key', function(value, meta) {
       equal(value, 'value', 'Inside the tester');
@@ -789,7 +792,8 @@ module("Test callbacks on set");
     });
     ev.test('key', function(value, meta) {
       equal(value, 'value', 'Inside the tester');
-      meta.done(true);
+      var res = meta.done(true);
+      equal(res, true, 'Pass through value worked');
     });
 
     ev.on('key', function(value) {
