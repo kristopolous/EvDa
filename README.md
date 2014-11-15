@@ -164,11 +164,11 @@ I'm doing actual work. I know, what the fuck, right?
  * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) )</a> - run a lambda when a key **is a certain value**
  * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test.
  * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
- * [boolean | undefined] .isSet(key | object) - see if a key or a group of keys have been set, **firing a setter if necessary**.
- * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set, **firing a setter if necessary**.
- * [boolean] pause() - stop running callbacks
- * [boolean] play() - run the aggregate callbacks
- * [void] fire(key) - runs the setter mechanics without changing any values
+ * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**.
+ * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**.
+ * <a href="#pause">[boolean] pause()</a> - stop running callbacks
+ * <a href="#play">[boolean] play()</a> - run the aggregate callbacks
+ * <a href="#fire">[void] fire(key)</a> - runs the setter mechanics without changing any values
 
 ##### Grouping
 
@@ -352,8 +352,8 @@ Example:
           })
         );
       });
-      
-**[boolean | undefined] .is[sS]et(key | object | array, lambda)**
+     
+<h4><a name="isset"></a>[boolean | undefined] .is[sS]et(key | object | array, lambda)</h4>
 
  * If lambda is not set, returns true if key exists, false if it is not
  * If lambda is set,
@@ -364,15 +364,15 @@ Example:
  * You can pass in K/V object style arguments similar to the ev() notation above.
  * You can also pass an array of things ... all of them need to be set for the lambda to run. 
 
-**[boolean | undefined] .whenSet(key | object, lambda)**
+<h4><a name="whenset"></a>[boolean | undefined] .whenSet(key | object, lambda)</h4>
 
  * An alias to `.isSet` for syntactic sugar.
 
-**[handle] .once(key, lambda)**
+<h4><a name="once"></a>[handle] .once(key, lambda)</h4>
 
  * Flag a function for running only once
 
-**[boolean] .pause()**
+<h4><a name="pause"></a>[boolean] .pause()</h4>
 
  * Prevents any values from being set and any callbacks from being registered.
  * Returns true if it was not paused already, false otherwise.
