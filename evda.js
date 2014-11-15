@@ -159,6 +159,8 @@ function EvDa (imported) {
     // that we ought to remove the function.
     ONCE = {once: 1},
 
+    lockMap = {},
+
     // Internals
     data = imported || {},
 
@@ -590,6 +592,9 @@ function EvDa (imported) {
     },
 
     set: function (key, value, _meta, bypass, _noexecute) {
+      if(lockMap[key] > 1) { return data[key]; }
+      lockMap[key] = (lockMap[key] || 0) + 1;
+
       var 
         testKey = 'test' + key,
         result,
@@ -674,6 +679,8 @@ function EvDa (imported) {
       if(key.length > 0) {
         bubble.apply(pub.context, [key].concat(slice.call(arguments, 2)));
       }
+
+      lockMap[key] = 0;
 
       return result;
     },
