@@ -189,7 +189,7 @@ I'm doing actual work. I know, what the fuck, right?
 
 #### Base
 
-<h4><a name="ev">**[handle | value] ev(key | hash | array, value | lambda, meta)**</a></h4>
+<h4><a name="ev"></a>[handle | value] ev(key | hash | array, value | lambda, meta)</a></h4>
 
  * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
  * If value is not a function, then it's a setter. If meta is set, then 
@@ -227,6 +227,18 @@ Looking at the last style, one can do the following:
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
  * Passes the meta information if supplied to the registered functions.
  * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
+
+ Example:
+
+    // sets key to 1.
+    ev.set('key', 1);
+
+    // sets the key to the array [1, 2, 3] and passes
+    // meta to the callback.
+    ev.set('key', [1,2,3], 'meta');
+
+    // sets the key to an undefined value.
+    ev.set('key');
 
 **[boolean] .unset(key, ...)** 
 
