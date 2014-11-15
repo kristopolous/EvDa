@@ -136,11 +136,12 @@ function EvDa (imported) {
           if (source[prop] !== void 0) {
 
             // This recursively assigns
+            /*
             if ( isObject(source[prop]) && isObject(obj[prop]) ) {
               extend(obj[prop], source[prop]);
             } else {
-              obj[prop] = source[prop];
-            }
+             */ obj[prop] = source[prop];
+            //}
           }
         }
       });
