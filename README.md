@@ -152,13 +152,13 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Values
 
- * [value] .incr(key, [ amount ] ) - increment a key's value - returning the new value.
- * [value] .decr(key, [ amount ] ) - decrement a key's value - returning the new value.
+ * <a href="#incr">[value] .incr(key, [ amount ] )</a> - increment a key's value - returning the new value.
+ * <a href="#decr">[value] .decr(key, [ amount ] )</a> - decrement a key's value - returning the new value.
 
 #### Triggers
 
- * [handle] .on(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **when** key is set.
- * [handle] .after(key, lambda ( value, { key, old, meta } ) ) - register lambda to run **after** key is set.
+ * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set.
+ * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set.
  * [handle] .test(key, lambda ( value, { key, old, result, meta } | cb )) - register lambda to run as **a condition OF** setting a key.
  * [handle] .once(key, lambda) - run an on, but only once.
  * [handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
@@ -285,13 +285,13 @@ Example:
 
 #### Values
 
-**[number] .incr(key, [ amount ] )**
+<h4><a name="incr"></a>[number] .incr(key, [ amount ] )</h4>
 
  * Atomically (in the JS sense) increments a key's value. 
  * It will initialize the key to the numeric value amount or 1 if it's not a number
  * Returns the result of the set event.
 
-**[number] .decr(key, [ amount ] )**
+<h4><a name="decr"></a>[number] .decr(key, [ amount ] )</h4>
 
  * Atomically (in the JS sense) decrements a key's value by an amount or 1 if not specified. 
  * It will initialize the key to the numeric value 0 if it's not a number
@@ -299,12 +299,12 @@ Example:
 
 ### Triggers
 
-**[handle] .on(key, lambda ( value, { key, old, meta } ) )**
+<h4><a name="on"></a>[handle] .on(key, lambda ( value, { key, old, meta } ) )</h4>
 
  * Runs every time the key is set.
  * Returns a handle that can be passed into ev.del to deregister.
 
-**[handle] .after(key, lambda ( value, { key, old, meta } ) )**
+<h4><a name="after"></a>[handle] .after(key, lambda ( value, { key, old, meta } ) )</h4>
 
  * Runs after a key has been set
  * Returns a handle that can be passed into ev.del to deregister.
