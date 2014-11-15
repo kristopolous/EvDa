@@ -142,13 +142,13 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Stacks
 
- * [array] .push(key, value) - push a value on a stack at `key`
- * [value] .pop(key) - pop a value off a stack at `key`
+ * <a href="#push">[array] .push(key, value)</a> - push a value on a stack at `key`
+ * <a href="#pop">[value] .pop(key)</a> - pop a value off a stack at `key`
 
 ##### Sets
 
- * [set] .setAdd(key, value) - add value to a set at `key`
- * [set] .setDel(key, value) - delete value from a set at `key`
+ * <a href="#setadd">[set] .setAdd(key, value)</a> - add value to a set at `key`
+ * <a href="#setdel">[set] .setDel(key, value)</a> - delete value from a set at `key`
 
 ##### Values
 
@@ -228,17 +228,16 @@ Looking at the last style, one can do the following:
  * Passes the meta information if supplied to the registered functions.
  * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
 
- Example:
+Example:
 
-     // sets key to 1.
-     ev.set('key', 1);
+    ev.set('key', 1);
 
-     // sets the key to the array [1, 2, 3] and passes
-     // meta to the callback.
-     ev.set('key', [1,2,3], 'meta');
- 
-     // sets the key to an undefined value.
-     ev.set('key');
+    // sets the key to the array [1, 2, 3] and passes
+    // meta to the callback.
+    ev.set('key', [1,2,3], 'meta');
+
+    // sets the key to an undefined value.
+    ev.set('key');
 
 
 <h4><a name="unset"></a>[boolean] .unset(key, ...)</h4>
@@ -256,13 +255,13 @@ Looking at the last style, one can do the following:
 
 #### Stacks
 
-**[array] .push(key, value)**
+<h4><a name="push"></a>[array] .push(key, value)</h4>
 
  * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
-**[value] .pop(key)**
+<h4><a name="pop"></a>[value] .pop(key)</h4>
 
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
@@ -270,14 +269,14 @@ Looking at the last style, one can do the following:
 
 #### Sets
 
-**[set] .setAdd(key, value)**
+<h4><a name="setadd"></a>[set] .setAdd(key, value)</h4>
 
  * Creates key if it doesn't exist, as an array
  * Adds value to the array if it's not already there.
  * If the set is not modified, events aren't run.
  * Returns set.
 
-**[set] .setDel(key, value)**
+<h4><a name="setdel"></a>[set] .setDel(key, value)</h4>
 
  * Creates key if it doesn't exist, as an array
  * Removes value from the set if it is there.
