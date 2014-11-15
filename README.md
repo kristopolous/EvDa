@@ -172,10 +172,10 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Grouping
 
- * [setter] .group(name, lambda) - Register a set of triggers under a common name.
- * [list] .disable(name) - Disable all the triggers of that name.
- * [list] .enable(name) - Enable all the triggers of that name.
- * Object Bubbling and Global Scope
+ * <a href="#group">[setter] .group(name, lambda)</a> - Register a set of triggers under a common name.
+ * <a href="#enable">[list] .enable(name)</a> - Enable all the triggers of that name.
+ * <a href="#disable">[list] .disable(name)</a> - Disable all the triggers of that name.
+ * <a href="#bubble">Object Bubbling</a> and <a href="#global">Global Scope</a>
 
 #### Miscellaneous
 
@@ -379,21 +379,21 @@ Example:
  * This is useful if a group of values with elaborate triggers is expected to change rapidly
  * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
-**[boolean] .play()**
+<h4><a name="play"></a>[boolean] .play()</h4>
 
  * Aggregates all the key/value pairs that were requested to be set (by running the backlog on a mock instance)
  * Returns true if it was paused, false otherwise.
  * Sets the new key/value pairs in a bulk execution - ignoring the interim values since the pause()
  * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
-**[void] .fire(key)**
+<h4><a name="fire"></a>[void] .fire(key)</h4>
 
  * Runs the setter mechanics without changing any values.
  * Equivalent to `ev.set(key, ev(key))`.
 
 #### Grouping
 
-**[setter] .group(list, params)**
+<h4><a name="group"></a>[setter] .group(list, params)</h4>
 
  * Identical to an ev() command as documented above, except for the first parameter.
  * The first parameter, list, categorizes lambdas into a group that can be disabled or enabled in bulk.
@@ -401,24 +401,24 @@ Example:
  * Callbacks can be disabled through multiple lists and enabled.  Only if it is completely enabled after being disabled through all routes will it run again.
  * This function returns a setter for syntactic convenience so that it doesn't have to be explicitly invoked each time.
 
-**[list] .enable( list )**
+<h4><a name="enable"></a>[list] .enable( list )</h4>
 
  * Enables a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
 
-**[list] .disable( list )**
+<h4><a name="disable"></a>[list] .disable( list )</h4>
 
  * Disables (supresses execution of) a list of lambdas previously disabled and set up through the ev.group() call
  * Does not work for test cases
 
-**Object Bubbling**
+<h4><a name="bubble"></a>Object Bubbling</h4>
 
  * When your key has a dot notation then events bubble up in a "dot-notation" style array hierarchy.
  * Note that this is a proper "bubbling" and not "capturing".  For example, in `a.b`, `a.b` events are ran before `a`.
  * The parent objects get key-wrapped versions of the sub-objects.  Although this sounds confusing, it's what you expect. For example, if you set `a.b = 3` and `a.c = 4`, then a's callback would get `{ b: 3, c: 4 }`.  For `a.b.c = 1`  you'll get `{ b: { c: 1 } }`.
  * All logic applies to bubbling.  You can object-set it, have setters, after events, tests, etc.
 
-**Global Scope**
+<h4><a name="global"></a>Global Scope</h4>
 
  * Every operation bubbles to an empty-string global scope, `''`.
  * You can set handlers here as a catch-all, after-all, or test-all.
@@ -461,53 +461,3 @@ Example:
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
  * There is an examples directory in the github repo
 
-<!--
-### What this is
-
-This adds a contingency abstraction to JS.
-
-Oftentimes, you may 
-
- * Need to do a number of things when a value is set.
- * Only want to do something if a value has been set; otherwise, delay that thing until the value is set.  
- * Want to be able to invalidate the process of settings a value; for instance, if the user attemps to change a context without saving things first.
- * Want to define how to get a value, but not actually do the process until something else needs it. 
-
-For example, pretend you have a site where people can see the content, but once they want to vote on something or leave a comment or do one of countless other things, they need to log in. And then before they submit a comment, you want to check it for
-say, some guidelines based on the content; or you want to pop up a captcha prior to submission.
-
-This is what contingency enables you to do with expressiveness and ease.  
-
-You can build large scale modular dynamic asynchronous applications without having to worry about cascading consequences or 
-having business logic changes require editing multiple files.
-
-### Dynamic function composition
-
-#### The scaling deficiencies
-Encapsulation efforts usually work best when you can separate your concerns via some
-single lens upon which you view your project.  Oftentimes, real-world objects are used
-to justify the OO style of design; say "dog" extends from "animals" but, then is quickly
-pointed out may also be classified under "pets" and "things that need to be fed". 
-
-Then multiple inheritance is touched upon; where you do meta-programming, defining
-the abstract concept of "things that require food" and then make sure that all systems
-somehow feed back to that that are relevant etc.
-
-The reality is that multi-dimensional design breaks the simple OO abstractions in that
-they complexify quickly.  Separation of concerns is very hard with vertical integration
-efforts which yield multi-disciplinary abstractions.
-
-#### Composable functions
-What if you could have an abstract definition of a function, say "initialize X" and
-then compose it indirectly throughout your application so that you can dynamically 
-redefine it as necessary, removing and adding sections.  You can put in conditionals,
-loops, callers, and all the things as if you had carefully designed the interface
-and abstraction in a more formal manner; but at the same time do not actually need to
-do so.
-
-You have data that is publically accessible; they have getters and setters; which can
-hook; you can pass arbitrary information into them via regular parameters, and can then
-have trace functions; very much like in a more traditional model.  That is what you will
-find here; compactly and succinctly.
-
--->
