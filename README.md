@@ -159,13 +159,13 @@ I'm doing actual work. I know, what the fuck, right?
 
  * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set.
  * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set.
- * [handle] .test(key, lambda ( value, { key, old, result, meta } | cb )) - register lambda to run as **a condition OF** setting a key.
- * [handle] .once(key, lambda) - run an on, but only once.
- * [handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) ) - run a lambda when a key **is a certain value**
- * [boolean] .setter(key, lambda) - define a way to set a key if requested
+ * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key.
+ * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once.
+ * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) )</a> - run a lambda when a key **is a certain value**
+ * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test.
+ * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
  * [boolean | undefined] .isSet(key | object) - see if a key or a group of keys have been set, **firing a setter if necessary**.
  * [boolean | undefined] .whenSet(key | object, lambda) - do something once when a key is set, **firing a setter if necessary**.
- * [void] .del(handle) - delete a handle returned by on, after, or test.
  * [boolean] pause() - stop running callbacks
  * [boolean] play() - run the aggregate callbacks
  * [void] fire(key) - runs the setter mechanics without changing any values
@@ -309,7 +309,7 @@ Example:
  * Runs after a key has been set
  * Returns a handle that can be passed into ev.del to deregister.
 
-**[handle] .test(key, lambda ( value, { key, old, result, meta } ))**
+<h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta } ))</h4>
 
  * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
  * If the test succeeds, then the function must call a supplied callback function, named 
@@ -318,18 +318,18 @@ Example:
    `.result()` means "go ahead".
  * The return value of the callback that is passed in passed through the test function.
 
-**[handle] .when(key, value | test | eval string, lambda)** 
+<h4><a name="when"></a>[handle] .when(key, value | test | eval string, lambda)</h4>
 
  * Executes lambda when `key === value` OR `test(value) == true`
  * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
 
     `ev.once(ev.when('key', 'value', callback))`
 
-**[void] .del(handle)**
+<h4><a name="del"></a>[void] .del(handle)</h4>
 
  * Deregisters a hooked function from running.
 
-**[bolean] .setter(key, lambda)** 
+<h4><a name="setter"></a>[bolean] .setter(key, lambda)</h4>
 
  * State that the setter for a key is a callback. 
    This will be run if there are things blocked on it.
