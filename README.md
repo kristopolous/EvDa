@@ -135,10 +135,10 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Base
 
- * [handle | value] ev(key | hash | array, value | lambda, meta) - do all the below
- * [value] .set(key, value, meta, bypass) - set a key
- * [boolean] .unset(key, ...) - delete a set of keys
- * [value] .extend(key, obj) - extends the object value of a key.
+ * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda, meta)</a> - do all the below
+ * <a href="#set">[value] .set(key, value, meta, bypass)</a> - set a key
+ * <a href="#unset">[boolean] .unset(key, ...)</a> - delete a set of keys
+ * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a key.
 
 ##### Stacks
 
@@ -189,7 +189,7 @@ I'm doing actual work. I know, what the fuck, right?
 
 #### Base
 
-**[handle | value] ev(key | hash | array, value | lambda, meta)**
+<h4><a name="ev">**[handle | value] ev(key | hash | array, value | lambda, meta)**</a></h4>
 
  * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
  * If value is not a function, then it's a setter. If meta is set, then 
