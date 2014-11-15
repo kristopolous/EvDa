@@ -222,7 +222,7 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-**[value] .set(key, value, meta, bypass)** 
+<h4><a name="set"></a>[value] .set(key, value, meta, bypass)</h4>
 
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
  * Passes the meta information if supplied to the registered functions.
@@ -230,24 +230,25 @@ Looking at the last style, one can do the following:
 
  Example:
 
-    // sets key to 1.
-    ev.set('key', 1);
+     // sets key to 1.
+     ev.set('key', 1);
 
-    // sets the key to the array [1, 2, 3] and passes
-    // meta to the callback.
-    ev.set('key', [1,2,3], 'meta');
+     // sets the key to the array [1, 2, 3] and passes
+     // meta to the callback.
+     ev.set('key', [1,2,3], 'meta');
+ 
+     // sets the key to an undefined value.
+     ev.set('key');
 
-    // sets the key to an undefined value.
-    ev.set('key');
 
-**[boolean] .unset(key, ...)** 
+<h4><a name="unset"></a>[boolean] .unset(key, ...)</h4>
 
- * Deletes the key, meaning that .isSet('key') will return false henceforth
+ * Deletes the key, meaning that `.isSet('key')` will return false henceforth
  * Returns whether all the keys existed or not.
  * No events are fired.
 
 
-**[value] .extend(key, obj)**
+<h4><a name="extend"></a>[value] .extend(key, obj)</h4>
 
  * Runs an equivalent to `$.extend` or `_.extend` on the existing value, merging back in.
  * Recurses down to the needed depth
