@@ -575,6 +575,23 @@ module("when");
     ev('key', 1);
     ev('key', 3);
   });
+
+  test("run if an object is set", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when({
+      key1: 'value1',
+      key2: 'value2'
+    }, function(what){
+      equal(true,true, "ran");
+    });
+
+    ev('key1', 'value1');
+    ev('key2', 'value2');
+
+  });
+
   test("run if something is set (array)", function(){
     expect(1);
     var ev = EvDa();
