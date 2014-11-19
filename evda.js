@@ -2,7 +2,7 @@
 // EvDa Events and Data v1.0
 // https://github.com/kristopolous/EvDa
 //
-// Copyright 2011 - 2014 Chris McKenzie
+// Copyright 2009 - 2014 Chris McKenzie
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
 function EvDa (imported) {
@@ -58,6 +58,16 @@ function EvDa (imported) {
 
     last = function(obj) {
       return obj.length ? obj[obj.length - 1] : undefined;
+    },
+
+    values = function (obj) {
+      var ret = [];
+
+      for(var key in obj) {
+        ret.push(obj[key]);
+      }
+
+      return ret;
     },
 
     keys = ({}).keys || function (obj) {
@@ -487,6 +497,36 @@ function EvDa (imported) {
     },
 
     when: function ( key, toTest, lambda ) {
+      // when multiple things are set in an object style.
+      if ( isObject(key) ) {
+        var 
+          cbMap = {},
+          flagMap = {},
+          // flagTest only gets run when
+          flagTest = function(val, meta) {
+            // set
+            flagMap[meta.key] = true;
+
+            // see if there's any more false things
+            // and if there are not then we run this
+            if(values(flagMap).indexOf(false) == -1) {
+              toTest.apply(pub.context, slice.call(arguments));
+            }
+          };
+
+        each(key, function(_key, _val) {
+
+          cbMap[_key] = pub.when(_key, _val, flagTest);
+
+          // set the initial flagmap key
+          // value to false - this will
+          // be triggered if things succeed.
+          flagMap[_key] = false;
+        });
+
+        return cbMap;
+      }
+
       // See if toTest makes sense as a block of code
       // This may have some drastically unexpected side-effects.
       if ( isString(toTest) ) {
@@ -513,7 +553,7 @@ function EvDa (imported) {
           // Otherwise, try a triple equals.
           ( value === toTest ) 
         ) {
-          lambda.call(pub.context, value);
+          lambda.apply(pub.context, slice.call(arguments));
         }
       });
     },
