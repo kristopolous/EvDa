@@ -302,12 +302,12 @@ Example:
 <h4><a name="on"></a>[handle] .on(key, lambda ( value, { key, old, meta } ) )</h4>
 
  * Runs every time the key is set.
- * Returns a handle that can be passed into ev.del to deregister.
+ * Returns a handle that can be passed into `ev.del` to deregister.
 
 <h4><a name="after"></a>[handle] .after(key, lambda ( value, { key, old, meta } ) )</h4>
 
  * Runs after a key has been set
- * Returns a handle that can be passed into ev.del to deregister.
+ * Returns a handle that can be passed into `ev.del` to deregister.
 
 <h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta } ))</h4>
 
@@ -324,6 +324,16 @@ Example:
  * **Note:** By default, this handler runs every time that key gets set to value. To make this a one-time run, you can do the following:
 
     `ev.once(ev.when('key', 'value', callback))`
+
+ * There is also an object-style way of doing this which offers more fidelity then the regular `isset` which just checks to see 
+   if something is or is not set. In this mode you can do things like:
+
+   `ev.when({
+      key1: 'value1',
+      key2: 'value2'
+    }, function() ... );
+   `
+This model above helps handle multiple dependencies where each one takes on a specific value.
 
 <h4><a name="del"></a>[void] .del(handle)</h4>
 
