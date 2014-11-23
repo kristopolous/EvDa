@@ -677,6 +677,47 @@ module("when");
     ev('key2', 'value2');
   });
 
+  test("run if an object is set - type checking false case", function(){
+    expect(0);
+    var ev = EvDa();
+
+    ev.when({
+      key1: true,
+      key2: 'value2'
+    }, function(what){
+      equal(true,true, "ran");
+    });
+
+    // this is an invalid state
+    ev('key1', {a: 1});
+    ev('key2', 'value2');
+
+    // this is too
+    ev('key1', 1);
+  });
+
+  test("run if an object is set - type checking true case", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when({
+      key1: true,
+      key2: false,
+    }, function(what){
+      equal(true,true, "ran");
+    });
+
+    // this is a valid state
+    ev('key1', true);
+    ev('key2', false);
+
+    // this is not
+    ev('key2', '');
+
+    // this also is not
+    ev('key2', 0);
+  });
+
   test("run if an object is set - twice case invalid state", function(){
     expect(1);
     var ev = EvDa();
