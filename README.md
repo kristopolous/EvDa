@@ -179,9 +179,10 @@ I'm doing actual work. I know, what the fuck, right?
 
 #### Miscellaneous
 
- * [object] .db - The current database.
- * [object] .events - The object of registered events.
- * [void] .sniff() - Enable a debugger.
+ * <a href="#db">[object] .db</a> - The current database.
+ * <a href="#settermap">[object] .setterMap</a> - All the setters.
+ * <a href="#events">[object] .events</a> - The object of registered events.
+ * <a href="#sniff">[void] .sniff()</a> - Enable a debugger.
  * [void] .empty() - Resetting all values and keeping all triggers.
 
 
@@ -239,6 +240,28 @@ Example:
     // sets the key to an undefined value.
     ev.set('key');
 
+`set` also has something called a handy setter.  For instance, say you have some kind of promise system
+like so:
+
+    var session = EvDa();
+
+    remote('/Login').then(session).fail(...);
+
+But you didn't want all of session to be filled. Pretend you wanted to scope it conveniently.  This is 
+where the handy setter comes in:
+
+    remote('/Login').then(session.set('user_data')).fail(...);
+
+In this use-case, session('user_data') gets set to undefined, and returns a function which will take in
+an argument to set the `user_data`.  This sounds multi-layered and hard but it isn't.  It does what you
+expect it to do.  For instance:
+
+
+    var cb = session.set('user_data');
+
+    cb({username: 'some user', id: 123});
+
+    session('user_data.id') == 123
 
 <h4><a name="unset"></a>[boolean] .unset(key, ...)</h4>
 
@@ -437,19 +460,19 @@ This model above helps handle multiple dependencies where each one takes on a sp
 
 ### Miscellaneous
 
-**.db**
+<h4><a name="db"></a>.db</h4>
 
  * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
 
-**.setterMap**
+<h4><a name="settermap"></a>.setterMap</h4>
 
  * The map of K/V setters
 
-**.events**
+<h4><a name="events"></a>.events</h4>
 
  * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
 
-**.sniff(arg)**
+<h4><a name="sniff"></a>.sniff(arg)</h4>
 
  * Wraps set in a console.log abstraction
  * ev.traceList is also exposed. It's an
