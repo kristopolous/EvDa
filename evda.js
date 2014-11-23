@@ -171,9 +171,12 @@ function EvDa (imported) {
     ONCE = {once: 1},
 
     lockMap = {},
+    testLockMap = {},
 
     // Internals
     data = imported || {},
+
+    insideTest = false,
 
     // the backlog to execute if something is paused.
     backlog = [],
@@ -679,7 +682,7 @@ function EvDa (imported) {
       }
 
       // recursion prevention.
-      if(lockMap[key] > 1) { return data[key]; }
+      if(lockMap[key] > 0) { return data[key]; }
       lockMap[key] = (lockMap[key] || 0) + 1;
 
       var 
@@ -720,10 +723,18 @@ function EvDa (imported) {
       });
 
       if (doTest) {
-        // This is the test handlers
-        each ( eventMap[ testKey ], function ( callback ) {
-          callback.call ( pub.context, value, meta );
-        });
+        // we permit a level of recursion for testing.
+        lockMap[key]--;
+        if (testLockMap[key] !== true) {
+          testLockMap[key] = true;
+
+          // This is the test handlers
+          each ( eventMap[ testKey ], function ( callback ) {
+            callback.call ( pub.context, value, meta );
+          });
+
+          testLockMap[key] = false;
+        }
         // Don't return the value...
         // return the current value of that key.
         // 
