@@ -520,8 +520,9 @@ function EvDa (imported) {
 
         each(key, function(_key, _val) {
           // we first set up a test that will reset our flag.
-          pub.test(_key, flagReset);
+          cbMap[_key + "-test" ] = pub.test(_key, flagReset);
 
+          // then the actual test
           cbMap[_key] = pub.when(_key, _val, flagTest);
 
           // set the initial flagmap key
@@ -740,6 +741,12 @@ function EvDa (imported) {
     once: function ( key, lambda, meta ) {
       // permit once to take a bunch of callbacks and mark
       // them all for one time
+      //
+      // if we have a 'smart map' then we actually only care
+      // about the values of it
+      if ( isObject(key) ) {
+        key = values(key);
+      }
       if ( isArray(key) ) {
         return map(key, function(what) {
           pub.once.call(pub.context, what, lambda, meta);
