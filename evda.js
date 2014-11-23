@@ -751,12 +751,22 @@ function EvDa (imported) {
         // through the meta
         data[key] = value;
 
-        var cback = function(){
+        var myargs = arguments, cback = function(){
           each(
             (eventMap[FIRST + key] || []).concat(
-              (eventMap[ON + key] || []),
-              (eventMap[AFTER + key] || []) 
+              (eventMap[ON + key] || [])
             ),
+            function(callback) {
+              meta.last = runCallback(callback, pub.context, value, meta);
+            });
+
+
+          // After this, we bubble up if relevant.
+          if(key.length > 0) {
+            bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
+          }
+
+          each(eventMap[AFTER + key] || [],
             function(callback) {
               meta.last = runCallback(callback, pub.context, value, meta);
             });
@@ -773,10 +783,6 @@ function EvDa (imported) {
         }
       } 
 
-      // After this, we bubble up if relevant.
-      if(key.length > 0) {
-        bubble.apply(pub.context, [key].concat(slice.call(arguments, 2)));
-      }
 
       lockMap[key] = 0;
 
