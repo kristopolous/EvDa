@@ -236,7 +236,7 @@ function EvDa (imported) {
       // we try to resolve the head
       var res = resolve( head );
 
-      if (tail in res) {
+      if ( isObject(res) && tail in res ) {
         return res[tail];
       }
     }

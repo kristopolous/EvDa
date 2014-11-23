@@ -349,7 +349,7 @@ module('Bubbling');
     ev.setAdd('a.b', 1);
   });
   
-  test("grouping events and downward referencing", function(){
+  test("downward referencing", function(){
     expect(3);
     var ev = EvDa();
 
@@ -360,7 +360,7 @@ module('Bubbling');
     equal(ev('key.value'), 123);
   });
 
-  test("grouping events and downward referencing - multi-level", function(){
+  test("downward referencing - multi-level", function(){
     expect(4);
     var ev = EvDa();
 
@@ -370,6 +370,15 @@ module('Bubbling');
     equal(ev('a').b.c, 123);
     equal(ev('a.b').c, 123);
     equal(ev('a.b.c'), 123);
+  });
+
+  test("invalid downward referencing", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', 1);
+
+    equal(ev('key.value'), undefined);
   });
 
   test("grouping events and downward referencing - multi-level + half-assign", function(){
