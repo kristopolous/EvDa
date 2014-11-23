@@ -340,6 +340,17 @@ module('Bubbling');
     ev.setAdd('a.b', 1);
   });
   
+  test("grouping events and downward referencing", function(){
+    expect(3);
+    var ev = EvDa();
+
+    ev('key', {value: 123});
+
+    equal(ev('').key.value, 123);
+    equal(ev('key').value, 123);
+    equal(ev('key.value'), 123);
+  });
+
   test("grouping events through dot notation - multi-level", function(){
     expect(1);
     var ev = EvDa();
