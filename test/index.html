@@ -619,6 +619,7 @@ module("when");
     });
     ev('key','value');
   });
+
   test("run if something is set function", function(){
     expect(1);
     var ev = EvDa();
@@ -1116,11 +1117,14 @@ module("Removing elements from a set");
 
 module("Running a setter");
   test("Setting a variable, checking to see if it's been set", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa();
 
     ev.set('key', 'value');
     ev.isset('key', function(value) {
+      equal(value, 'value', 'Key set to value');
+    });
+    ev.whenSet('key', function(value) {
       equal(value, 'value', 'Key set to value');
     });
   });
