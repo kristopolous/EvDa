@@ -211,6 +211,36 @@ function EvDa (imported) {
       return cback(what);
     }
   }
+
+  // this will try to resolve what the user
+  // is asking for.
+  function resolve ( what ) {
+    if ( what in data ) {
+      return data[ what ];
+    }
+
+    // If the key isn't set then we try to resolve it
+    // through dot notation.
+    // ex: a.b.c
+    var 
+      // [a,b,c]
+      parts = what.split('.'),
+
+      // c
+      tail = parts.pop(),
+      
+      // a.b
+      head = parts.join('.');
+
+    if (head) {
+      // we try to resolve the head
+      var res = resolve( head );
+
+      if (tail in res) {
+        return res[tail];
+      }
+    }
+  }
   
   // This is the main invocation function. After
   // you declare an instance and call that instance
@@ -271,9 +301,7 @@ function EvDa (imported) {
         return scope;
       }
 
-      return smartMap(scope, function(what) { 
-        return data[ what ];
-      });
+      return smartMap(scope, resolve);
     } 
 
     // If there were two arguments and if one of them was a function, then
