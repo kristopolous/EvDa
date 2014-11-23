@@ -351,6 +351,32 @@ module('Bubbling');
     equal(ev('key.value'), 123);
   });
 
+  test("grouping events and downward referencing - multi-level", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev('a', {b: {c: 123}});
+
+    equal(ev('').a.b.c, 123);
+    equal(ev('a').b.c, 123);
+    equal(ev('a.b').c, 123);
+    equal(ev('a.b.c'), 123);
+  });
+
+  test("grouping events and downward referencing - multi-level + half-assign", function(){
+    expect(5);
+    var ev = EvDa();
+
+    ev('a.b', {c: {d: 123}});
+
+    equal(ev('').a.b.c.d, 123);
+    equal(ev('a').b.c.d, 123);
+    equal(ev('a.b').c.d, 123);
+    equal(ev('a.b.c').d, 123);
+    equal(ev('a.b.c.d'), 123);
+  });
+
+
   test("grouping events through dot notation - multi-level", function(){
     expect(1);
     var ev = EvDa();
@@ -737,7 +763,6 @@ module("when");
       key1: 'value1',
       key2: 'value2'
     }, function(what){
-      console.log("HERE");
       equal(true,true, "ran");
     });
 
