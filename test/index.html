@@ -641,6 +641,42 @@ module("when");
     });
   });
 
+  test("run if an object is set - twice case", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.when({
+      key1: 'value1',
+      key2: 'value2'
+    }, function(what){
+      equal(true,true, "ran");
+    });
+
+    ev('key1', 'value1');
+    ev('key2', 'value2');
+    ev('key2', 'value2');
+  });
+
+  test("run if an object is set - twice case invalid state", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when({
+      key1: 'value1',
+      key2: 'value2'
+    }, function(what){
+      equal(true,true, "ran");
+    });
+
+    // this is a valid state
+    ev('key1', 'value1');
+    ev('key2', 'value2');
+
+    // this is an invalid state.
+    ev('key1', 'nono');
+    ev('key2', 'value2');
+  });
+
   test("run if something is set (array)", function(){
     expect(1);
     var ev = EvDa();
