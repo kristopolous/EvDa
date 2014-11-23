@@ -669,6 +669,16 @@ function EvDa (imported) {
     },
 
     set: function (key, value, _meta, bypass, _noexecute) {
+      // this is when we are calling a future setter
+      if(arguments.length == 1) {
+        var ret = function() {
+          pub.set.apply(pub.context, [key].concat(slice.call(arguments)));
+        }
+        pub.set.call(pub.context, key, undefined);
+        return ret;
+      }
+
+      // recursion prevention.
       if(lockMap[key] > 1) { return data[key]; }
       lockMap[key] = (lockMap[key] || 0) + 1;
 
