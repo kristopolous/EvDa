@@ -109,6 +109,15 @@ module("OO binding");
     new m();
   });
 
+  test("handy setter", function(){
+    var ev = EvDa();
+
+    var cb = ev.set('key');
+    cb(1);
+
+    equal(ev('key'), 1, 'cb style setter ran');
+  });
+
 module("empty");
   test("fill in an object and empty it", function() {
     var ev = EvDa();
