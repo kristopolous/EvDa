@@ -657,6 +657,26 @@ module("when");
     ev('key2', 'value2');
   });
 
+  test("run if an object is set - twice case valid state but once called", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.once(ev.when({
+      key1: 'value1',
+      key2: 'value2'
+    }, function(what){
+      equal(true,true, "ran");
+    }));
+
+    // this is a valid state
+    ev('key1', 'value1');
+    ev('key2', 'value2');
+
+    // this is a valid state.
+    ev('key1', 'value1');
+    ev('key2', 'value2');
+  });
+
   test("run if an object is set - twice case invalid state", function(){
     expect(1);
     var ev = EvDa();
@@ -665,6 +685,7 @@ module("when");
       key1: 'value1',
       key2: 'value2'
     }, function(what){
+      console.log("HERE");
       equal(true,true, "ran");
     });
 
