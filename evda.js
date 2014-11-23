@@ -503,8 +503,12 @@ function EvDa (imported) {
           cbMap = {},
           flagMap = {},
           // flagTest only gets run when
+          flagReset = function(val, meta) {
+            flagMap[meta.key] = false;
+            meta();
+          }, 
           flagTest = function(val, meta) {
-            // set
+            // toggle the flag
             flagMap[meta.key] = true;
 
             // see if there's any more false things
@@ -515,12 +519,15 @@ function EvDa (imported) {
           };
 
         each(key, function(_key, _val) {
+          // we first set up a test that will reset our flag.
+          pub.test(_key, flagReset);
 
           cbMap[_key] = pub.when(_key, _val, flagTest);
 
           // set the initial flagmap key
           // value to false - this will
           // be triggered if things succeed.
+          // This has to be initialized here.
           flagMap[_key] = false;
         });
 
@@ -731,6 +738,14 @@ function EvDa (imported) {
     },
 
     once: function ( key, lambda, meta ) {
+      // permit once to take a bunch of callbacks and mark
+      // them all for one time
+      if ( isArray(key) ) {
+        return map(key, function(what) {
+          pub.once.call(pub.context, what, lambda, meta);
+        });
+      }
+
       // If this is a callback, then we can register it to be called once.
       if(lambda) {
         // Through some slight recursion.
