@@ -42,6 +42,20 @@ module("Basic");
     ev({key: 'value'});
     equal(ev.db.key, 'value', "Initialized");
   });
+  
+  test("Set a key, object style with array", function(){
+    expect(3);
+    var ev = EvDa();
+    ev({
+      key1: 'value1',
+      key2: [1,2,3]
+    });
+
+    equal(ev.db.key1, 'value1', "Initialized");
+    equal(ev.db.key2.length, 3, "Array set");
+    equal(ev.db.key2[1], 2, "values are right");
+  });
+
 
   test("Set 3 keys, object style", function(){
     expect(6);
@@ -265,6 +279,20 @@ module('Bubbling');
     });
 
     ev('group.key2', 2);
+  });
+
+  test("grouping events through dot notation - all values correct", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev.after('group', function(value) {
+      equal(value.key1, 1, 'Callback triggered')
+      equal(ev('group.key1'), 1, 'correct in function full dot');
+      equal(ev('group').key1, 1, 'correct in function single reference');
+      equal(ev('').group.key1, 1, 'correct in function double reference');
+    });
+
+    ev('group.key1', 1);
   });
 
   test("grouping events through dot notation - cascaded callback", function(){
