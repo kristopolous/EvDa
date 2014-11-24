@@ -160,6 +160,7 @@ I'm doing actual work. I know, what the fuck, right?
  * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set.
  * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set.
  * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key.
+ * <a href="#or">[handle] .or(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run if a test fails.
  * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once.
  * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) )</a> - run a lambda when a key **is a certain value**
  * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test.
@@ -183,7 +184,7 @@ I'm doing actual work. I know, what the fuck, right?
  * <a href="#settermap">[object] .setterMap</a> - All the setters.
  * <a href="#events">[object] .events</a> - The object of registered events.
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger.
- * [void] .empty() - Resetting all values and keeping all triggers.
+ * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers.
 
 
 ### Manipulation
@@ -341,6 +342,10 @@ expect it to do.  For instance:
    `.result()` means "go ahead".
  * The return value of the callback that is passed in passed through the test function.
 
+<h4><a name="or"></a>[handle] .or(key, lambda ( value, { key, old, result, meta } ))</h4>
+
+  * Runs if a `test` is registered and the test fails
+
 <h4><a name="when"></a>[handle] .when(key, value | test | eval string, lambda)</h4>
 
  * Executes lambda when `key === value` OR `test(value) == true`
@@ -483,7 +488,7 @@ This model above helps handle multiple dependencies where each one takes on a sp
    * FALSE - this feature is disabled
    * TRUE - the feature is enabled
 
-**.empty()**
+<h4><a name="empty"></a>.empty()</h4>
 
  * Removes all keys from the object
  * Does not call any triggers during the removal
