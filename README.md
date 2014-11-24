@@ -193,15 +193,15 @@ I'm doing actual work. I know, what the fuck, right?
 
 <h4><a name="ev"></a>[handle | value] ev(key | hash | array, value | lambda, meta)</a></h4>
 
- * If value, lambda, and meta are absent, this is a getter. eg., ev('key') => 'value'
+ * If value, lambda, and meta are absent, this is a getter. eg., `ev('key')` => 'value'
  * If value is not a function, then it's a setter. If meta is set, then 
    this object gets passed around to the trigger functions.
  * If value is a function, this registers a callback in the "ON" block.
  * If the first argument an array then each element of the array is ran on the rest of the arguments.
    
-   * Since the handle is itself, a decorated callback, then you can simply run ev.once(handle) at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
+   * Since the handle is itself, a decorated callback, then you can simply run `ev.once(handle)` at any future time to make sure that the callback only runs once more, then deregisters. This is different from a delete wherein it will deregister right away.
 
- * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like ev({}, undefined, meta) to pass the same meta information to all the tuples in the hash.
+ * If value is in object, its keys and values are run through the handler again, following the above rules. Note that you can do something like `ev({}, undefined, meta)` to pass the same meta information to all the tuples in the hash.
 
 Looking at the last style, one can do the following:
 
@@ -253,7 +253,7 @@ where the handy setter comes in:
 
     remote('/Login').then(session.set('user_data')).fail(...);
 
-In this use-case, session('user_data') gets set to undefined, and returns a function which will take in
+In this use-case, `session('user_data')` gets set to undefined, and returns a function which will take in
 an argument to set the `user_data`.  This sounds multi-layered and hard but it isn't.  It does what you
 expect it to do.  For instance:
 
@@ -335,7 +335,7 @@ expect it to do.  For instance:
 
 <h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta } ))</h4>
 
- * Can block ev.set or ev(key, value) and thus suppress the "ON" and "AFTER" functions.
+ * Can block `ev.set`  or `ev(key, value)` and thus suppress the "ON" and "AFTER" functions.
  * If the test succeeds, then the function must call a supplied callback function, named 
    `result` and supplied in an object in the second argument. Calling the function with anything
    other then the boolean false signals that the check succeeded. That means that calling
@@ -377,9 +377,9 @@ This model above helps handle multiple dependencies where each one takes on a sp
  * The list of setters are in `ev.setterMap`
  * The lambda function may have a function that it runs when its ready.  That's to say something like this:
 
-      ev.setter("username", function(done) {
+      `ev.setter("username", function(done) {
         $.get("/whoami", done);
-      }); 
+      });`
 
  Now in some template I'm doing something like this
 
@@ -441,7 +441,7 @@ This model above helps handle multiple dependencies where each one takes on a sp
 
 <h4><a name="enable"></a>[list] .enable( list )</h4>
 
- * Enables a list of lambdas previously disabled and set up through the ev.group() call
+ * Enables a list of lambdas previously disabled and set up through the `ev.group()` call.
  * Does not work for test cases
 
 <h4><a name="disable"></a>[list] .disable( list )</h4>
