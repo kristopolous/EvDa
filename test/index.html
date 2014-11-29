@@ -634,6 +634,20 @@ module("Callbacks on set");
     ev('key', 'value', {key: 'value'});
   });
 
+  test("register a callback, pass meta as middleware", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', function(value, meta) {
+      meta.something = 1;
+    });
+    ev('key', function(value, meta) {
+      equal(meta.something, 1, 'values passed down');
+    });
+
+    ev('key', 'value');
+  });
+
 module("when");
   test("run if something is set (literal)", function(){
     expect(1);
