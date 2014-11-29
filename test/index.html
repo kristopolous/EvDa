@@ -1334,6 +1334,49 @@ module("Miscellaneous");
 
     // set the key
     ev('key','value');
+  });
+
+  test("Mass assign of setters", function(){
+    expect(2);
+    var ev = EvDa(), counter = 0;
+
+    ev('key', [
+        function(){
+          equal(counter, 0, 'Order correct');
+          counter++;
+        },
+        function(){
+          equal(counter, 1, 'Order correct');
+          counter++;
+        }
+      ]
+    );
+
+
+    // set the key
+    ev('key','value');
+  });
+
+  test("Mass cross-assign of setters", function(){
+    expect(2);
+    var ev = EvDa(), counter = 0;
+
+    ev('key-notset', [
+        function(){
+          equal(counter, 0, 'Order correct');
+          counter++;
+        },
+        function(){
+          equal(counter, 1, 'Order correct');
+          counter++;
+        }
+      ]
+    );
+
+    ev.on('key', ev.on('key-notset'));
+
+    // set the key
+    ev('key','value');
   })
 </script>
 
