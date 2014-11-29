@@ -323,6 +323,20 @@ expect it to do.  For instance:
 
 ### Triggers
 
+These triggers have different semantic values although they all function in much the same way.
+If you want to view or modify the current triggers assigned you can do so by not providing a secondary
+argument like so:
+
+    ev.on("key");
+
+With that you can do things like re-order, remove, or add things manually.  
+
+It's worth noting that the second argument can be an array of functions so you can do things like
+
+    ev.on('key', ev.on('key1'));
+
+To duplicate functionality.
+
 <h4><a name="on"></a>[handle] .on(key, lambda ( value, { key, old, meta } ) )</h4>
 
  * Runs every time the key is set.
