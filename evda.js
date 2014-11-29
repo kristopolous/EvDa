@@ -7,7 +7,6 @@
 //
 function EvDa (imported) {
   var 
-    BASE = '__base',
     slice = Array.prototype.slice,  
 
     // This is mostly underscore functions here. But they are included to make sure that
@@ -321,8 +320,7 @@ function EvDa (imported) {
       var map = eventMap;
 
       if ( !callback ) {
-        callback = key;
-        key = BASE;
+        return map[stage + key];
       }
 
       // This is the back-reference map to this callback
@@ -626,16 +624,11 @@ function EvDa (imported) {
     // Therein, we don't try to handle input validation
     // and just try it anyway
     push: function ( key, value ) {
-      if (size(arguments) == 1) {
-        value = key;
-        key = BASE;
-      }
-
       return pub.set ( key, [].concat(data[key] || [], [value]) );
     },
 
     pop: function ( key ) {
-      return pub.set ( key || BASE, data[key].slice(0, -1) );
+      return pub.set ( key, data[key].slice(0, -1) );
     },
 
     traceList: [],
@@ -887,11 +880,6 @@ function EvDa (imported) {
     },
 
     changed: function(key, callback) {
-      if( !callback ) {
-        callback = key;
-        key = BASE;
-      }
-
       return pub.on(key, function(value, meta) {
         var 
           newlen = size(value),
