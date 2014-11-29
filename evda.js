@@ -308,7 +308,12 @@ function EvDa (imported) {
 
     // If there were two arguments and if one of them was a function, then
     // this needs to be registered.  Otherwise, we are setting a value.
-    return pub [ isFunction ( value ) ? ON : 'set' ].apply(this, arguments);
+    //
+    // unless it's an array of functions
+    return pub [ 
+      ( isFunction ( value ) || 
+        ( isArray(value) && isFunction(value[0]) )
+      ) ? ON : 'set' ].apply(this, arguments);
   }
 
   // Register callbacks for
@@ -317,10 +322,26 @@ function EvDa (imported) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
-      var map = eventMap;
+
+      // if it's an array, then we register each one
+      // individually.
+      if(_.isArray(callback)) {
+        // take everything after the first two arguments
+        var args = slice.call(arguments, 2);
+        
+        // go through the callback as an array, returning
+        // its list of cbs
+        return map(callback, function(cb) {
+          // call within the oo binding context, the key, the cb,
+          // and the remaining args.
+          return pub[stage].apply(pub.context, [key, cb].concat(args));
+        });
+      }
+
+      var my_map = eventMap;
 
       if ( !callback ) {
-        return map[stage + key];
+        return my_map[stage + key];
       }
 
       // This is the back-reference map to this callback
@@ -328,10 +349,10 @@ function EvDa (imported) {
       (callback.$ || (callback.$ = [])).push ( stage + key );
 
       if (isGlobbed(key)) {
-        map = globberMap;
+        my_map = globberMap;
       }
 
-      (map[stage + key] || (map[stage + key] = [])).push ( callback );
+      (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
       return extend(callback, meta);
     }
