@@ -1312,6 +1312,29 @@ module("Defining a setter");
   });
 
 });
+module("Miscellaneous");
+  test("Reordering of setters", function(){
+    expect(2);
+    var ev = EvDa(), counter = 0;
+
+    ev('key', function(){
+      equal(counter, 1, 'Order correct');
+      counter++;
+    });
+
+    ev('key', function(){
+      equal(counter, 0, 'Order correct');
+      counter++;
+    });
+
+    var Setters = ev.on('key');
+
+    // reorder things
+    Setters.push(Setters.shift());
+
+    // set the key
+    ev('key','value');
+  })
 </script>
 
 
