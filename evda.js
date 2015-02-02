@@ -858,7 +858,9 @@ function EvDa (imported) {
       // wrap it.
       value = isArray(value) ? value : [value];
 
-      var after = clone(data[key] || []);
+      var 
+        before = data[key] || [],
+        after = clone(before);
 
       each(value, function(what) {
         if(after.indexOf(what) == -1) {
