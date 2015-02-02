@@ -850,13 +850,44 @@ function EvDa (imported) {
       return pub.list[listName];
     },
 
+    // This an M*N cost set-add that preserves list 
+    // ordinality
+    osetadd: function ( key, value ) {
+      // If what we are getting in is an array then
+      // we can concat the array, otherwise we should
+      // wrap it.
+      value = isArray(value) ? value : [value];
+
+      var after = clone(data[key] || []);
+
+      each(value, function(what) {
+        if(after.indexOf(what) == -1) {
+          after.push(what);
+        }
+      });
+
+      // If we are successfully adding to the set
+      // then we run the events associated with it.
+      if ( before.length != after.length) {
+        return pub ( key, after );
+      }
+
+      return after;
+    },
+    // This is a sort + M complexity version that
+    // doesn't perserve ordinality.
     setadd: function ( key, value ) {
+      // If what we are getting in is an array then
+      // we can concat the array, otherwise we should
+      // wrap it.
       value = isArray(value) ? value : [value];
 
       var 
         before = data[key] || [],
         after = uniq( before.concat(value) );
 
+      // If we are successfully adding to the set
+      // then we run the events associated with it.
       if ( before.length != after.length) {
         return pub ( key, after );
       }
@@ -954,6 +985,7 @@ function EvDa (imported) {
   });
 
   pub.setAdd = pub.setadd;
+  pub.osetAdd = pub.osetadd;
   pub.setDel = pub.setdel;
   pub.isSet = pub.isset;
 
