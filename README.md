@@ -148,6 +148,7 @@ I'm doing actual work. I know, what the fuck, right?
 ##### Sets
 
  * <a href="#setadd">[set] .setAdd(key, value)</a> - add value to a set at `key`
+ * <a href="#osetadd">[set] .osetAdd(key, value)</a> - add value to a set at `key` maintaining the order.
  * <a href="#setdel">[set] .setDel(key, value)</a> - delete value from a set at `key`
 
 ##### Values
@@ -299,6 +300,10 @@ expect it to do.  For instance:
  * Adds value to the array if it's not already there.
  * If the set is not modified, events aren't run.
  * Returns set.
+
+<h4><a name="setadd"></a>[set] .osetAdd(key, value)</h4>
+
+ * Identical to `setAdd` but maintains the order of the set at a slight complexity cost.
 
 <h4><a name="setdel"></a>[set] .setDel(key, value)</h4>
 
