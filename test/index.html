@@ -281,6 +281,24 @@ module('Bubbling');
     ev('group.key2', 2);
   });
 
+  test("grouping events through dot notation - unset cascading up", function(){
+    var ev = EvDa();
+
+    ev('key', 'value');
+    equal(ev('').key, 'value', 'correct');
+    ev.unset('key');
+    equal('key' in ev(''), false, 'key removed');
+  });
+
+  test("grouping events through dot notation - unset cascading up", function(){
+    var ev = EvDa();
+
+    ev('a.b.c', 'value');
+    equal(ev('a.b').c, 'value', 'correct');
+    ev.unset('a.b.c');
+    equal('c' in ev('a.b'), false, 'key removed');
+  });
+
   test("grouping events through dot notation - all values correct", function(){
     expect(4);
     var ev = EvDa();

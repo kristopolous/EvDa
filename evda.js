@@ -922,8 +922,29 @@ function EvDa (imported) {
       var bool = true;
       each(arguments, function(which) {
         bool &= (which in data);
+
+        // this bubbling is totally slow but it works
+        var 
+          parts = which.split('.'), 
+          key = '', 
+          len = parts.length,
+          last = parts[len - 1],
+          ix, iy, 
+          ref;
+
+        for(ix = 0; ix < len; ix++) {
+          key = parts.slice(0, ix).join('.');
+          ref = data[key];
+
+          for(iy = ix; iy < (len - 1); iy++) {
+            ref = ref[parts[iy]];
+          }
+          delete ref[last];
+        }
+
         delete data[which];
       });
+
       return bool;
     },
 
