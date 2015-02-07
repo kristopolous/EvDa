@@ -935,11 +935,12 @@ function EvDa (imported) {
         for(ix = 0; ix < len; ix++) {
           key = parts.slice(0, ix).join('.');
           ref = data[key];
-
-          for(iy = ix; iy < (len - 1); iy++) {
-            ref = ref[parts[iy]];
+          if(ref) {
+            for(iy = ix; iy < (len - 1); iy++) {
+              ref = ref[parts[iy]];
+            }
+            delete ref[last];
           }
-          delete ref[last];
         }
 
         delete data[which];
