@@ -717,10 +717,10 @@ function EvDa (imported) {
             if ( ! --times ) { 
               if ( failure ) { 
                 each ( eventMap[ "or" + key ] || [], function ( callback ) {
-                  runCallback ( callback, pub.context, value, _meta );
+                  runCallback ( callback, pub.context, _meta.value, _meta );
                 });
               } else {
-                pub.set ( key, value, _meta, 1 );
+                pub.set ( key, _meta.value, _meta, 1 );
               }
             }
             return ok;
@@ -733,7 +733,9 @@ function EvDa (imported) {
         meta: _meta || {},
         done: meta, 
         result: meta,
-        key: key
+        key: key,
+        // the value to set ... or change.
+        value: value
       });
 
       if (doTest) {

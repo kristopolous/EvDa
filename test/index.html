@@ -622,7 +622,7 @@ module("Callbacks on set");
     var ev = EvDa();
 
     ev('key', function(value, meta) {
-      equal(_.keys(meta).sort().join(' '), 'done key meta old result', 'Meta information there');
+      equal(_.keys(meta).sort().join(' '), 'done key meta old result value', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
       equal(meta.key, 'key', 'key correct');
     });
