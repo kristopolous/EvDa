@@ -965,6 +965,18 @@ module("Tests");
 
   });
 
+  test("Set a value to a key, register a test, change the value in the test", function(){
+    var ev = EvDa();
+
+    ev.test('key', function(v, meta) {
+      meta.value = 2;
+      meta(true);
+    });
+
+    ev('key', 1);
+    equal(ev.get("key"), 2, "Key set to 2 in the test");
+  });
+
   test("Set a key to a value, register a test, deny the set, and check the keys value", function() {
     var ev = EvDa();
 
@@ -1003,6 +1015,7 @@ module("Or");
     ev.incr('key');
 
   });
+
 module("Callbacks after set");
   test("Register two callbacks, check their execution order", function(){
     expect(2);
