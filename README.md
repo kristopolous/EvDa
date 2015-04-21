@@ -361,6 +361,28 @@ To duplicate functionality.
    `.result()` means "go ahead".
  * The return value of the callback that is passed in passed through the test function.
 
+Example:
+
+    // set up a test condition that tells whether
+    // the test should succeed or not - only go forward
+    // when value is truthy.
+    ev.test('key', function(value, meta) {
+      meta(value == true);
+    });
+
+    // this will only run 1 time because 
+    // the test will fail on the second
+    // execution.
+    ev.after('key', function(){ 
+      console.log('here');
+    });
+
+    // this should run.
+    ev.set('key', true);
+
+    // sets the key to an undefined value.
+    ev.set('key', false);
+
 <h4><a name="or"></a>[handle] .or(key, lambda ( value, { key, old, result, meta } ))</h4>
 
   * Runs if a `test` is registered and the test fails
