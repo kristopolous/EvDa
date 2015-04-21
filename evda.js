@@ -717,10 +717,10 @@ function EvDa (imported) {
             if ( ! --times ) { 
               if ( failure ) { 
                 each ( eventMap[ "or" + key ] || [], function ( callback ) {
-                  runCallback ( callback, pub.context, _meta.value, _meta );
+                  runCallback ( callback, pub.context, meta.value, meta );
                 });
               } else {
-                pub.set ( key, _meta.value, _meta, 1 );
+                pub.set ( key, meta.value, meta, 1 );
               }
             }
             return ok;
