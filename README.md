@@ -352,7 +352,7 @@ To duplicate functionality.
  * Runs after a key has been set
  * Returns a handle that can be passed into `ev.del` to deregister.
 
-<h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta } ))</h4>
+<h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta, value } ))</h4>
 
  * Can block `ev.set`  or `ev(key, value)` and thus suppress the "ON" and "AFTER" functions.
  * If the test succeeds, then the function must call a supplied callback function, named 
@@ -360,6 +360,8 @@ To duplicate functionality.
    other then the boolean false signals that the check succeeded. That means that calling
    `.result()` means "go ahead".
  * The return value of the callback that is passed in passed through the test function.
+ * The value of `meta.value` cascades down through the test suite as the value to be 
+ tested and eventually the value to be set. This means it is mutable.
 
 Example:
 
