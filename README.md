@@ -133,10 +133,17 @@ I'm doing actual work. I know, what the fuck, right?
 
 #### Manipulation
 
+Syntax notations:
+
+  * square brackets ( [ ] ) - data types
+  * vertical bars ( | ) - optional versions of a specific parameter
+  * squiggly brackets ( { } ) - objects that are passed in and their keys
+  * pointy brackets ( &lt; &gt; ) - optional arguments.
+
 ##### Base
 
- * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda, meta)</a> - do all the below
- * <a href="#set">[value] .set(key, value, meta, _opts)</a> - set a key
+ * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda &lt;, meta &gt;)</a> - do all the below
+ * <a href="#set">[value] .set(key, value &lt;, meta, _opts &gt;)</a> - set a key
  * <a href="#unset">[boolean] .unset(key, ...)</a> - delete a set of keys
  * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a key.
 
@@ -147,14 +154,14 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Sets
 
- * <a href="#setadd">[set] .setAdd(key, value, meta)</a> - add value to a set at `key`
- * <a href="#osetadd">[set] .osetAdd(key, value, meta)</a> - add value to a set at `key` maintaining the order.
- * <a href="#setdel">[set] .setDel(key, value, meta)</a> - delete value from a set at `key`
+ * <a href="#setadd">[set] .setAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key`
+ * <a href="#osetadd">[set] .osetAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key` maintaining the order.
+ * <a href="#setdel">[set] .setDel(key, value &lt;, meta &gt; )</a> - delete value from a set at `key`
 
 ##### Values
 
- * <a href="#incr">[value] .incr(key, [ amount ] )</a> - increment a key's value - returning the new value.
- * <a href="#decr">[value] .decr(key, [ amount ] )</a> - decrement a key's value - returning the new value.
+ * <a href="#incr">[value] .incr(key &lt;, amount, meta &gt; )</a> - increment a key's value - returning the new value.
+ * <a href="#decr">[value] .decr(key &lt;, amount, meta &gt; )</a> - decrement a key's value - returning the new value.
 
 #### Triggers
 
