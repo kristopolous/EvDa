@@ -977,6 +977,19 @@ module("Tests");
     equal(ev.get("key"), 2, "Key set to 2 in the test");
   });
 
+  test("Setadd testing of the value", function() {
+    var ev = EvDa();
+
+    ev.setAdd('key', 1);
+    ev.test('key', function(key, meta) {
+      console.log(meta);
+      equal(key.join(''), '12', 'key is correct');
+      equal(meta.meta._element[0], 2, 'individual value is correct');
+    });
+    
+    ev.setAdd('key', 2);
+  });
+
   test("Set a key to a value, register a test, deny the set, and check the keys value", function() {
     var ev = EvDa();
 

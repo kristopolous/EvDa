@@ -284,7 +284,7 @@ function EvDa (imported) {
         // to avoid ordinals of the keys making a substantial
         // difference in the existence of the values
         each( scope, function( _key, _value ) {
-          ret[_key] = pub ( _key, _value, meta, 0, 1 );
+          ret[_key] = pub ( _key, _value, meta, {noexec: 1} );
         });
 
         // After the callbacks has been bypassed, then we
@@ -685,7 +685,10 @@ function EvDa (imported) {
       );
     },
 
-    set: function (key, value, _meta, bypass, _noexecute) {
+    set: function (key, value, _meta, _opts) {
+      _opts = _opts || {};
+      var bypass = _opts['bypass'], noexec = _opts['noexec'];
+
       // this is when we are calling a future setter
       if(arguments.length == 1) {
         var ret = function() {
@@ -720,7 +723,7 @@ function EvDa (imported) {
                   runCallback ( callback, pub.context, meta.value, meta );
                 });
               } else {
-                pub.set ( key, meta.value, meta, 1 );
+                pub.set ( key, meta.value, meta, {bypass: 1} );
               }
             }
             return ok;
@@ -789,7 +792,7 @@ function EvDa (imported) {
           return value;
         }
 
-        if(!_noexecute) {
+        if(!noexec) {
           result = cback.call(pub.context);
         } else {
           // if we are not executing this, then
@@ -880,7 +883,7 @@ function EvDa (imported) {
     },
     // This is a sort + M complexity version that
     // doesn't perserve ordinality.
-    setadd: function ( key, value ) {
+    setadd: function ( key, value, meta ) {
       // If what we are getting in is an array then
       // we can concat the array, otherwise we should
       // wrap it.
@@ -893,7 +896,7 @@ function EvDa (imported) {
       // If we are successfully adding to the set
       // then we run the events associated with it.
       if ( before.length != after.length) {
-        return pub ( key, after );
+        return pub ( key, after, extend(meta || {}, { _element: value } ));
       }
 
       return after;
