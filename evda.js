@@ -687,7 +687,11 @@ function EvDa (imported) {
 
     set: function (key, value, _meta, _opts) {
       _opts = _opts || {};
-      var bypass = _opts['bypass'], noexec = _opts['noexec'];
+
+      var 
+        bypass = _opts['bypass'], 
+        hasvalue = ('value' in _opts),
+        noexec = _opts['noexec'];
 
       // this is when we are calling a future setter
       if(arguments.length == 1) {
@@ -720,9 +724,10 @@ function EvDa (imported) {
             if ( ! --times ) { 
               if ( failure ) { 
                 each ( eventMap[ "or" + key ] || [], function ( callback ) {
-                  runCallback ( callback, pub.context, meta.value, meta );
+                  runCallback ( callback, pub.context, hasvalue ? _opts['value'] : meta.value, meta );
                 });
               } else {
+                // The actual setter gets the real value.
                 pub.set ( key, meta.value, meta, {bypass: 1} );
               }
             }
@@ -749,7 +754,7 @@ function EvDa (imported) {
 
           // This is the test handlers
           each ( eventMap[ testKey ], function ( callback ) {
-            callback.call ( pub.context, value, meta );
+            callback.call ( pub.context, hasvalue ? _opts['value'] : value, meta );
           });
 
           testLockMap[key] = false;
@@ -778,7 +783,6 @@ function EvDa (imported) {
             function(callback) {
               meta.last = runCallback(callback, pub.context, value, meta);
             });
-
 
           // After this, we bubble up if relevant.
           if(key.length > 0) {
