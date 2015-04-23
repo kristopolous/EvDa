@@ -147,9 +147,9 @@ I'm doing actual work. I know, what the fuck, right?
 
 ##### Sets
 
- * <a href="#setadd">[set] .setAdd(key, value)</a> - add value to a set at `key`
- * <a href="#osetadd">[set] .osetAdd(key, value)</a> - add value to a set at `key` maintaining the order.
- * <a href="#setdel">[set] .setDel(key, value)</a> - delete value from a set at `key`
+ * <a href="#setadd">[set] .setAdd(key, value, meta)</a> - add value to a set at `key`
+ * <a href="#osetadd">[set] .osetAdd(key, value, meta)</a> - add value to a set at `key` maintaining the order.
+ * <a href="#setdel">[set] .setDel(key, value, meta)</a> - delete value from a set at `key`
 
 ##### Values
 
@@ -298,18 +298,24 @@ expect it to do.  For instance:
 
 #### Sets
 
-<h4><a name="setadd"></a>[set] .setAdd(key, value)</h4>
+The set functions are convenience wrappers on top of the basic value-based functionalities.  Their are a 
+few differences:
+
+ * The value that is passed to the handlers of the set functions is the value to be added or deleted.
+ * The value of the entire set is still available (and modifiable in the testers) via meta.value
+
+<h4><a name="setadd"></a>[set] .setAdd(key, value, meta)</h4>
 
  * Creates key if it doesn't exist, as an array
  * Adds value to the array if it's not already there.
  * If the set is not modified, events aren't run.
  * Returns set.
 
-<h4><a name="setadd"></a>[set] .osetAdd(key, value)</h4>
+<h4><a name="setadd"></a>[set] .osetAdd(key, value, meta)</h4>
 
  * Identical to `setAdd` but maintains the order of the set at a slight complexity cost.
 
-<h4><a name="setdel"></a>[set] .setDel(key, value)</h4>
+<h4><a name="setdel"></a>[set] .setDel(key, value, meta)</h4>
 
  * Creates key if it doesn't exist, as an array
  * Removes value from the set if it is there.
