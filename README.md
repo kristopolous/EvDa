@@ -136,7 +136,7 @@ I'm doing actual work. I know, what the fuck, right?
 ##### Base
 
  * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda, meta)</a> - do all the below
- * <a href="#set">[value] .set(key, value, meta, bypass)</a> - set a key
+ * <a href="#set">[value] .set(key, value, meta, _opts)</a> - set a key
  * <a href="#unset">[boolean] .unset(key, ...)</a> - delete a set of keys
  * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a key.
 
@@ -225,11 +225,15 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-<h4><a name="set"></a>[value] .set(key, value, meta, bypass)</h4>
+<h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
  * Passes the meta information if supplied to the registered functions.
- * If bypass is set to something truthy, then the tests for the key (if any) will be bypassed once.
+ * The opts section gives options for how the flow of the setter is run.  This is a kind of ["multiple dispatch"](http://en.wikipedia.org/wiki/Multiple_dispatch) that is needed for internal unification.  The options are:
+   * value: a value to be passed to the setters and the callbacks which may be different from the actual value set.
+   * bypass: if set, bypasses any test conditions when running a setter
+   * noexec: if set, disables all callbacks from being fired when settings.
+   
 
 Example:
 
