@@ -623,20 +623,20 @@ function EvDa (imported) {
       }
     },
 
-    incr: function ( key, amount ) {
+    incr: function ( key, amount, meta ) {
       amount = amount || 1;
       // we can't use the same trick here because if we
       // hit 0, it will auto-increment to amount
-      return pub.set ( key, isNumber(data[key]) ? (data[key] + amount) : amount );
+      return pub.set ( key, isNumber(data[key]) ? (data[key] + amount) : amount, meta );
     },
 
-    decr: function ( key, amount ) {
+    decr: function ( key, amount, meta ) {
       amount = amount || 1;
       // if key isn't in data, it returns 0 and sets it
       // if key is in data but isn't a number, it returns NaN and sets it
       // if key is 1, then it gets reduced to 0, getting 0,
       // if key is any other number, than it gets set
-      return pub.set ( key, data[key] - amount || 0 );
+      return pub.set ( key, data[key] - amount || 0, meta );
     },
 
     // If we are pushing and popping a non-array then
