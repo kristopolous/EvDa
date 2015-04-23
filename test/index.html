@@ -981,10 +981,9 @@ module("Tests");
     var ev = EvDa();
 
     ev.setAdd('key', 1);
-    ev.test('key', function(key, meta) {
-      console.log(meta);
-      equal(key.join(''), '12', 'key is correct');
-      equal(meta.meta._element[0], 2, 'individual value is correct');
+    ev.test('key', function(value, meta) {
+      equal(meta.value.join(''), '12', 'key is correct');
+      equal(value, 2, 'individual value is correct');
     });
     
     ev.setAdd('key', 2);

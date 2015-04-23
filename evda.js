@@ -861,7 +861,7 @@ function EvDa (imported) {
 
     // This an M*N cost set-add that preserves list 
     // ordinality
-    osetadd: function ( key, value ) {
+    osetadd: function ( key, value, meta ) {
       // If what we are getting in is an array then
       // we can concat the array, otherwise we should
       // wrap it.
@@ -880,7 +880,7 @@ function EvDa (imported) {
       // If we are successfully adding to the set
       // then we run the events associated with it.
       if ( before.length != after.length) {
-        return pub ( key, after );
+        return pub ( key, after, meta, {value: value} );
       }
 
       return after;
@@ -900,20 +900,20 @@ function EvDa (imported) {
       // If we are successfully adding to the set
       // then we run the events associated with it.
       if ( before.length != after.length) {
-        return pub ( key, after, extend(meta || {}, { _element: value } ));
+        return pub ( key, after, meta, {value: value} );
       }
 
       return after;
     },
 
-    setdel: function ( key, value ) {
+    setdel: function ( key, value, meta ) {
 
       var
         before = data[key] || [],
         after = without( before, value);
 
       if ( before.length != after.length) {
-        return pub ( key, after );
+        return pub ( key, after, meta, {value: value} );
       }
 
       return after;
