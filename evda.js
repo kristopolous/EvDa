@@ -723,11 +723,24 @@ function EvDa (imported) {
 
             if ( ! --times ) { 
               if ( failure ) { 
+                // If the tests fail, then this is the alternate failure
+                // path that will be run
                 each ( eventMap[ "or" + key ] || [], function ( callback ) {
-                  runCallback ( callback, pub.context, hasvalue ? _opts['value'] : meta.value, meta );
+                  runCallback ( 
+                    callback, 
+                    pub.context, 
+                    hasvalue ? _opts['value'] : meta.value, 
+                    meta );
                 });
               } else {
                 // The actual setter gets the real value.
+                //
+                // if a "coroutine" is set then this will be
+                // called before the final setter goes through.
+                if (opts['coroutine']) {
+                  opts['coroutine'](meta);
+                }
+
                 pub.set ( key, meta.value, meta, {bypass: 1} );
               }
             }
