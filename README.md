@@ -240,7 +240,8 @@ Looking at the last style, one can do the following:
    * value: a value to be passed to the setters and the callbacks which may be different from the actual value set.
    * bypass: if set, bypasses any test conditions when running a setter
    * noexec: if set, disables all callbacks from being fired when settings.
-   * coroutine: if set, this is a function that gets passed the meta object after all the test but prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations perhaps done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  the `meta.value` at the end of the coroutine function is the one that will be sent to the `after` and `on` listeners - in this sense is more of a middleware than a knuthian coroutine - but since its passed as a lambda during the actual set as opposed to a decoupled listener, the flow of control more closely resembles that of a coroutine than a middleware stack.
+   * coroutine: if set, this is a function that gets passed the meta object after all the test but prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations perhaps done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
+   the `meta.value` at the end of the coroutine function is the one that will be sent to the `after` and `on` listeners - in this sense is more of a middleware than a knuthian coroutine - but since its passed as a lambda during the actual set as opposed to a decoupled listener, the flow of control more closely resembles that of a coroutine than a middleware stack.
    
 
 Example:
@@ -283,6 +284,19 @@ expect it to do.  For instance:
  * Returns whether all the keys existed or not.
  * No events are fired.
 
+Example:
+
+    ev('key', 1);
+    > 1
+
+    ev(''); // see <a href="#bubble">bubbling and globals</a> at the end.
+    > { key: 1 }
+
+    ev.unset('key')
+    > 1
+
+    ev('')
+    > {}
 
 <h4><a name="extend"></a>[value] .extend(key, obj)</h4>
 
