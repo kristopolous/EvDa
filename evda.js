@@ -752,13 +752,14 @@ function EvDa (imported) {
                 // if a "coroutine" is set then this will be
                 // called before the final setter goes through.
                 if (coroutine) {
-                  coroutine(meta);
+                  coroutine(meta, true);
                 }
 
                 pub.set ( key, meta.value, meta, {bypass: 1} );
               }
             } else {
               testIx++;
+              coroutine(meta, false);
               eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
             }
 
@@ -784,6 +785,7 @@ function EvDa (imported) {
           testLockMap[key] = true;
 
           // This is the test handlers
+          coroutine(meta, false);
           eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
 
           testLockMap[key] = false;
@@ -802,7 +804,7 @@ function EvDa (imported) {
         // if there's a coroutine then we call that
         // here
         if (coroutine) {
-          coroutine(meta);
+          coroutine(meta, true);
           value = meta.value;
         }
 
@@ -938,9 +940,12 @@ function EvDa (imported) {
       if ( before.length != after.length) {
         return pub( key, value, meta, {
           // this is only called if the tests pass
-          coroutine: function(meta) {
+          coroutine: function(meta, isFinal) {
             var valArray = isArray(meta.value) ? meta.value : [meta.value];
-            meta.value = uniq( (meta.old || []).concat(valArray) );
+            meta.set = uniq( (meta.old || []).concat(valArray) );
+            if(isFinal) {
+              meta.value = meta.set; 
+            }
           }
         });
       }
