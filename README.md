@@ -188,9 +188,9 @@ Syntax notations:
 
 #### Miscellaneous
 
+ * <a href="#events">[object] .events(key, type)</a> - The registered events to (re)order them.
  * <a href="#db">[object] .db</a> - The current database.
  * <a href="#settermap">[object] .setterMap</a> - All the setters.
- * <a href="#events">[object] .events</a> - The object of registered events.
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger.
  * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers.
 
@@ -549,9 +549,24 @@ This model above helps handle multiple dependencies where each one takes on a sp
 
  * The map of K/V setters
 
-<h4><a name="events"></a>.events</h4>
+<h4><a name="events"></a>.events(name, type)</h4>
 
- * A map to the lambdas, broken up into key values of either "test", "on", or "after" followed by the key value.  For instance, if you had run ev.on('key', lambda).  Then ev.events['onkey'] = lambda.  This may sound dangerous at first, but everything gets either a "test", "on" or "after" prefix - so no collisions from shared namespace will arise.
+ * With no arguments, the event system is returned.
+ * With a name argument, all of the types of events associated with that name is returned.  These can be re-ordered.
+
+For instance, say I had two test conditions and I wanted to make the second one registered run first.
+
+    ev.test('key', fun2);
+
+    ev.test('key', fun1);
+
+I can use this to re-order the events.
+
+    var list = ev.events('key', 'test');
+
+    list.unshift(list.pop());
+
+And there I go.
 
 <h4><a name="sniff"></a>.sniff(arg)</h4>
 
