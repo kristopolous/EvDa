@@ -764,7 +764,9 @@ function EvDa (imported) {
               testIx++;
 
               if (coroutine(meta, false)) {
-                eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+                if (true === eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta )) {
+                  meta();
+                }
               } else {
                 orHandler();
               }
@@ -793,7 +795,9 @@ function EvDa (imported) {
 
           // This is the test handlers
           if(coroutine(meta, false)) {
-            eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+            if (true === eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta )) {
+              meta();
+            }
           } else {
             orHandler();
           }
@@ -939,10 +943,6 @@ function EvDa (imported) {
     // This is a sort + M complexity version that
     // doesn't perserve ordinality.
     setadd: function ( key, value, meta ) {
-      // If what we are getting in is an array then
-      // we can concat the array, otherwise we should
-      // wrap it.
-
       var before = data[key] || [];
 
       return pub( key, value, meta, {

@@ -392,10 +392,11 @@ To duplicate functionality.
 <h4><a name="test"></a>[handle] .test(key, lambda ( value, { key, old, result, meta, value } ))</h4>
 
  * Can block `ev.set`  or `ev(key, value)` and thus suppress the "ON" and "AFTER" functions.
- * If the test succeeds, then the function must call a supplied callback function, named 
-   `result` and supplied in an object in the second argument. Calling the function with anything
-   other then the boolean false signals that the check succeeded. That means that calling
-   `.result()` means "go ahead".
+ * If the test succeeds, then the function may either 
+   * call a supplied callback function, named `result` and supplied in an object in the second argument. Calling the function with anything
+   other then the boolean false signals that the check succeeded. That means that calling `.result()` means "go ahead".
+   * or return the boolean `true`.
+   * also, `.result()` is aliased to `.done()` and can also be invoked by calling the object, as in `function(val, meta) { meta() }`.
  * The return value of the callback that is passed in passed through the test function.
  * The value of `meta.value` cascades down through the test suite as the value to be 
  tested and eventually the value to be set. This means it is mutable.
