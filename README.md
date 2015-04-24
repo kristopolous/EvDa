@@ -142,9 +142,9 @@ Syntax notations:
 
 ##### Base
 
- * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda &lt;, meta &gt;)</a> - do all the below
- * <a href="#set">[value] .set(key, value &lt;, meta, _opts &gt;)</a> - set a key
- * <a href="#unset">[boolean] .unset(key, ...)</a> - delete a set of keys
+ * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda &lt;, meta &gt; )</a> - do all the below
+ * <a href="#set">[value] .set(key, value &lt;, meta, _opts &gt; )</a> - set a key
+ * <a href="#unset">[boolean] .unset(key &lt;, ... &gt; )</a> - delete a set of keys
  * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a key.
 
 ##### Stacks
@@ -312,18 +312,18 @@ few differences:
  * The value of the entire set is still available (and modifiable in the testers) via meta.set.
  * Alternatively just the value of meta.value can be modified before the set-inclusion rules are actually applied.
 
-<h4><a name="setadd"></a>[set] .setAdd(key, value, meta)</h4>
+<h4><a name="setadd"></a>[set] .setAdd(key, value &lt;, meta &gt; )</h4>
 
  * Creates key if it doesn't exist, as an array
  * Adds value to the array if it's not already there.
  * If the set is not modified, events aren't run.
  * Returns set.
 
-<h4><a name="setadd"></a>[set] .osetAdd(key, value, meta)</h4>
+<h4><a name="setadd"></a>[set] .osetAdd(key, value &lt;, meta &gt; )</h4>
 
  * Identical to `setAdd` but maintains the order of the set at a slight complexity cost.
 
-<h4><a name="setdel"></a>[set] .setDel(key, value, meta)</h4>
+<h4><a name="setdel"></a>[set] .setDel(key, value &lt;, meta &gt; )</h4>
 
  * Creates key if it doesn't exist, as an array
  * Removes value from the set if it is there.
@@ -332,13 +332,13 @@ few differences:
 
 #### Values
 
-<h4><a name="incr"></a>[number] .incr(key, [ amount ] )</h4>
+<h4><a name="incr"></a>[number] .incr(key &lt;, amount, meta &gt; )</h4>
 
  * Atomically (in the JS sense) increments a key's value. 
  * It will initialize the key to the numeric value amount or 1 if it's not a number
  * Returns the result of the set event.
 
-<h4><a name="decr"></a>[number] .decr(key, [ amount ] )</h4>
+<h4><a name="decr"></a>[number] .decr(key &lt;, amount, meta &gt; )</h4>
 
  * Atomically (in the JS sense) decrements a key's value by an amount or 1 if not specified. 
  * It will initialize the key to the numeric value 0 if it's not a number
