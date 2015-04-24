@@ -644,12 +644,12 @@ function EvDa (imported) {
     // to the user than we try to be graceful and silent
     // Therein, we don't try to handle input validation
     // and just try it anyway
-    push: function ( key, value ) {
-      return pub.set ( key, [].concat(data[key] || [], [value]) );
+    push: function ( key, value, meta ) {
+      return pub.set ( key, [].concat(data[key] || [], [value]), meta );
     },
 
-    pop: function ( key ) {
-      return pub.set ( key, data[key].slice(0, -1) );
+    pop: function ( key, meta ) {
+      return pub.set ( key, data[key].slice(0, -1), meta );
     },
 
     traceList: [],
