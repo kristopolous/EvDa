@@ -728,6 +728,17 @@ function EvDa (imported) {
         doTest = (times && !bypass),
         failure,
 
+        orHandler = function() {
+          // If the tests fail, then this is the alternate failure
+          // path that will be run
+          each ( eventMap[ "or" + key ] || [], function ( callback ) {
+            runCallback ( 
+              callback, 
+              pub.context, 
+              hasvalue ? _opts['value'] : meta.value, 
+              meta );
+          });
+        },
         // Invoke will also get done
         // but it will have no semantic
         // meaning, so it's fine.
@@ -737,15 +748,7 @@ function EvDa (imported) {
 
             if ( ! --times ) { 
               if ( failure ) { 
-                // If the tests fail, then this is the alternate failure
-                // path that will be run
-                each ( eventMap[ "or" + key ] || [], function ( callback ) {
-                  runCallback ( 
-                    callback, 
-                    pub.context, 
-                    hasvalue ? _opts['value'] : meta.value, 
-                    meta );
-                });
+                orHandler();
               } else {
                 // The actual setter gets the real value.
                 //
@@ -753,15 +756,18 @@ function EvDa (imported) {
                 // called before the final setter goes through.
                 if (coroutine(meta, true)) {
                   pub.set ( key, meta.value, meta, {bypass: 1} );
+                } else {
+                  orHandler();
                 }
               }
             } else {
               testIx++;
 
-              if(coroutine) {
-                coroutine(meta, false);
+              if (coroutine(meta, false)) {
+                eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+              } else {
+                orHandler();
               }
-              eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
             }
 
             return ok;
@@ -788,6 +794,8 @@ function EvDa (imported) {
           // This is the test handlers
           if(coroutine(meta, false)) {
             eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+          } else {
+            orHandler();
           }
 
           testLockMap[key] = false;
