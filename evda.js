@@ -2,7 +2,7 @@
 // EvDa Events and Data v1.0
 // https://github.com/kristopolous/EvDa
 //
-// Copyright 2009 - 2014 Chris McKenzie
+// Copyright 2009 - 2015 Chris McKenzie
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
 function EvDa (imported) {
@@ -699,7 +699,7 @@ function EvDa (imported) {
 
       var 
         bypass = _opts['bypass'], 
-        coroutine = _opts['coroutine'],
+        coroutine = _opts['coroutine'] || function(){ return true },
         hasvalue = ('value' in _opts),
         noexec = _opts['noexec'];
 
@@ -751,15 +751,16 @@ function EvDa (imported) {
                 //
                 // if a "coroutine" is set then this will be
                 // called before the final setter goes through.
-                if (coroutine) {
-                  coroutine(meta, true);
+                if (coroutine(meta, true)) {
+                  pub.set ( key, meta.value, meta, {bypass: 1} );
                 }
-
-                pub.set ( key, meta.value, meta, {bypass: 1} );
               }
             } else {
               testIx++;
-              coroutine(meta, false);
+
+              if(coroutine) {
+                coroutine(meta, false);
+              }
               eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
             }
 
@@ -785,8 +786,9 @@ function EvDa (imported) {
           testLockMap[key] = true;
 
           // This is the test handlers
-          coroutine(meta, false);
-          eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+          if(coroutine(meta, false)) {
+            eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+          }
 
           testLockMap[key] = false;
         }
@@ -803,10 +805,11 @@ function EvDa (imported) {
 
         // if there's a coroutine then we call that
         // here
-        if (coroutine) {
-          coroutine(meta, true);
-          value = meta.value;
+        if (!coroutine(meta, true)) {
+          return result;
         }
+
+        value = meta.value;
 
         // Set the key to the new value.
         // The old value is being passed in
@@ -946,6 +949,7 @@ function EvDa (imported) {
             if(isFinal) {
               meta.value = meta.set; 
             }
+            return (before.length != meta.set.length);
           }
         });
       }
