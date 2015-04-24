@@ -163,6 +163,7 @@ function EvDa (imported) {
     FIRST = 'first',
     ON = 'on',
     AFTER = 'after',
+    typeList = [FIRST, ON, AFTER, 'test', 'or'],
 
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
@@ -179,7 +180,6 @@ function EvDa (imported) {
 
     // the backlog to execute if something is paused.
     backlog = [],
-    setterMap = {},
     globberMap = {},
     eventMap = {};
 
@@ -205,7 +205,7 @@ function EvDa (imported) {
     var ret = {};
     if(isArray(what)) {
       each(what, function(field) {
-        ret[what] = cback(what);
+        ret[field] = cback(field);
       });
       return ret;
 
@@ -254,7 +254,6 @@ function EvDa (imported) {
     if ( arguments.length === 0 ) {
       return {
         data: data, 
-        setters: setterMap, 
         events: eventMap,
         globs: globberMap
       };
@@ -318,7 +317,7 @@ function EvDa (imported) {
 
   // Register callbacks for
   // test, on, after, and or.
-  each ( [FIRST, ON, AFTER, 'test', 'or'], function ( stage ) {
+  each ( typeList, function ( stage ) {
 
     // register the function
     pub[stage] = function ( key, callback, meta ) {
@@ -409,10 +408,11 @@ function EvDa (imported) {
 
     } 
 
+    var setKey = 'set' + key;
     // If I know how to set this key but
     // I just haven't done it yet, run through
     // that function now.
-    if( setterMap[key] ) {
+    if( eventMap[setKey] ) {
       // If someone explicitly sets the k/v in the setter
       // that is fine, that means this function isn't run.
       //
@@ -421,11 +421,11 @@ function EvDa (imported) {
       // reliably check if the code explicitly set things after the function
       // returns.
       
-      /* var ThisIsWorthless = */ setterMap[key](function(value) {
+      /* var ThisIsWorthless = */ eventMap[setKey](function(value) {
         pub.set.call(pub.context, key, value, meta);
       });
 
-      delete setterMap[key];
+      delete eventMap[setKey];
     }
 
     if ( callback ) {
@@ -489,8 +489,17 @@ function EvDa (imported) {
     list: {},
     isPaused: false,
     db: data,
-    setterMap: setterMap,
-    events: eventMap,
+    events: function(name, type){
+      if(type) {
+        return eventMap[type + name];
+      }
+      if(name) {
+        return smartMap(typeList, function(type) {
+          return eventMap[type + name];
+        });
+      }
+      return eventMap;
+    },
     del: del,
     whenSet: isset,
     isset: isset,
@@ -536,7 +545,7 @@ function EvDa (imported) {
     // Unlike much of the reset of the code,
     // setters have single functions.
     setter: function ( key, callback ) {
-      setterMap[key] = callback;
+      eventMap['set' + key] = callback;
 
       // If I am setting a setter and
       // a function is already waiting on it,
