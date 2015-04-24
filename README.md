@@ -309,7 +309,8 @@ The set functions are convenience wrappers on top of the basic value-based funct
 few differences:
 
  * The value that is passed to the handlers of the set functions is the value to be added or deleted.
- * The value of the entire set is still available (and modifiable in the testers) via meta.value
+ * The value of the entire set is still available (and modifiable in the testers) via meta.set.
+ * Alternatively just the value of meta.value can be modified before the set-inclusion rules are actually applied.
 
 <h4><a name="setadd"></a>[set] .setAdd(key, value, meta)</h4>
 

@@ -978,12 +978,33 @@ module("Tests");
   });
 
   test("Setadd testing of the value", function() {
+    expect(2);
     var ev = EvDa();
 
     ev.setAdd('key', 1);
     ev.test('key', function(value, meta) {
-      equal(meta.value.join(''), '12', 'key is correct');
       equal(value, 2, 'individual value is correct');
+      meta(true);
+    });
+    ev('key', function(value) {
+      equal(value.join(''), '12', "proper value passed");
+    });
+    
+    ev.setAdd('key', 2);
+  });
+
+  test("Setadd mutable value", function() {
+    expect(2);
+    var ev = EvDa();
+
+    ev.setAdd('key', 1);
+    ev.test('key', function(value, meta) {
+      equal(value, 2, 'individual value is correct');
+      meta.value = 3;
+      meta(true);
+    });
+    ev('key', function(value) {
+      equal(value.join(''), '13', "proper value passed");
     });
     
     ev.setAdd('key', 2);
