@@ -690,6 +690,7 @@ function EvDa (imported) {
 
       var 
         bypass = _opts['bypass'], 
+        coroutine = _opts['coroutine'],
         hasvalue = ('value' in _opts),
         noexec = _opts['noexec'];
 
@@ -737,8 +738,8 @@ function EvDa (imported) {
                 //
                 // if a "coroutine" is set then this will be
                 // called before the final setter goes through.
-                if (opts['coroutine']) {
-                  opts['coroutine'](meta);
+                if (coroutine) {
+                  coroutine(meta);
                 }
 
                 pub.set ( key, meta.value, meta, {bypass: 1} );
@@ -782,6 +783,13 @@ function EvDa (imported) {
         each ( pub.traceList, function ( callback ) {
           callback.call ( pub.context, args );
         });
+
+        // if there's a coroutine then we call that
+        // here
+        if (coroutine) {
+          coroutine(meta);
+          value = meta.value;
+        }
 
         // Set the key to the new value.
         // The old value is being passed in
@@ -904,16 +912,22 @@ function EvDa (imported) {
       // If what we are getting in is an array then
       // we can concat the array, otherwise we should
       // wrap it.
-      value = isArray(value) ? value : [value];
 
       var 
+        valueArr = isArray(value) ? value : [value];
         before = data[key] || [],
-        after = uniq( before.concat(value) );
+        after = uniq( before.concat(valueArr) );
 
       // If we are successfully adding to the set
       // then we run the events associated with it.
       if ( before.length != after.length) {
-        return pub ( key, after, meta, {value: value} );
+        return pub( key, value, meta, {
+          // this is only called if the tests pass
+          coroutine: function(meta) {
+            var valArray = isArray(meta.value) ? meta.value : [meta.value];
+            meta.value = uniq( (meta.old || []).concat(valArray) );
+          }
+        });
       }
 
       return after;
