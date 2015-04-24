@@ -759,7 +759,7 @@ function EvDa (imported) {
               }
             } else {
               testIx++;
-              eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : value, meta );
+              eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : meta.value, meta );
             }
 
             return ok;
@@ -784,7 +784,7 @@ function EvDa (imported) {
           testLockMap[key] = true;
 
           // This is the test handlers
-          eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : value, meta );
+          eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : meta.value, meta );
 
           testLockMap[key] = false;
         }
