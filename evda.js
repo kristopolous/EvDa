@@ -911,29 +911,31 @@ function EvDa (imported) {
     // This an M*N cost set-add that preserves list 
     // ordinality
     osetadd: function ( key, value, meta ) {
-      // If what we are getting in is an array then
-      // we can concat the array, otherwise we should
-      // wrap it.
-      value = isArray(value) ? value : [value];
-
-      var 
-        before = data[key] || [],
-        after = clone(before);
-
-      each(value, function(what) {
-        if(after.indexOf(what) == -1) {
-          after.push(what);
-        }
-      });
+      var before = data[key] || [];
 
       // If we are successfully adding to the set
       // then we run the events associated with it.
-      if ( before.length != after.length) {
-        return pub ( key, after, meta, {value: value} );
-      }
+      return pub ( key, value, meta, {
+        coroutine: function(meta, isFinal) {
+          var valArray = isArray(meta.value) ? meta.value : [meta.value];
 
-      return after;
+          meta.set = clone(before);
+
+          each(valArray, function(what) {
+            if(meta.set.indexOf(what) == -1) {
+              meta.set.push(what);
+            }
+          });
+
+          if(isFinal) {
+            meta.value = meta.set; 
+          }
+
+          return (before.length != meta.set.length);
+        }
+      });
     },
+
     // This is a sort + M complexity version that
     // doesn't perserve ordinality.
     setadd: function ( key, value, meta ) {
@@ -941,28 +943,21 @@ function EvDa (imported) {
       // we can concat the array, otherwise we should
       // wrap it.
 
-      var 
-        valueArr = isArray(value) ? value : [value];
-        before = data[key] || [],
-        after = uniq( before.concat(valueArr) );
+      var before = data[key] || [];
 
-      // If we are successfully adding to the set
-      // then we run the events associated with it.
-      if ( before.length != after.length) {
-        return pub( key, value, meta, {
-          // this is only called if the tests pass
-          coroutine: function(meta, isFinal) {
-            var valArray = isArray(meta.value) ? meta.value : [meta.value];
-            meta.set = uniq( (meta.old || []).concat(valArray) );
-            if(isFinal) {
-              meta.value = meta.set; 
-            }
-            return (before.length != meta.set.length);
+      return pub( key, value, meta, {
+        // this is only called if the tests pass
+        coroutine: function(meta, isFinal) {
+          var valArray = isArray(meta.value) ? meta.value : [meta.value];
+          meta.set = uniq( before.concat(valArray) );
+
+          if(isFinal) {
+            meta.value = meta.set; 
           }
-        });
-      }
 
-      return after;
+          return (before.length != meta.set.length);
+        }
+      });
     },
 
     setdel: function ( key, value, meta ) {
