@@ -494,7 +494,7 @@ function EvDa (imported) {
         return eventMap[type + name];
       }
       if(name) {
-        return smartMap(typeList, function(type) {
+        return smartMap(typeList.concat(['set']), function(type) {
           return eventMap[type + name];
         });
       }
