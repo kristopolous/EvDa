@@ -149,8 +149,8 @@ Syntax notations:
 
 ##### Stacks
 
- * <a href="#push">[array] .push(key, value)</a> - push a value on a stack at `key`
- * <a href="#pop">[value] .pop(key)</a> - pop a value off a stack at `key`
+ * <a href="#push">[array] .push(key, value &lt;, meta &gt; )</a> - push a value on a stack at `key`
+ * <a href="#pop">[value] .pop(key &lt;, meta &gt; )</a> - pop a value off a stack at `key`
 
 ##### Sets
 
@@ -291,13 +291,13 @@ expect it to do.  For instance:
 
 #### Stacks
 
-<h4><a name="push"></a>[array] .push(key, value)</h4>
+<h4><a name="push"></a>[array] .push(key, value &lt;, meta &gt; )</h4>
 
  * Pushes value to the end of key, which must take the push operation (aka, initialized as an array).  
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
-<h4><a name="pop"></a>[value] .pop(key)</h4>
+<h4><a name="pop"></a>[value] .pop(key &lt;, meta &gt; )</h4>
 
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
