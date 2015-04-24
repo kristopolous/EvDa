@@ -395,6 +395,7 @@ To duplicate functionality.
  * The return value of the callback that is passed in passed through the test function.
  * The value of `meta.value` cascades down through the test suite as the value to be 
  tested and eventually the value to be set. This means it is mutable.
+ * Tests are run in order based on the successful call of a `lambda` from the last test.  This allows for an asynchronous cascading of middleware and mutation of data.
 
 Example:
 

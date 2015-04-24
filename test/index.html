@@ -965,6 +965,23 @@ module("Tests");
 
   });
 
+  test("Set a value to a key, wait a bit before going to the next", function(){
+    var ev = EvDa(), now = +new Date();
+
+    ev.test('key', function(v, meta) {
+      setTimeout(function(){
+        meta(true);
+      }, 500);
+    });
+
+    ev.test('key', function(){ 
+      var toTest = +new Date();
+      equal(toTest - now > 400, true, "test was delayed");
+    });
+
+    ev('key', 1);
+  });
+
   test("Set a value to a key, register a test, change the value in the test", function(){
     var ev = EvDa();
 
@@ -1377,6 +1394,7 @@ module("Defining a setter");
 
 });
 module("Miscellaneous");
+
   test("Reordering of setters", function(){
     expect(2);
     var ev = EvDa(), counter = 0;

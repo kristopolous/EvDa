@@ -721,6 +721,10 @@ function EvDa (imported) {
         result,
         args = slice.call(arguments),
         times = size(eventMap[ testKey ]),
+
+        // Tests are run sequentially, not
+        // in parallel.
+        testIx = 0,
         doTest = (times && !bypass),
         failure,
 
@@ -753,7 +757,11 @@ function EvDa (imported) {
 
                 pub.set ( key, meta.value, meta, {bypass: 1} );
               }
+            } else {
+              testIx++;
+              eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : value, meta );
             }
+
             return ok;
           }
         ) : {};
@@ -776,9 +784,7 @@ function EvDa (imported) {
           testLockMap[key] = true;
 
           // This is the test handlers
-          each ( eventMap[ testKey ], function ( callback ) {
-            callback.call ( pub.context, hasvalue ? _opts['value'] : value, meta );
-          });
+          eventMap[ testKey ][ testIx ].call ( pub.context, hasvalue ? _opts['value'] : value, meta );
 
           testLockMap[key] = false;
         }
