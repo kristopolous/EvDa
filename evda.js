@@ -698,6 +698,7 @@ function EvDa (imported) {
       _opts = _opts || {};
 
       var 
+        res,
         bypass = _opts['bypass'], 
         coroutine = _opts['coroutine'] || function(){ return true },
         hasvalue = ('value' in _opts),
@@ -764,8 +765,10 @@ function EvDa (imported) {
               testIx++;
 
               if (coroutine(meta, false)) {
-                if (true === eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta )) {
-                  meta();
+                res = eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+
+                if(res === true || res === false) {
+                  meta(res);
                 }
               } else {
                 orHandler();
@@ -795,8 +798,10 @@ function EvDa (imported) {
 
           // This is the test handlers
           if(coroutine(meta, false)) {
-            if (true === eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta )) {
-              meta();
+            res = eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+
+            if(res === true || res === false) {
+              meta(res);
             }
           } else {
             orHandler();

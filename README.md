@@ -188,12 +188,11 @@ Syntax notations:
 
 #### Miscellaneous
 
- * <a href="#events">[object] .events(key, type)</a> - The registered events to (re)order them.
+ * <a href="#events">[object] .events( &lt; key, type &gt; )</a> - The registered events to (re)order them.
  * <a href="#db">[object] .db</a> - The current database.
  * <a href="#settermap">[object] .setterMap</a> - All the setters.
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger.
  * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers.
-
 
 ### Manipulation
 
@@ -335,6 +334,7 @@ few differences:
 
  * Creates key if it doesn't exist, as an array
  * Adds value to the array if it's not already there.
+ * If value is an `array` then it gets flattened and appended.
  * If the set is not modified, events aren't run.
  * Returns set.
 
@@ -426,7 +426,15 @@ Example:
 
 <h4><a name="or"></a>[handle] .or(key, lambda ( value, { key, old, result, meta } ))</h4>
 
-  * Runs if a `test` is registered and the test fails
+  * Runs if a `test` is registered and the test suite fails
+
+Example:
+
+    ev.test('key', function(val, meta){
+      meta(false);
+    }).or('key', function(val) {
+      console.log("failure");
+    });
 
 <h4><a name="when"></a>[handle] .when(key, value | test | eval string, lambda)</h4>
 
@@ -456,7 +464,6 @@ This model above helps handle multiple dependencies where each one takes on a sp
  * Returns whether it was run immediately or not.
  * Useful for asynchronous operations, such as a login screen; wherein you only
    want to give it to the user when applicable
- * The list of setters are in `ev.setterMap`
  * The lambda function may have a function that it runs when its ready.  That's to say something like this:
 
       `ev.setter("username", function(done) {
@@ -550,10 +557,6 @@ This model above helps handle multiple dependencies where each one takes on a sp
 <h4><a name="db"></a>.db</h4>
 
  * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
-
-<h4><a name="settermap"></a>.setterMap</h4>
-
- * The map of K/V setters
 
 <h4><a name="events"></a>.events(name, type)</h4>
 
