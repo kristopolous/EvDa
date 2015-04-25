@@ -395,7 +395,7 @@ To duplicate functionality.
  * If the test succeeds, then the function may either 
    * call a supplied callback function, named `result` and supplied in an object in the second argument. Calling the function with anything
    other then the boolean false signals that the check succeeded. That means that calling `.result()` means "go ahead".
-   * or return the boolean `true`.
+   * or return the boolean `true`. (you can return a boolean of `false` to represent test failure).
    * also, `.result()` is aliased to `.done()` and can also be invoked by calling the object, as in `function(val, meta) { meta() }`.
  * The return value of the callback that is passed in passed through the test function.
  * The value of `meta.value` cascades down through the test suite as the value to be 
