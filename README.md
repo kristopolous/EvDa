@@ -456,6 +456,38 @@ This model above helps handle multiple dependencies where each one takes on a sp
 <h4><a name="del"></a>[void] .del(handle)</h4>
 
  * Deregisters a hooked function from running.
+ * Can be called inside the function itself.
+
+Example:
+
+    var 
+      ev = EvDa(),
+      handle = ev('key', function(value) { 
+        console.log(value);
+      });
+
+    ev('key', 1);
+
+    ev.del(handle);
+
+    ev('key', 2); << this will not be run.
+
+Inline example:
+
+    var ev = EvDa();
+
+    ev('key', function(value) { 
+      console.log(value);
+
+      if(value == 1) {
+        // Using the callee reference works as
+        // a valid way to deregister the function.
+        ev.del(arguments.callee);
+      }
+    });
+
+    ev('key', 1);
+    ev('key', 2); << this will not be run.
 
 <h4><a name="setter"></a>[bolean] .setter(key, lambda)</h4>
 
