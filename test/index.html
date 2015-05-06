@@ -641,6 +641,24 @@ module("Callbacks on set");
     ev('key', 'value', 'meta');
   });
 
+  test("register a callback, pass meta object information after a test", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.test('key', function(){
+      return true;
+    });
+
+    ev('key', function(value, meta) {
+      equal(meta.meta.one, true, 'meta info correct');
+    });
+    ev('key', function(value, meta) {
+      equal(meta.meta.one, true, 'meta info correct');
+    });
+
+    ev('key', 'value', {one: true});
+  });
+
   test("register a callback, pass meta object information", function(){
     expect(1);
     var ev = EvDa();
