@@ -751,12 +751,25 @@ function EvDa (imported) {
               if ( failure ) { 
                 orHandler();
               } else {
+
+                //
                 // The actual setter gets the real value.
                 //
-                // if a "coroutine" is set then this will be
+                // If a "coroutine" is set then this will be
                 // called before the final setter goes through.
+                //
                 if (coroutine(meta, true)) {
-                  pub.set ( key, meta.value, meta, {bypass: 1} );
+
+                  //
+                  // Since the setter normally wraps the meta through a layer
+                  // of indirection and we have done that already, we need
+                  // to pass the meta this time as the wrapped version.
+                  //
+                  // Otherwise the calling convention of the data getting
+                  // passed through would magically change if a test gets
+                  // placed in the chain.
+                  //
+                  pub.set ( key, meta.value, meta.meta, {bypass: 1} );
                 } else {
                   orHandler();
                 }
@@ -798,7 +811,11 @@ function EvDa (imported) {
 
           // This is the test handlers
           if(coroutine(meta, false)) {
-            res = eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta );
+            res = eventMap[ testKey ][ testIx ].call ( 
+              pub.context, 
+              (hasvalue ? _opts['value'] : meta.value), 
+              meta
+            );
 
             if(res === true || res === false) {
               meta(res);
@@ -809,6 +826,8 @@ function EvDa (imported) {
 
           testLockMap[key] = false;
         }
+
+        //
         // Don't return the value...
         // return the current value of that key.
         // 
@@ -820,7 +839,7 @@ function EvDa (imported) {
           callback.call ( pub.context, args );
         });
 
-        // if there's a coroutine then we call that
+        // If there's a coroutine then we call that
         // here
         if (!coroutine(meta, true)) {
           return result;
@@ -875,11 +894,14 @@ function EvDa (imported) {
     },
 
     once: function ( key, lambda, meta ) {
-      // permit once to take a bunch of callbacks and mark
-      // them all for one time
+       
+      //
+      // Permit once to take a bunch of callbacks and mark
+      // them all for one time.
       //
       // if we have a 'smart map' then we actually only care
-      // about the values of it
+      // about the values of it.
+      //
       if ( isObject(key) ) {
         key = values(key);
       }
@@ -897,6 +919,7 @@ function EvDa (imported) {
           // Then we call the once with the 
           // handle, returning here
           pub ( key, lambda, meta )
+
           // And running the function below:
         );
       } 
@@ -991,7 +1014,7 @@ function EvDa (imported) {
       each(arguments, function(which) {
         bool &= (which in data);
 
-        // this bubbling is totally slow but it works
+        // This bubbling is totally slow but it works
         var 
           parts = which.split('.'), 
           key = '', 
