@@ -883,7 +883,7 @@ module("when");
   });
 
 module("Deletion of callbacks");
-  test("register a one time callback, set twice", function(){
+  test("register a callback, delete & set twice", function(){
     expect(1);
     var ev = EvDa(), cb;
 
@@ -893,6 +893,19 @@ module("Deletion of callbacks");
 
     ev('key', 'value1');
     ev.del(cb);
+    ev('key', 'value3');
+  });
+
+  test("register a callback, inline delete & set twice", function(){
+    expect(1);
+    var ev = EvDa(), cb;
+
+    cb = ev('key', function(value) {
+      ev.del(arguments.callee);
+      equal(value, 'value1', 'Callback triggered');
+    });
+
+    ev('key', 'value1');
     ev('key', 'value3');
   });
 
