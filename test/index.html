@@ -882,6 +882,21 @@ module("when");
     ev('key',"value");
   });
 
+module("Deletion of callbacks");
+  test("register a one time callback, set twice", function(){
+    expect(1);
+    var ev = EvDa(), cb;
+
+    cb = ev('key', function(value) {
+      equal(value, 'value1', 'Callback triggered');
+    });
+
+    ev('key', 'value1');
+    ev.del(cb);
+    ev('key', 'value3');
+  });
+
+
 module("Onetime callbacks on set");
   test("register a one time callback, set twice", function(){
     expect(1);
