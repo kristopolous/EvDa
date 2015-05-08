@@ -249,8 +249,6 @@ function EvDa (imported) {
   // as a function, this is what gets run.
   function pub ( scope, value, meta, opts ) {
 
-    opts = opts || {};
-
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
     if ( arguments.length === 0 ) {
@@ -280,10 +278,19 @@ function EvDa (imported) {
     if( isObject(scope) ) {
       var ret = {};
 
-      opts.noexec = 1;
+      //
       // Object style should be executed as a transaction
       // to avoid ordinals of the keys making a substantial
-      // difference in the existence of the values
+      // difference in the existence of the values.
+      //
+      // Also under an object style assignment passing, the
+      // ordering of the arguments is naturally one off -
+      // excluding the value ... this means that we cascade
+      // down.
+      opts = meta || {};
+      meta = value;
+      opts.noexec = 1;
+
       each( scope, function( _key, _value ) {
         ret[_key] = pub ( _key, _value, meta, opts );
       });
