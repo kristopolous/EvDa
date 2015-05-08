@@ -175,6 +175,7 @@ function EvDa (imported) {
 
     // Internals
     data = imported || {},
+    data_ix = {},
 
     insideTest = false,
 
@@ -708,6 +709,10 @@ function EvDa (imported) {
       );
     },
 
+    count: function(key) {
+      return data_ix[key];
+    },
+
     set: function (key, value, _meta, _opts) {
       _opts = _opts || {};
 
@@ -861,10 +866,13 @@ function EvDa (imported) {
 
         value = meta.value;
 
+        //
         // Set the key to the new value.
         // The old value is being passed in
         // through the meta
+        //
         data[key] = value;
+        data_ix[key] = (data_ix[key] || 0) + 1;
 
         var myargs = arguments, cback = function(){
           each(
@@ -884,6 +892,7 @@ function EvDa (imported) {
             function(callback) {
               meta.last = runCallback(callback, pub.context, value, meta);
             });
+
           return value;
         }
 
