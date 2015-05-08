@@ -711,7 +711,7 @@ function EvDa (imported) {
 
     count: function(key) {
       if(arguments.length === 0) {
-        return Math.max.apply(this, data_ix);
+        return Math.max.apply(this, values(data_ix));
       } else {
         return data_ix[key];
       }
