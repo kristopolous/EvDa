@@ -271,42 +271,44 @@ function EvDa (imported) {
         return pub.apply(pub.context, [which].concat(args));
       });
     }
-    if ( arguments.length == 1 ) {
 
-      // The object style invocation will return
-      // handles associated with all the keys that
-      // went in. There *could* be a mix and match
-      // of callbacks and setters, but that would
-      // be fine I guess...
-      if( isObject(scope) ) {
-        var ret = {};
+    // The object style invocation will return
+    // handles associated with all the keys that
+    // went in. There *could* be a mix and match
+    // of callbacks and setters, but that would
+    // be fine I guess...
+    if( isObject(scope) ) {
+      var ret = {};
 
-        opts.noexec = 1;
-        // Object style should be executed as a transaction
-        // to avoid ordinals of the keys making a substantial
-        // difference in the existence of the values
-        each( scope, function( _key, _value ) {
-          ret[_key] = pub ( _key, _value, meta, opts );
+      opts.noexec = 1;
+      // Object style should be executed as a transaction
+      // to avoid ordinals of the keys making a substantial
+      // difference in the existence of the values
+      each( scope, function( _key, _value ) {
+        ret[_key] = pub ( _key, _value, meta, opts );
+      });
+
+      // After the callbacks has been bypassed, then we
+      // run all of them a second time, this time the
+      // dependency graphs from the object style transactional
+      // invocation should be satisfied
+      if(!opts.bypass) {
+        each( ret, function( _key, _value ) {
+          if(isFunction(ret[_key]) && !isFunction(scope[_key])) {
+            scope[_key] = ret[_key]();
+          }
         });
-
-        // After the callbacks has been bypassed, then we
-        // run all of them a second time, this time the
-        // dependency graphs from the object style transactional
-        // invocation should be satisfied
-        if(!opts.bypass) {
-          each( ret, function( _key, _value ) {
-            if(isFunction(ret[_key]) && !isFunction(scope[_key])) {
-              scope[_key] = ret[_key]();
-            }
-          });
-        }
-
-        // TODO: fix this
-        bubble( keys(ret)[0] );
-
-        return scope;
       }
 
+      // TODO: fix this
+      bubble( keys(ret)[0] );
+
+      return scope;
+    }
+
+    // This will return all the handlers associated with
+    // this event.
+    if ( arguments.length == 1 ) {
       return smartMap(scope, resolve);
     } 
 
