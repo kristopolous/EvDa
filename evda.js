@@ -710,7 +710,11 @@ function EvDa (imported) {
     },
 
     count: function(key) {
-      return data_ix[key];
+      if(arguments.length === 0) {
+        return Math.max.apply(this, data_ix);
+      } else {
+        return data_ix[key];
+      }
     },
 
     set: function (key, value, _meta, _opts) {
