@@ -247,7 +247,9 @@ function EvDa (imported) {
   // This is the main invocation function. After
   // you declare an instance and call that instance
   // as a function, this is what gets run.
-  function pub ( scope, value, meta ) {
+  function pub ( scope, value, meta, opts ) {
+
+    opts = opts || {};
 
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
@@ -279,22 +281,25 @@ function EvDa (imported) {
       if( isObject(scope) ) {
         var ret = {};
 
+        opts.noexec = 1;
         // Object style should be executed as a transaction
         // to avoid ordinals of the keys making a substantial
         // difference in the existence of the values
         each( scope, function( _key, _value ) {
-          ret[_key] = pub ( _key, _value, meta, {noexec: 1} );
+          ret[_key] = pub ( _key, _value, meta, opts );
         });
 
         // After the callbacks has been bypassed, then we
         // run all of them a second time, this time the
         // dependency graphs from the object style transactional
         // invocation should be satisfied
-        each( ret, function( _key, _value ) {
-          if(isFunction(ret[_key]) && !isFunction(scope[_key])) {
-            scope[_key] = ret[_key]();
-          }
-        });
+        if(!opts.bypass) {
+          each( ret, function( _key, _value ) {
+            if(isFunction(ret[_key]) && !isFunction(scope[_key])) {
+              scope[_key] = ret[_key]();
+            }
+          });
+        }
 
         // TODO: fix this
         bubble( keys(ret)[0] );
