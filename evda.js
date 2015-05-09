@@ -875,38 +875,41 @@ function EvDa (imported) {
         // The old value is being passed in
         // through the meta
         //
-        data[key] = value;
-        data_ix[key] = (data_ix[key] || 0) + 1;
+        if(!(_opts.onlychange && value === data[key])) {
 
-        var myargs = arguments, cback = function(){
-          each(
-            (eventMap[FIRST + key] || []).concat(
-              (eventMap[ON + key] || [])
-            ),
-            function(callback) {
-              meta.last = runCallback(callback, pub.context, value, meta);
-            });
+          data[key] = value;
+          data_ix[key] = (data_ix[key] || 0) + 1;
 
-          // After this, we bubble up if relevant.
-          if(key.length > 0) {
-            bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
+          var myargs = arguments, cback = function(){
+            each(
+              (eventMap[FIRST + key] || []).concat(
+                (eventMap[ON + key] || [])
+              ),
+              function(callback) {
+                meta.last = runCallback(callback, pub.context, value, meta);
+              });
+
+            // After this, we bubble up if relevant.
+            if(key.length > 0) {
+              bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
+            }
+
+            each(eventMap[AFTER + key] || [],
+              function(callback) {
+                meta.last = runCallback(callback, pub.context, value, meta);
+              });
+
+            return value;
           }
 
-          each(eventMap[AFTER + key] || [],
-            function(callback) {
-              meta.last = runCallback(callback, pub.context, value, meta);
-            });
-
-          return value;
-        }
-
-        if(!noexec) {
-          result = cback.call(pub.context);
-        } else {
-          // if we are not executing this, then
-          // we return a set of functions that we
-          // would be executing.
-          result = cback;
+          if(!noexec) {
+            result = cback.call(pub.context);
+          } else {
+            // if we are not executing this, then
+            // we return a set of functions that we
+            // would be executing.
+            result = cback;
+          }
         }
       } 
 
