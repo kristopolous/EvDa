@@ -292,8 +292,6 @@ function EvDa (imported) {
       meta = value;
       opts.noexec = 1;
 
-      value = data_ix[''] || 0;
-
       each( scope, function( _key, _value ) {
         ret[_key] = pub ( _key, _value, meta, opts );
       });
@@ -312,8 +310,6 @@ function EvDa (imported) {
 
       // TODO: fix this
       bubble( keys(ret)[0] );
-
-      data_ix[''] = value + 1;
 
       return scope;
     }
@@ -882,7 +878,10 @@ function EvDa (imported) {
         if(!(_opts.onlychange && value === data[key])) {
 
           data[key] = value;
-          data_ix[key] = (data_ix[key] || 0) + 1;
+
+          if(key != '') {
+            data_ix[key] = (data_ix[key] || 0) + 1;
+          }
 
           var myargs = arguments, cback = function(){
             each(
