@@ -877,10 +877,12 @@ function EvDa (imported) {
         //
         if(!(_opts.onlychange && value === data[key])) {
 
-          data[key] = value;
+          if(!_opts.noset) {
+            data[key] = value;
 
-          if(key != '') {
-            data_ix[key] = (data_ix[key] || 0) + 1;
+            if(key != '') {
+              data_ix[key] = (data_ix[key] || 0) + 1;
+            }
           }
 
           var myargs = arguments, cback = function(){
@@ -922,8 +924,8 @@ function EvDa (imported) {
       return result;
     },
 
-    fire: function ( key ) {
-      pub.set ( key, data[key] );
+    fire: function ( key, meta ) {
+      pub.set ( key, data[key], meta, {noset: true} );
     },
 
     once: function ( key, lambda, meta ) {

@@ -177,7 +177,7 @@ Syntax notations:
  * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**.
  * <a href="#pause">[boolean] pause()</a> - stop running callbacks
  * <a href="#play">[boolean] play()</a> - run the aggregate callbacks
- * <a href="#fire">[void] fire(key)</a> - runs the setter mechanics without changing any values
+ * <a href="#fire">[void] fire(key &lt;, meta &gt; )</a> - runs the setter mechanics without changing any values
 
 ##### Grouping
 
@@ -239,6 +239,8 @@ Looking at the last style, one can do the following:
    * value: a value to be passed to the setters and the callbacks which may be different from the actual value set.
    * bypass: if set, bypasses any test conditions when running a setter
    * noexec: if set, disables all callbacks from being fired when settings.
+   * noset: if set, doesn't set any value.
+   * onlychange: if set, only run callbacks if something is changed.
    * coroutine: `function(meta, isFinal)` if set, this is a function that gets passed the meta object before each test and prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations perhaps done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
    If `isFinal` is true then it means this is the last call prior to being set.
    the `meta.value` at the end of the coroutine function is the one that will be sent to the `after` and `on` listeners - in this sense is more of a middleware than a knuthian coroutine - but since its passed as a lambda during the actual set as opposed to a decoupled listener, the flow of control more closely resembles that of a coroutine than a middleware stack.
@@ -545,10 +547,10 @@ Inline example:
  * Sets the new key/value pairs in a bulk execution - ignoring the interim values since the pause()
  * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
-<h4><a name="fire"></a>[void] .fire(key)</h4>
+<h4><a name="fire"></a>[void] .fire(key &lt;, key &gt; )</h4>
 
  * Runs the setter mechanics without changing any values.
- * Equivalent to `ev.set(key, ev(key))`.
+ * Equivalent to `ev.set(key, ev(key), {noset: true})`.
 
 #### Grouping
 
