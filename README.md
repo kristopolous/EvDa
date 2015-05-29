@@ -455,6 +455,8 @@ Example:
    `
 This model above helps handle multiple dependencies where each one takes on a specific value.
 
+If invoked as `.when(key, lambda)` then this works identical to an `.isset()` so long as the key isn't an object.
+
 <h4><a name="del"></a>[void] .del(handle)</h4>
 
  * Deregisters a hooked function from running.
