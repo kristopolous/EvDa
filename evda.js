@@ -622,6 +622,8 @@ function EvDa (imported) {
 
           toTest = attempt;
         } catch (ex) { }
+      } else if ( arguments.length == 2 ) {
+        return pub.isset ( key, toTest );
       }
 
       return pub(key, function(value) {
