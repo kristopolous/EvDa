@@ -830,6 +830,19 @@ module("when");
     ev('key1', 1);
   });
 
+  test("2 arg run if an object is set - type checking true case", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.when('key', function(what){
+      equal(true,true, "ran");
+    });
+
+    // this is a valid state
+    ev('key1', true);
+    ev('key2', false);
+  });
+
   test("run if an object is set - type checking true case", function(){
     expect(1);
     var ev = EvDa();
