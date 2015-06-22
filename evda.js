@@ -339,7 +339,7 @@ function EvDa (imported) {
 
       // if it's an array, then we register each one
       // individually.
-      if(_.isArray(callback)) {
+      if(isArray(callback)) {
         // take everything after the first two arguments
         var args = slice.call(arguments, 2);
         
