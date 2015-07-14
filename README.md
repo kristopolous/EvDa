@@ -157,6 +157,7 @@ Syntax notations:
  * <a href="#setadd">[set] .setAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key`
  * <a href="#osetadd">[set] .osetAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key` maintaining the order.
  * <a href="#setdel">[set] .setDel(key, value &lt;, meta &gt; )</a> - delete value from a set at `key`
+ * <a href="#settoggle">[set] .setToggle(key, value &lt;, meta &gt; )</a> - toggle the membership of a value in a set at `key`
 
 ##### Values
 
@@ -348,6 +349,14 @@ few differences:
 
  * Creates key if it doesn't exist, as an array
  * Removes value from the set if it is there.
+ * If the set is not modified, events aren't run.
+ * Returns set.
+
+<h4><a name="settoggle"></a>[set] .setToggle(key, value &lt;, meta &gt; )</h4>
+
+ * Creates key if it doesn't exist, as an array
+ * Removes value from the set if it is there.
+ * Adds value to the set if it is not there.
  * If the set is not modified, events aren't run.
  * Returns set.
 

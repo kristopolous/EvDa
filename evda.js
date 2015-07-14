@@ -1030,11 +1030,8 @@ function EvDa (imported) {
     },
 
     settoggle: function ( key, value, meta ) {
-      console.log(key, data[key], value, (data[key] || []).indexOf(value) === -1);
-      return pub['set' + 
-        ((data[key] || []).indexOf(value) === -1) ? 
-        'add' : 'del'
-      ]( key, value, meta );
+      var routine = ((data[key] || []).indexOf(value) === -1) ? 'add' : 'del';
+      return pub['set' + routine](key, value, meta);
     },
 
     setdel: function ( key, value, meta ) {
