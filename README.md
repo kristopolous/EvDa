@@ -164,11 +164,11 @@ Syntax notations:
 
 #### Miscellaneous
 
- * <a href="#events">[object] .events( &lt; key, type &gt; )</a> - The registered events to (re)order them.
- * <a href="#db">[object] .db</a> - The current database.
- * <a href="#settermap">[object] .setterMap</a> - All the setters.
- * <a href="#sniff">[void] .sniff()</a> - Enable a debugger.
- * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers.
+ * <a href="#events">[object] .events( &lt; key, type &gt; )</a> - The registered events to (re)order them
+ * <a href="#db">[object] .db</a> - The current database
+ * <a href="#settermap">[object] .setterMap</a> - All the setters
+ * <a href="#sniff">[void] .sniff()</a> - Enable a debugger
+ * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers
 
 ### Manipulation
 
@@ -291,11 +291,24 @@ Example:
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
 
+Example:
+
+    ev.push('key', 1);
+    > [1]
+
+    ev.push('key', 2);
+    > [1,2]
+
 <h4><a name="pop"></a>[value] .pop(key &lt;, meta &gt; )</h4>
 
  * Pops a value off the end of the key, which must take the pop operation (aka, initialized as an array).
  * Updates the 'current' pointer to the last item on the array. 
  * Returns the result of the set event.
+
+Example:
+
+    ev.pop('key');
+    > 2
 
 #### Sets
 
@@ -315,6 +328,17 @@ few differences:
  * If value is an `array` then it gets flattened and appended.
  * If the set is not modified, events aren't run.
  * Returns set.
+
+Example:
+
+    ev.setadd('key', 1);
+    > [1]
+
+    ev.setadd('key', 1); << no triggers are run
+    > [1]
+
+    ev.setadd('key', 2);
+    > [1, 2]
 
 <h4><a name="setadd"></a>[set] .osetAdd(key, value &lt;, meta &gt; )</h4>
 
