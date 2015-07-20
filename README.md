@@ -337,10 +337,10 @@ Example:
     ev.setadd('key', 1); << no triggers are run
     > [1]
 
-    ev.setadd('key', 2);
-    > [1, 2]
+    ev.setadd('key', [2, 3]);
+    > [1, 2, 3]
 
-<h4><a name="setadd"></a>[set] .osetAdd(key, value &lt;, meta &gt; )</h4>
+<h4><a name="osetadd"></a>[set] .osetAdd(key, value &lt;, meta &gt; )</h4>
 
  * Identical to `setAdd` but maintains the order of the set at a slight complexity cost.
 
@@ -351,6 +351,15 @@ Example:
  * If the set is not modified, events aren't run.
  * Returns set.
 
+Example:
+
+    ev.setAdd('key', [1, 2, 3]);
+    > [1, 2, 3]
+
+    ev.setDel('key', 2);
+    > [1, 3]
+
+
 <h4><a name="settoggle"></a>[set] .setToggle(key, value &lt;, meta &gt; )</h4>
 
  * Creates key if it doesn't exist, as an array
@@ -358,6 +367,17 @@ Example:
  * Adds value to the set if it is not there.
  * If the set is not modified, events aren't run.
  * Returns set.
+
+Example:
+
+    ev.setAdd('key', 1);
+    > [1]
+
+    ev.setToggle('key', 1);
+    > []
+
+    ev.setToggle('key', 1);
+    > [1]
 
 #### Values
 
@@ -367,11 +387,27 @@ Example:
  * It will initialize the key to the numeric value amount or 1 if it's not a number
  * Returns the result of the set event.
 
+Example:
+
+    ev.incr('key')
+    > 1
+
+    ev.incr('key', 2)
+    > 3
+
 <h4><a name="decr"></a>[number] .decr(key &lt;, amount, meta &gt; )</h4>
 
  * Atomically (in the JS sense) decrements a key's value by an amount or 1 if not specified. 
  * It will initialize the key to the numeric value 0 if it's not a number
  * Returns the result of the set event.
+
+Example:
+
+    ev.decr('key')
+    > 0
+
+    ev.decr('key', 2)
+    > -2 
 
 ### Triggers
 
