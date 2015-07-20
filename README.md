@@ -100,9 +100,7 @@ I still have to know what will load before what; that's what synchronous is. Lik
 
     this.trigger("something"); << OR here, it doesn't matter.
 
-Well, this library does that. It actually does. Fancy that. We aren't just pretending to be asynchronous here and then spending all our time taking instagram like pics for gravatar with a $5,000 camera.
-
-I'm doing actual work. I know, what the fuck, right?
+Well, this library does that. Fancy that. 
 
 ## API
 
@@ -120,9 +118,9 @@ Syntax notations:
 ##### Base
 
  * <a href="#ev">[handle | value] ev(key | hash | array, value | lambda &lt;, meta &gt; )</a> - do all the below
- * <a href="#set">[value] .set(key, value &lt;, meta, _opts &gt; )</a> - set a key
+ * <a href="#set">[value] .set(key, value &lt;, meta, _opts &gt; )</a> - set a `key`
  * <a href="#unset">[boolean] .unset(key &lt;, ... &gt; )</a> - delete a set of keys
- * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a key.
+ * <a href="#extend">[value] .extend(key, obj)</a> - extends the object value of a `key`
 
 ##### Stacks
 
@@ -132,27 +130,27 @@ Syntax notations:
 ##### Sets
 
  * <a href="#setadd">[set] .setAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key`
- * <a href="#osetadd">[set] .osetAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key` maintaining the order.
+ * <a href="#osetadd">[set] .osetAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key` maintaining the order
  * <a href="#setdel">[set] .setDel(key, value &lt;, meta &gt; )</a> - delete value from a set at `key`
  * <a href="#settoggle">[set] .setToggle(key, value &lt;, meta &gt; )</a> - toggle the membership of a value in a set at `key`
 
 ##### Values
 
- * <a href="#incr">[value] .incr(key &lt;, amount, meta &gt; )</a> - increment a key's value - returning the new value.
- * <a href="#decr">[value] .decr(key &lt;, amount, meta &gt; )</a> - decrement a key's value - returning the new value.
+ * <a href="#incr">[value] .incr(key &lt;, amount, meta &gt; )</a> - increment a key's value - returning the new value
+ * <a href="#decr">[value] .decr(key &lt;, amount, meta &gt; )</a> - decrement a key's value - returning the new value
 
 #### Triggers
 
- * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set.
- * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set.
- * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key.
- * <a href="#or">[handle] .or(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run if a test fails.
- * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once.
+ * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set
+ * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set
+ * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key
+ * <a href="#or">[handle] .or(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run if a test fails
+ * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once
  * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) )</a> - run a lambda when a key **is a certain value**
- * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test.
+ * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test
  * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
- * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**.
- * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**.
+ * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**
+ * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**
  * <a href="#pause">[boolean] pause()</a> - stop running callbacks
  * <a href="#play">[boolean] play()</a> - run the aggregate callbacks
  * <a href="#fire">[void] fire(key &lt;, meta &gt; )</a> - runs the setter mechanics without changing any values
