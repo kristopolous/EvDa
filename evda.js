@@ -18,6 +18,7 @@ function EvDa (imported) {
     isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
     isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
     isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
+    isScalar = function(obj) { return isString(obj) || isNumber(obj) },
     isObject = function(obj) {
       if(isFunction(obj) || isString(obj) || isNumber(obj) || isArray(obj)) {
         return false;
@@ -34,7 +35,9 @@ function EvDa (imported) {
 
     each = [].forEach ?
       function (obj, cb) {
-        if (isArray(obj) || obj.length) { 
+        if (isScalar(obj)) {
+          return each([obj], cb);
+        } else if (isArray(obj) || obj.length) { 
           toArray(obj).forEach(cb);
         } else {
           for( var key in obj ) {
@@ -44,7 +47,9 @@ function EvDa (imported) {
       } :
 
       function (obj, cb) {
-        if (isArray(obj)) {
+        if (isScalar(obj)) {
+          return each([obj], cb);
+        } else if (isArray(obj)) {
           for ( var i = 0, len = obj.length; i < len; i++ ) { 
             cb(obj[i], i);
           }
@@ -931,7 +936,9 @@ function EvDa (imported) {
     },
 
     fire: function ( key, meta ) {
-      pub.set ( key, data[key], meta, {noset: true} );
+      each(key, function(what) {
+        pub.set ( key, data[what], meta, {noset: true} );
+      });
     },
 
     once: function ( key, lambda, meta ) {
