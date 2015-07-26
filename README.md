@@ -153,7 +153,7 @@ Syntax notations:
  * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**
  * <a href="#pause">[boolean] pause()</a> - stop running callbacks
  * <a href="#play">[boolean] play()</a> - run the aggregate callbacks
- * <a href="#fire">[void] fire(key &lt;, meta &gt; )</a> - runs the setter mechanics without changing any values
+ * <a href="#fire">[void] fire(key | [ key1, key2, ..., keyn ] &lt;, meta &gt; )</a> - runs the setter mechanics without changing any values
 
 ##### Grouping
 
@@ -593,7 +593,7 @@ Inline example:
  * Sets the new key/value pairs in a bulk execution - ignoring the interim values since the pause()
  * State is held in the .isPaused variable. **Don't set directly** - I trust you ;-)
 
-<h4><a name="fire"></a>[void] .fire(key &lt;, key &gt; )</h4>
+<h4><a name="fire"></a>[void] .fire(key | [ key1, key2, ..., keyn ] &lt;, key &gt; )</h4>
 
  * Runs the setter mechanics without changing any values.
  * Equivalent to `ev.set(key, ev(key), {noset: true})`.
