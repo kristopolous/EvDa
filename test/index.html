@@ -132,6 +132,32 @@ module("OO binding");
     equal(ev('key'), 1, 'cb style setter ran');
   });
 
+module('fire');
+  test("scalar fire", function(){
+    expect(1);
+    var ev = EvDa({key: 1});
+
+    ev('key', function(key, obj){
+      equal(key, 1, "Everything is fine");
+    });
+    ev.fire('key');
+  });
+
+  test("list fire", function(){
+    expect(2);
+    var ev = EvDa({keyA: 1, keyB: 2});
+
+    ev('keyA', function(key, obj){
+      equal(key, 1, "Everything is fine");
+    });
+
+    ev('keyB', function(key, obj){
+      equal(key, 2, "Everything is fine");
+    });
+
+    ev.fire(['keyA', 'keyB']);
+  });
+
 module("empty");
   test("fill in an object and empty it", function() {
     var ev = EvDa();

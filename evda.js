@@ -937,7 +937,7 @@ function EvDa (imported) {
 
     fire: function ( key, meta ) {
       each(key, function(what) {
-        pub.set ( key, data[what], meta, {noset: true} );
+        pub.set ( what, data[what], meta, {noset: true} );
       });
     },
 
