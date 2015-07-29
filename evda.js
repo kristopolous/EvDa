@@ -374,6 +374,7 @@ function EvDa (imported) {
 
       (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
+      //
       // It would be nice to do something like
       // ev('key', function()).after(function(){})
       //
@@ -386,13 +387,26 @@ function EvDa (imported) {
       //
       each(typeList, function (stage) {
 
-        callback[stage] = function() {
-          // the first one will be our key from above
-          var args = slice.call(arguments, 1);
+        callback[stage] = function(am_i_a_function) {
+          // the first argument MAY be our key from above
+          var args;
 
-          // when we do this, this will recursively create another set ...
+          // If this is a function then we inherit our key
+          if(isFunction(am_i_a_function)) {
+            args = [key].concat(slice.call(arguments, 1));
+
+          } else {
+            // However, maybe someone didn't read the documentation closely and is
+            // trying to fuck with us, providing an entirely different set of keys here ...
+            // that bastard.  It's ok, that's what the type-checking was all about. In this
+            // case we just blindly pass everything through
+            args = slice.call(arguments);
+          }
+
+          // When we do this, this will recursively create another set ...
           // well yeah I guess it is recursive in memory space ... but it's at
-          // human depth.
+          // human depth (specificed manually) so we might as well make this a 
+          // candidate for tail recursion.
           return pub[stage].apply(pub.context, args);
         }
       });
