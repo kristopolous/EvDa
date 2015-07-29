@@ -76,6 +76,24 @@ And now running that chain?
 
     ev.fire(['key1','key2']);
 
+That's nice you think, but some libraries will completely make chain functions inaccessible ... for instance
+what if we do this?
+
+    var ret = ev
+      .before('key', fn0)
+      .test(fn1)
+      .on(fn2)
+      .after(fn3);
+
+And then you want to unregister the third one on the list, the "on" function?  Easy! Address it like an array:
+
+    ev.del(ret[2]);
+
+What if you want to repurpose the third function for something else?
+
+    ev('something else', ret[3]);
+
+There you go ... 
 
 Smooth like butta' baby.
 
