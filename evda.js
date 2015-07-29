@@ -168,7 +168,8 @@ function EvDa (imported) {
     FIRST = 'first',
     ON = 'on',
     AFTER = 'after',
-    typeList = [FIRST, ON, AFTER, 'test', 'or'],
+    OR = 'or',
+    typeList = [FIRST, ON, AFTER, 'test', OR],
 
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
@@ -372,6 +373,29 @@ function EvDa (imported) {
       }
 
       (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
+
+      // It would be nice to do something like
+      // ev('key', function()).after(function(){})
+      //
+      // But in order for this to happen you need to proxy the first argument
+      // magically over to a reference set. This isn't that hard actually 
+      // and shouldn't be too expensive (lolz) anyway, a purely prototype-based 
+      // approach would be awesome here but we need to do this functionally so
+      // it's a bit of superfluous code where we cross our fingers and hope nobody
+      // hates us.
+      //
+      each(typeList, function (stage) {
+
+        callback[stage] = function() {
+          // the first one will be our key from above
+          var args = slice.call(arguments, 1);
+
+          // when we do this, this will recursively create another set ...
+          // well yeah I guess it is recursive in memory space ... but it's at
+          // human depth.
+          return pub[stage].apply(pub.context, args);
+        }
+      });
 
       return extend(callback, meta);
     }
@@ -762,7 +786,7 @@ function EvDa (imported) {
         orHandler = function() {
           // If the tests fail, then this is the alternate failure
           // path that will be run
-          each ( eventMap[ "or" + key ] || [], function ( callback ) {
+          each ( eventMap[ OR + key ] || [], function ( callback ) {
             runCallback ( 
               callback, 
               pub.context, 
