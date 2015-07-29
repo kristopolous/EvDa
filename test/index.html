@@ -149,6 +149,47 @@ module('chaining')
 
   });
 
+  test('longer chain', function(){
+    expect(4);
+
+    var ev = EvDa({key: 1}), ix = 0;
+    ev.on('key', function() {
+      equal(ix, 0, "this is run first");
+      ix++;
+    }).after(function(value, meta){
+      equal(value, 1, 'this is run from the right context');
+      equal(ix, 1, "this is run second");
+      ix++;
+    }).after(function(value, meta){
+      equal(ix, 2, "this is run third");
+    });
+
+    ev('key',1);
+
+  });
+
+  test('deregistered chain', function(){
+    expect(2);
+
+    var ev = EvDa({key: 1}), ix = 0;
+
+    var cb = ev.on('key', function() {
+      equal(ix, 0, "this is run first");
+      ix++;
+    }, {meta: 1}).after(function(value, meta){
+      equal(false, true, "this is not run");
+      ix++;
+    }).after(function(value, meta){
+      equal(ix, 1, "this is run second");
+    });
+
+    // So now there should be a second element
+    // in the callback array that we can unregister
+    ev.del(cb[1]);
+
+    ev('key',1);
+  });
+
 module('fire');
   test("scalar fire", function(){
     expect(1);

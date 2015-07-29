@@ -387,24 +387,36 @@ function EvDa (imported) {
       //
       each(typeList, function (stage) {
 
-        callback[stage] = function(am_i_a_function) {
-          // the first argument MAY be our key from above
-          var args = slice.call(arguments);
+        if (!(stage in callback)) {
+          
+          callback[stage] = function(am_i_a_function) {
+            // the first argument MAY be our key from above
+            var args = slice.call(arguments);
 
-          // If this is a function then we inherit our key
-          if(isFunction(am_i_a_function)) {
-            args = [key].concat(args);
-          } 
-          // However, maybe someone didn't read the documentation closely and is
-          // trying to fuck with us, providing an entirely different set of keys here ...
-          // that bastard.  It's ok, that's what the type-checking was all about. In this
-          // case we just blindly pass everything through
+            // If this is a function then we inherit our key
+            if(isFunction(am_i_a_function)) {
+              args = [key].concat(args);
+            } 
+            // However, maybe someone didn't read the documentation closely and is
+            // trying to fuck with us, providing an entirely different set of keys here ...
+            // that bastard.  It's ok, that's what the type-checking was all about. In this
+            // case we just blindly pass everything through
 
-          // When we do this, this will recursively create another set ...
-          // well yeah I guess it is recursive in memory space ... but it's at
-          // human depth (specificed manually) so we might as well make this a 
-          // candidate for tail recursion.
-          return pub[stage].apply(pub.context, args);
+            // Also we want to be clever with the return of the callbacks, since we effectively 
+            // shadow the previous system. As it turns out it doesn't matter how we chain these thing
+            // it just matters what temporal time we register them.  So we make the final callback 
+            // an array like structure.
+            if(! ('len' in callback) ) {
+              // self reference
+              callback[0] = callback;
+              // seed it one past the self-reference minus our incrementer
+              callback.len = 0;
+            }
+            callback.len++;
+            callback[callback.len] = pub[stage].apply(pub.context, args);
+
+            return callback;
+          }
         }
       });
 
