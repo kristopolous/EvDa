@@ -132,6 +132,23 @@ module("OO binding");
     equal(ev('key'), 1, 'cb style setter ran');
   });
 
+module('chaining')
+  test('basic chain', function(){
+    expect(3);
+
+    var ev = EvDa({key: 1}), ix = 0;
+    ev.on('key', function() {
+      equal(ix, 0, "this is run first");
+      ix++;
+    }).after(function(value, meta){
+      equal(value, 1, 'this is run from the right context');
+      equal(ix, 1, "this is run second");
+    });
+
+    ev('key',1);
+
+  });
+
 module('fire');
   test("scalar fire", function(){
     expect(1);

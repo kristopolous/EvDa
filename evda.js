@@ -389,19 +389,16 @@ function EvDa (imported) {
 
         callback[stage] = function(am_i_a_function) {
           // the first argument MAY be our key from above
-          var args;
+          var args = slice.call(arguments);
 
           // If this is a function then we inherit our key
           if(isFunction(am_i_a_function)) {
-            args = [key].concat(slice.call(arguments, 1));
-
-          } else {
-            // However, maybe someone didn't read the documentation closely and is
-            // trying to fuck with us, providing an entirely different set of keys here ...
-            // that bastard.  It's ok, that's what the type-checking was all about. In this
-            // case we just blindly pass everything through
-            args = slice.call(arguments);
-          }
+            args = [key].concat(args);
+          } 
+          // However, maybe someone didn't read the documentation closely and is
+          // trying to fuck with us, providing an entirely different set of keys here ...
+          // that bastard.  It's ok, that's what the type-checking was all about. In this
+          // case we just blindly pass everything through
 
           // When we do this, this will recursively create another set ...
           // well yeah I guess it is recursive in memory space ... but it's at
