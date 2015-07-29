@@ -26,7 +26,58 @@ Along with things that you can do before they are cool. Like this:
     ev.after('key', function() { });
     ev.test('key', function() { return false; });
 
-What do those things do? Read on!
+What about a way to console log whenever anything gets set?
+
+    ev('', function(el){ console.log(el) })
+
+What about setting 2 things to one value?
+
+    ev(['key1', 'key2'], value);
+
+What about having two callbacks for this?
+
+    ev({
+      'key1': function() { &hellip; },
+      'key2': function() { &hellip; },
+    })
+
+What about having just one?
+
+    ev(['key1','key2'], function(new_value, meta_info) {
+      console.log(key + ' was set to ' + new_value);
+    })
+
+What about making them run just once?
+
+    ev(['key1','key2'], function(new_value, meta_info) {
+      console.log(key + ' was set to ' + new_value);
+    }, {once: 1})
+    
+What about unregistering one of them?
+
+    var list = ev(['key1','key2'], function(new_value, meta_info) {
+      console.log(key + ' was set to ' + new_value);
+    });
+
+    ev.del(list[0]);
+
+And setting the other one to only running once?
+
+    list[1].once = true;
+
+And then running something after that?
+
+
+    list[1].after(function() {
+      console.log('this will be run after');
+    });
+
+And now running that chain?
+
+    ev.fire(['key1','key2']);
+
+
+Smooth like butta' baby.
 
 ### Be years ahead of those low-contrast hard-to read blog articles with curvy custom hairline fonts.
 
