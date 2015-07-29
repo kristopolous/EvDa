@@ -1,8 +1,6 @@
 # A Generic Controller
 ## IoC, Events, Data, Promises, all the buzzwords.
 
-## Usage
-
     var ev = EvDa();
 
 creates an event namespace, ev. You can use one for the entire app, that's fine.
@@ -10,12 +8,6 @@ creates an event namespace, ev. You can use one for the entire app, that's fine.
 You can also seed it with initialization values by passing in an object, for instance:
 
     var ev = EvDa({key: 'value'});
-
-There's a section far down at the bottom that discusses what this API is from a theoretical
-standpoint. You can view it as a generic controller in the traditional MVC sense that has some
-hooks for a model, but that's only because that acronym seems to help things gain traction.
-
-It's really, actually, something quite different and quite a bit more useful than that.
 
 You have hipster promises like this:
 
@@ -60,6 +52,7 @@ What about unregistering one of them?
     });
 
     ev.del(list[0]);
+    >> list[0]
 
 And setting the other one to only running once?
 
@@ -71,10 +64,12 @@ And then running something after that?
     list[1].after(function() {
       console.log('this will be run after');
     });
+    >> fn0
 
 And now running that chain?
 
-    ev.fire(['key1','key2']);
+    ev.fire(['key1', 'key2']);
+    >> ['value1', 'value2']
 
 That's nice you think, but some libraries will completely make chain functions inaccessible ... for instance
 what if we do this?
@@ -85,13 +80,36 @@ what if we do this?
       .on(fn2)
       .after(fn3);
 
+    >> [fn0, fn1, ..., fnX]
+
 And then you want to unregister the third one on the list, the "on" function?  Easy! Address it like an array:
 
     ev.del(ret[2]);
+    >> ret[2]
 
 What if you want to repurpose the third function for something else?
 
     ev('something else', ret[3]);
+    >> ret[3]
+
+What if you want to take some callbacks as a group and then disabled them?
+
+    var some_group = ev.after(['key1','key2']),
+      handle = ev.disable(some_group);
+
+Now what if you want to assign all of those to another key?
+
+    ev.on('key3', some_group);
+    >> fn0
+
+And now you want to re-enable them and then increment all the keys at once?
+
+    ev.enable(some_group);
+    >> [ fn0, fn1, ..., fnX ]
+
+    ev.incr(['key1','key2','key3']);
+    >> [1, 1, 1]
+
 
 There you go ... 
 
