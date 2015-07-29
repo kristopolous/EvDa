@@ -22,16 +22,22 @@ What about a way to console log whenever anything gets set?
 
     ev('', function(el){ console.log(el) })
 
-What about setting 2 things to one value?
+    >> fn0
+
+What about setting 2 keys to one value?
 
     ev(['key1', 'key2'], value);
+
+    >> [value, value]
 
 What about having two callbacks for this?
 
     ev({
-      'key1': function() { &hellip; },
-      'key2': function() { &hellip; },
+      'key1': function() { ... },
+      'key2': function() { ... },
     })
+
+    >> {key1: fn0, key2: fn1 }
 
 What about having just one?
 
@@ -39,11 +45,15 @@ What about having just one?
       console.log(key + ' was set to ' + new_value);
     })
 
+    >> [fn0, fn1]
+
 What about making them run just once?
 
     ev(['key1','key2'], function(new_value, meta_info) {
       console.log(key + ' was set to ' + new_value);
     }, {once: 1})
+
+    >> [fn0, fn1]
     
 What about unregistering one of them?
 
@@ -52,6 +62,7 @@ What about unregistering one of them?
     });
 
     ev.del(list[0]);
+
     >> list[0]
 
 And setting the other one to only running once?
@@ -64,11 +75,13 @@ And then running something after that?
     list[1].after(function() {
       console.log('this will be run after');
     });
+
     >> fn0
 
 And now running that chain?
 
     ev.fire(['key1', 'key2']);
+
     >> ['value1', 'value2']
 
 That's nice you think, but some libraries will completely make chain functions inaccessible ... for instance
@@ -85,29 +98,35 @@ what if we do this?
 And then you want to unregister the third one on the list, the "on" function?  Easy! Address it like an array:
 
     ev.del(ret[2]);
+
     >> ret[2]
 
 What if you want to repurpose the third function for something else?
 
     ev('something else', ret[3]);
+
     >> ret[3]
 
 What if you want to take some callbacks as a group and then disabled them?
 
-    var some_group = ev.after(['key1','key2']),
+    var 
+      some_group = ev.after(['key1','key2']),
       handle = ev.disable(some_group);
 
 Now what if you want to assign all of those to another key?
 
     ev.on('key3', some_group);
+
     >> fn0
 
 And now you want to re-enable them and then increment all the keys at once?
 
     ev.enable(some_group);
+
     >> [ fn0, fn1, ..., fnX ]
 
     ev.incr(['key1','key2','key3']);
+
     >> [1, 1, 1]
 
 
