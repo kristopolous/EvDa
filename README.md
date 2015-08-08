@@ -796,16 +796,17 @@ The invocation here that I want to do is have a number of `li > a` style selecto
 
 And then have those keys in the data always reflect the selected things on the UI.  
 
-Do we need to build the entire fucking application with Ember or Angular for this? Hellz no, that's
-totally redic.  Come on man, be more reasonable.  Here's a basic function that can do it:
+Do we need to build the Entire Application with Ember or Angular for this? Of course not!
+
+Here's a basic function that can easily do two-way databinding without trying to redefine
+javascript as something crazy-hard and really weird or annotating your HTML in order to
+satisfy some supposedly sophisticated library:
 
 
     function easy_bind(list) {
 
-      // There's some claim that you can feature-test everything. Those
-      // people are living in magical fairy candy-land.  There's a bunch
-      // of UI things that have no reasonable tests for beyond UA string
-      // matching.
+      // There's some claim that you can feature-test everything. 
+      // Some totally bogus claim, that is.
       var 
         isiDevice = navigator.userAgent.match(/ip(hone|od|ad)/i),
         listenEvent = isiDevice ? 'touchend' : 'click';
@@ -813,7 +814,7 @@ totally redic.  Come on man, be more reasonable.  Here's a basic function that c
       // Take each "query" to bind to from the list
       _.each(list, function(what) {
 
-        // For look for a node with that name
+        // Look for a node with that name
         var node = document.querySelector('#' + what);
 
         if(!node) {
@@ -846,7 +847,7 @@ totally redic.  Come on man, be more reasonable.  Here's a basic function that c
           // there should be an <a> tag underneath
           $("a", node).on(listenEvent, function(){
 
-            // This tricks stupid iDevices into notscrewing with the user.
+            // This tricks stupid iDevices into not screwing with the user.
             // (Requiring a user to tap twice to select anything.  WTF apple...)
             var mthis = this;
 
