@@ -858,6 +858,7 @@ satisfy some supposedly sophisticated library:
 
           // Here's the two-way
           ev(what, function(val) {
+            $("a", node).removeClass("selected");
             $("a:contains(" + val + ")", node).addClass("selected");
             $("a[data='" + val + "']", node).addClass("selected");
           });
