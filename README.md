@@ -782,6 +782,133 @@ And there I go.
 
 ### Examples
 
+#### Two-way binding
+
+This is all the hot-sauce these days, as if it's some kind of miraculous difficult thing to achieve. 
+Here's something I did for my [indycast](https://github.com/kristopolous/DRR) project called `easy_bind`.
+
+You can see how nicely evda plays with underscore, modern js, and jquery:
+
+The invocation here that I want to do is have a number of `li > a` style selectors and 
+`input[type=text]`. I want to have two way data-binding so that I can do something like:
+
+    easy_bind(['email', 'notes', 'duration', 'station']);
+
+And then have those keys in the data always reflect the selected things on the UI.  
+
+Do we need to build the entire fucking application with Ember or Angular for this? Hellz no, that's
+totally redic.  Come on man, be more reasonable.  Here's a basic function that can do it:
+
+
+    function easy_bind(list) {
+
+      // There's some claim that you can feature-test everything. Those
+      // people are living in magical fairy candy-land.  There's a bunch
+      // of UI things that have no reasonable tests for beyond UA string
+      // matching.
+      var 
+        isiDevice = navigator.userAgent.match(/ip(hone|od|ad)/i),
+        listenEvent = isiDevice ? 'touchend' : 'click';
+
+      // Take each "query" to bind to from the list
+      _.each(list, function(what) {
+
+        // For look for a node with that name
+        var node = document.querySelector('#' + what);
+
+        if(!node) {
+          // And if it doesn't exist, see if some input has it
+          node = document.querySelector('input[name="' + what + '"]');
+
+          // Alright that didn't work, let's bail
+          if(!node) {
+            throw new Error("Can't find anything matching ", what);
+          }
+        }
+
+        // If we are looking at an input box, then we can just grab
+        // the value of it
+        if(node.nodeName == 'INPUT') {
+
+          $(node).on('blur focus change keyup', function() {
+            ev(what, this.value, {node: this});
+          });
+
+          // This is the 'two-way' ... 
+          ev(what, function(val){ 
+            node.value = val; 
+          });
+
+        } else {
+
+          // Otherwise there's some complex UL/LI structure that is mostly an artifact
+          // of the limitations of CSS.  Regardless, after all the onion-style wrappings, 
+          // there should be an <a> tag underneath
+          $("a", node).on(listenEvent, function(){
+
+            // This tricks stupid iDevices into notscrewing with the user.
+            // (Requiring a user to tap twice to select anything.  WTF apple...)
+            var mthis = this;
+
+            setTimeout(function(){
+              ev(what, mthis.getAttribute('data') || mthis.innerHTML);
+            }, 0);
+          });
+
+          // Here's the two-way
+          ev(what, function(val) {
+            $("a:contains(" + val + ")", node).addClass("selected");
+            $("a[data='" + val + "']", node).addClass("selected");
+          });
+        }
+      });
+    }
+
+#### Easy syncing
+
+The two way data-binding is ok for the local in-memory structures but what if I want
+to make this work independently with a syncing layer (yes, completely independently as in
+one doesn't know about the other.)
+
+Here's an `easy_sync` implementation from the [same project](https://github.com/kristopolous/DRR):
+
+    // First we have a local-storage getter/setter that is determined
+    // based on argument length - to make our lives easier.
+    function ls(key, value) {
+      if (arguments.length == 1) {
+        return localStorage[key] || false;
+      } else {
+        localStorage[key] = value;
+      }
+      return value;
+    }
+
+    // Now we use it to sync things to the local storage
+    function easy_sync(list) {
+      _.each(list, function(what) {
+        if(ls(what)) {
+          ev(what, ls(what));
+        }
+        ev.after(what, function(value) {
+          ls(what, value);
+        });
+      });
+    }
+
+Using the two above functions I was able to write something like:
+
+    easy_bind(['email', 'notes', 'station', 'duration']);
+    easy_sync(['email', 'station']);
+
+And then have the two way data-binding with remote syncing and I don't have to be restricted to
+how I'm going to structure my end-points, or what templating engine I'm using or whatever else.
+
+You can just do this one single thing, and not get a bunch of garbage with it.  Refreshing.
+
+#### Even more?!
+
+Sure.
+
  * My [ytmix](https://github.com/kristopolous/ytmix) project uses this library all over the place.
  * There is an examples directory in the github repo
 
