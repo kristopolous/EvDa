@@ -863,6 +863,7 @@ satisfy some supposedly sophisticated library:
             $("a[data='" + val + "']", node).addClass("selected");
           });
         }
+        ev.fire(what); 
       });
     }
 
@@ -895,12 +896,15 @@ Here's an `easy_sync` implementation from the [same project](https://github.com/
           ls(what, value);
         });
       });
+      return ev('');
     }
 
 Using the two above functions I was able to write something like:
 
     easy_bind(['email', 'notes', 'station', 'duration']);
-    easy_sync(['email', 'station']);
+    var map = easy_sync(['email', 'station']);
+
+    if(map.station) ...
 
 And then have the two way data-binding with remote syncing and I don't have to be restricted to
 how I'm going to structure my end-points, or what templating engine I'm using or whatever else.
