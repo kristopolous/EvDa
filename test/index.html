@@ -365,6 +365,13 @@ module('Bubbling');
     ev('group.key2', 2);
   });
 
+  test("imported list - bubbling check" , function(){
+    expect(1);
+    var ev = EvDa({key: 'value'});
+
+    equal(ev('').key, 'value', 'correct');
+  });
+
   test("grouping events through dot notation - unset cascading up", function(){
     var ev = EvDa();
 
