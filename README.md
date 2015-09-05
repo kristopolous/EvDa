@@ -860,7 +860,7 @@ satisfy some supposedly sophisticated library:
           ev(what, function(val) {
             $("a", node).removeClass("selected");
             if (val) {
-              $("a:contains(" + val + ")", node).addClass("selected");
+              $("a", node).filter(function(){return this.innerHTML == val}).addClass("selected");
               $("a[data='" + val + "']", node).addClass("selected");
             }
           });
