@@ -823,7 +823,7 @@ satisfy some supposedly sophisticated library:
 
           // Alright that didn't work, let's bail
           if(!node) {
-            throw new Error("Can't find anything matching ", what);
+            throw new Error("Can't find anything matching " + what);
           }
         }
 
@@ -859,8 +859,10 @@ satisfy some supposedly sophisticated library:
           // Here's the two-way
           ev(what, function(val) {
             $("a", node).removeClass("selected");
-            $("a:contains(" + val + ")", node).addClass("selected");
-            $("a[data='" + val + "']", node).addClass("selected");
+            if (val) {
+              $("a:contains(" + val + ")", node).addClass("selected");
+              $("a[data='" + val + "']", node).addClass("selected");
+            }
           });
         }
         ev.fire(what); 
