@@ -845,7 +845,9 @@ satisfy some supposedly sophisticated library:
 
           // This is the 'two-way' ... 
           instance(what, function(val){ 
-            node.value = val; 
+            if(node !== undefined) {
+              node.value = val; 
+            }
           });
 
         } else {
