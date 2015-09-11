@@ -803,7 +803,15 @@ javascript as something crazy-hard and really weird or annotating your HTML in o
 satisfy some supposedly sophisticated library:
 
 
-    function easy_bind(list) {
+    function easy_bind(list, instance) {
+
+      if (!instance) {
+        if (ev) {
+          instance = ev;
+        } else {
+          throw "Can't find any instance to attach to";
+        }
+      }
 
       // There's some claim that you can feature-test everything. 
       // Some totally bogus claim, that is.
@@ -832,11 +840,11 @@ satisfy some supposedly sophisticated library:
         if(node.nodeName == 'INPUT') {
 
           $(node).on('blur focus change keyup', function() {
-            ev(what, this.value, {node: this});
+            instance(what, this.value, {node: this});
           });
 
           // This is the 'two-way' ... 
-          ev(what, function(val){ 
+          instance(what, function(val){ 
             node.value = val; 
           });
 
@@ -852,12 +860,12 @@ satisfy some supposedly sophisticated library:
             var mthis = this;
 
             setTimeout(function(){
-              ev(what, mthis.getAttribute('data') || mthis.innerHTML);
+              instance(what, mthis.getAttribute('data') || mthis.innerHTML);
             }, 0);
           });
 
           // Here's the two-way
-          ev(what, function(val) {
+          instance(what, function(val) {
             $("a", node).removeClass("selected");
             if (val) {
               $("a", node).filter(function(){return this.innerHTML == val}).addClass("selected");
@@ -865,7 +873,8 @@ satisfy some supposedly sophisticated library:
             }
           });
         }
-        ev.fire(what); 
+
+        instance.fire(what); 
       });
     }
 
