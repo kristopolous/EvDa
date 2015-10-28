@@ -262,6 +262,7 @@ function EvDa (imported) {
       return {
         data: data, 
         events: eventMap,
+        lockMap: lockMap,
         globs: globberMap
       };
     }
