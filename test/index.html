@@ -215,6 +215,34 @@ module('fire');
 
     ev.fire(['keyA', 'keyB']);
   });
+  test("scalar fire", function(){
+    expect(2);
+    var ev = EvDa({key: 1});
+
+    ev('key', function(key, obj){
+      equal(key, 1, "Everything is fine");
+    });
+    ev.fire('key');
+    ev.fire('key');
+  });
+  test("empty fire", function(){
+    expect(1);
+    var ev = EvDa({key: {}});
+
+    ev('key', function(key, obj){
+      equal(JSON.stringify(key), '{}', "Everything is fine");
+    });
+    ev.fire('key');
+  });
+  test("empty fire", function(){
+    expect(1);
+    var ev = EvDa({where: {}});
+
+    ev('where', function(key, obj){
+      equal(JSON.stringify(key), '{}', "Everything is fine");
+    });
+    ev.fire('where');
+  });
 
 module("empty");
   test("fill in an object and empty it", function() {
