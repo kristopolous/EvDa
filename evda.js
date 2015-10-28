@@ -792,7 +792,13 @@ function EvDa (imported) {
       }
 
       // recursion prevention.
-      if(lockMap[key] > 0) { return data[key]; }
+      if(lockMap[key] > 0) { 
+        each ( pub.traceList, function ( callback ) {
+          callback.call ( pub.context, extend({locked: true}, args) );
+        });
+
+        return data[key]; 
+      }
       lockMap[key] = (lockMap[key] || 0) + 1;
 
       var 
