@@ -794,7 +794,7 @@ function EvDa (imported) {
       // recursion prevention.
       if(lockMap[key] > 0) { 
         each ( pub.traceList, function ( callback ) {
-          callback.call ( pub.context, extend({locked: true}, args) );
+          callback.call ( pub.context, extend({locked: key}, args) );
         });
 
         return data[key]; 
