@@ -924,6 +924,8 @@ how I'm going to structure my end-points, or what templating engine I'm using or
 
 You can just do this one single thing, and not get a bunch of garbage with it.  Refreshing.
 
+For convenience, these have been included in `evda-helper.js`.
+
 #### Even more?!
 
 Sure.
