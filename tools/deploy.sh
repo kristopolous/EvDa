@@ -1,11 +1,12 @@
 #!/bin/bash
-set +x
-base=evda
-cp $base.js $base-tmp.js
-cp $base.min.js $base-tmp.min.js
-echo "EvDa.__version__='`git describe`';" >> $base-tmp.js
-./minifier.sh $base-tmp
-mv $base-tmp.min.js $base.min.js
-rm $base-tmp.js
+for file in evda evda-helper; do
+  cp src/$file.js release/$file.js
+done
 
-./minifier.sh $base-helper
+echo "EvDa.__version__='`git describe`';" >> release/evda.js
+
+cd release
+for file in evda evda-helper; do
+  ../tools/minifier.sh $file
+done
+
