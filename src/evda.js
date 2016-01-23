@@ -1193,20 +1193,21 @@ function EvDa (imported) {
       // neuter this function but don't populate
       // the users keyspace.
       pub.sniff = function(key) {
-        if(arguments.length > 0) {
+        var args = slice(arguments), ret = [];
+        while(key = args.pop()) {
           if(isString(key)) {
             ignoreMap[key] = !ignoreMap[key];
-            return "[Un]ignoring " + key;
+            ret.push("[Un]ignoring " + key);
           } else {
             // If the key is true then we turn sniffing "on"
             // by linking the proxy to the real sniff function.
             //
             // Otherwise, we link the proxy to a dummy function
             sniffProxy = key ? sniff : dummy;
-            return key;
+            ret.push(key);
           }
         } 
-        return keys(ignoreMap);
+        return ret || keys(ignoreMap);
       }
     }
   });
