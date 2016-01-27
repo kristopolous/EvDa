@@ -264,7 +264,7 @@ function EvDa (imported) {
       return {
         data: data, 
         events: eventMap,
-        lockMap: lockMap,
+        locks: lockMap,
         last: lastMap,
         globs: globberMap
       };
@@ -520,7 +520,7 @@ function EvDa (imported) {
   function runCallback(callback, context, value, meta) {
     if( ! callback.S) {
       // our ingested meta was folded into our callback
-      callback.call ( 
+      var res = callback.call ( 
         context, 
         value, 
         meta
@@ -529,6 +529,8 @@ function EvDa (imported) {
       if ( callback.once ) {
         del ( callback );
       }
+
+      return res;
     }
   }
 
@@ -925,6 +927,8 @@ function EvDa (imported) {
           result = data[key];
         } else {
 
+          // If there are tracing functions, then we
+          // call them one by one
           each ( pub.traceList, function ( callback ) {
             callback.call ( pub.context, args );
           });
@@ -1238,4 +1242,4 @@ function EvDa (imported) {
 
   return pub;
 }
-EvDa.__version__='0.1-versioning-added-12-g262d85e';
+EvDa.__version__='0.1-versioning-added-17-g1d2e866';
