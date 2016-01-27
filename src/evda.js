@@ -973,7 +973,7 @@ function EvDa (imported) {
                   });
 
                 // Record this as the last value.
-                last[key] = meta.last;
+                lastMap[key] = meta.last;
 
                 return value;
               }
