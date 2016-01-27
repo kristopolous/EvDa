@@ -368,6 +368,43 @@ module("Pausing");
 
   });
 
+module('Last');
+  test('seeing if last value is propagated', function(){
+    expect(1);
+    var ev = EvDa();
+    ev('key', function() {
+      return 'abc';
+    });
+    ev('key', function(obj, meta) {
+      equal(meta.last, 'abc', 'propagated');
+    });
+    ev('key', 'value');
+  });
+  test('seeing if last value is registered', function(){
+    expect(1);
+    var ev = EvDa();
+    ev('key', function() {
+      return 'abc';
+    });
+    ev('key', function(obj, meta) {
+      return 'def';
+    });
+    ev('key', 'value');
+    equal(ev().last.key, 'def', 'last value is registered right')
+  });
+  test('seeing if last value is registered at after right', function(){
+    expect(1);
+    var ev = EvDa();
+    ev.after('key', function() {
+      return 'abc';
+    });
+    ev('key', function(obj, meta) {
+      return 'def';
+    });
+    ev('key', 'value');
+    equal(ev().last.key, 'abc', 'last value is registered right')
+  });
+
 module('Bubbling');
   test("grouping events through dot notation", function(){
     expect(1);
