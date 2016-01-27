@@ -973,7 +973,7 @@ function EvDa (imported) {
                   });
 
                 // Record this as the last value.
-                last[key] = meta.last;
+                lastMap[key] = meta.last;
 
                 return value;
               }
@@ -1238,4 +1238,4 @@ function EvDa (imported) {
 
   return pub;
 }
-EvDa.__version__='0.1-versioning-added-10-g7329efa';
+EvDa.__version__='0.1-versioning-added-12-g262d85e';
