@@ -315,7 +315,7 @@ Looking at the last style, one can do the following:
 
 If there are no arguments, then an object for inspection is returned.
 
-As of 0.1.15, this is what is returned:
+As of 0.1.22, this is what is returned:
 
     {
       data: ...    The keys and current values
