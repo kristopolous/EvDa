@@ -188,6 +188,8 @@ function EvDa (imported) {
     // the backlog to execute if something is paused.
     backlog = [],
     globberMap = {},
+    // last return
+    lastMap = {},
     eventMap = {};
 
   function isGlobbed(str) {
@@ -263,6 +265,7 @@ function EvDa (imported) {
         data: data, 
         events: eventMap,
         lockMap: lockMap,
+        last: lastMap,
         globs: globberMap
       };
     }
@@ -969,6 +972,9 @@ function EvDa (imported) {
                     meta.last = runCallback(callback, pub.context, value, meta);
                   });
 
+                // Record this as the last value.
+                last[key] = meta.last;
+
                 return value;
               }
 
@@ -1232,4 +1238,4 @@ function EvDa (imported) {
 
   return pub;
 }
-EvDa.__version__='0.1-versioning-added-8-g536e159';
+EvDa.__version__='0.1-versioning-added-10-g7329efa';
