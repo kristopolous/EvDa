@@ -313,6 +313,19 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
+If there are no arguments, then an object for inspection is returned.
+
+As of 0.1.15, this is what is returned:
+
+    {
+      data: ...    The keys and current values
+      events: ...  The events (on, after, before, test ...)
+      locks: ...   Used to prevent recursion, it can also (if buggy) prevent firing
+      last: ...    The last function return value for each key (useful for debugging closures)
+      globs: ...   Regex style event listening
+    }
+
+
 <h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
