@@ -188,6 +188,8 @@ function EvDa (imported) {
     // the backlog to execute if something is paused.
     backlog = [],
     globberMap = {},
+    // last return
+    lastMap = {},
     eventMap = {};
 
   function isGlobbed(str) {
@@ -263,6 +265,7 @@ function EvDa (imported) {
         data: data, 
         events: eventMap,
         lockMap: lockMap,
+        last: lastMap,
         globs: globberMap
       };
     }
@@ -968,6 +971,9 @@ function EvDa (imported) {
                   function(callback) {
                     meta.last = runCallback(callback, pub.context, value, meta);
                   });
+
+                // Record this as the last value.
+                last[key] = meta.last;
 
                 return value;
               }
