@@ -188,6 +188,7 @@ function EvDa (imported) {
     // the backlog to execute if something is paused.
     backlog = [],
     globberMap = {},
+    traceList = [],
     // last return
     lastMap = {},
     eventMap = {};
@@ -266,6 +267,7 @@ function EvDa (imported) {
         events: eventMap,
         locks: lockMap,
         last: lastMap,
+        trace: traceList,
         globs: globberMap
       };
     }
@@ -736,8 +738,6 @@ function EvDa (imported) {
       return pub.set ( key, data[key].slice(0, -1), meta );
     },
 
-    traceList: [],
-
     group: function ( list ) {
       var 
         opts = toArray(arguments),
@@ -798,7 +798,7 @@ function EvDa (imported) {
 
       // recursion prevention.
       if(lockMap[key] > 0) { 
-        each ( pub.traceList, function ( callback ) {
+        each ( traceList, function ( callback ) {
           callback.call ( pub.context, extend({locked: key}, args) );
         });
 
@@ -929,7 +929,7 @@ function EvDa (imported) {
 
           // If there are tracing functions, then we
           // call them one by one
-          each ( pub.traceList, function ( callback ) {
+          each ( traceList, function ( callback ) {
             callback.call ( pub.context, args );
           });
 
@@ -1196,7 +1196,7 @@ function EvDa (imported) {
         dummy = function() {},
         sniffProxy = sniff;
 
-      pub.traceList.unshift(function(args){
+      traceList.unshift(function(args){
         sniffProxy(args);
       });
          
