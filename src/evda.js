@@ -7,8 +7,12 @@
 // Copyright 2008 - 2016 Chris McKenzie
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
-if(!self.EvDa) {
-  function EvDa (imported) {
+var EvDa = (function(){
+  if(self.EvDa) {
+    return EvDa;
+  }
+
+  var e = function (imported) {
     var 
       slice = Array.prototype.slice,  
 
@@ -1265,7 +1269,10 @@ if(!self.EvDa) {
 
     // exposing some internals (mostly for the helper)
     pub.isArray = isArray;
-    pub.each = each;
+
+    each(e._ext, function(key, val) {
+      pub[key] = val;
+    });
 
     // After all the mechanisms are set up, then and only then do
     // we do the import
@@ -1275,4 +1282,12 @@ if(!self.EvDa) {
 
     return pub;
   }
-}
+
+  e._ext = {};
+  e.extend = function(name, cb) {
+    e._ext[name] = cb;
+  }
+
+  return e;
+
+})();
