@@ -323,6 +323,7 @@ As of 0.1.22, this is what is returned:
       locks: ...   Used to prevent recursion, it can also (if buggy) prevent firing
       last: ...    The last function return value for each key (useful for debugging closures)
       globs: ...   Regex style event listening
+      trace: ...   Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
     }
 
 
@@ -779,13 +780,15 @@ And there I go.
 <h4><a name="sniff"></a>.sniff(arg)</h4>
 
  * Wraps set in a console.log abstraction
- * ev.traceList is also exposed. It's an
+ * `ev().traceList` is also exposed. It's an
    array and run every time.
  * if arg is
    * a string - that event is excluded from being logged
    * empty - the current set of excluded events are returned
    * FALSE - this feature is disabled
    * TRUE - the feature is enabled
+
+The `traceList` parameter can be directly manipulated.
 
 <h4><a name="empty"></a>.empty()</h4>
 
