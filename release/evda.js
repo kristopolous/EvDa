@@ -188,9 +188,18 @@ function EvDa (imported) {
     // the backlog to execute if something is paused.
     backlog = [],
     globberMap = {},
+    traceList = [],
     // last return
     lastMap = {},
-    eventMap = {};
+    eventMap = {},
+    dbg = {
+      data: data, 
+      events: eventMap,
+      locks: lockMap,
+      last: lastMap,
+      trace: traceList,
+      globs: globberMap
+    };
 
   function isGlobbed(str) {
     return str.match(/[?*]/);
@@ -261,13 +270,7 @@ function EvDa (imported) {
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
     if ( arguments.length === 0 ) {
-      return {
-        data: data, 
-        events: eventMap,
-        locks: lockMap,
-        last: lastMap,
-        globs: globberMap
-      };
+      return dbg;
     }
 
     // If there was one argument, then this is
@@ -736,8 +739,6 @@ function EvDa (imported) {
       return pub.set ( key, data[key].slice(0, -1), meta );
     },
 
-    traceList: [],
-
     group: function ( list ) {
       var 
         opts = toArray(arguments),
@@ -798,7 +799,7 @@ function EvDa (imported) {
 
       // recursion prevention.
       if(lockMap[key] > 0) { 
-        each ( pub.traceList, function ( callback ) {
+        each ( traceList, function ( callback ) {
           callback.call ( pub.context, extend({locked: key}, args) );
         });
 
@@ -929,7 +930,7 @@ function EvDa (imported) {
 
           // If there are tracing functions, then we
           // call them one by one
-          each ( pub.traceList, function ( callback ) {
+          each ( traceList, function ( callback ) {
             callback.call ( pub.context, args );
           });
 
@@ -1188,37 +1189,53 @@ function EvDa (imported) {
         startTime = +new Date(),
         // Use a few levels of indirection to be
         // able to toggle the sniffing on or off.
-        sniff = function(args) {
-          if(!ignoreMap[args[0]]) {
-            console.log((+new Date()) - startTime, args);
-          }
+        sniffConsole = function(args) {
+          // If we are to ignore this then we do nothing,
+          // otherwise we console.log when this occurs.
+          return ignoreMap[args[0]] || console.log(new Date() - startTime, args);
         },
         dummy = function() {},
-        sniffProxy = sniff;
+        sniffProxy = sniffConsole;
 
-      pub.traceList.unshift(function(args){
+      // sniffProxy either points to sniffConsole
+      // when it's on or dummy when it's off.
+      traceList.unshift(function(args){
+        // That's why we can't call the proxy directly.
         sniffProxy(args);
       });
          
       // neuter this function but don't populate
       // the users keyspace.
-      pub.sniff = function(key) {
-        var args = slice(arguments), ret = [];
-        while(key = args.pop()) {
+      pub.sniff = function() {
+        var args = slice.call(arguments), 
+            key,
+            ret = [];
+
+        while(key = args.shift()) {
           if(isString(key)) {
-            ignoreMap[key] = !ignoreMap[key];
-            ret.push("[Un]ignoring " + key);
+            if(ignoreMap[key]) {
+              delete ignoreMap[key];
+            } else {
+              ignoreMap[key] = true;
+            }
+            ret.push([key, ignoreMap[key]]);
+
           } else {
             // If the key is true then we turn sniffing "on"
             // by linking the proxy to the real sniff function.
             //
             // Otherwise, we link the proxy to a dummy function
-            sniffProxy = key ? sniff : dummy;
+            sniffProxy = key ? sniffConsole : dummy;
             ret.push(key);
           }
         } 
-        return ret || keys(ignoreMap);
+
+        return args.length ? ret : keys(ignoreMap);
       }
+
+      // After we've done the swapping to turn this thing on,
+      // now we call the internal function with the args set
+      return pub.sniff.apply(pub.context, arguments);
     }
   });
 
@@ -1242,4 +1259,4 @@ function EvDa (imported) {
 
   return pub;
 }
-EvDa.__version__='0.1-versioning-added-17-g1d2e866';
+EvDa.__version__='0.1-versioning-added-25-g5e9f0e1';
