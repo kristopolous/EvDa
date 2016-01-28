@@ -1,5 +1,69 @@
-# A Generic Controller
-## IoC, Events, Data, Promises, all the buzzwords.
+# A Generic Event System
+EvDa is a collection of about 30 or so functions (backed by over 300 tests) to construct a modular no-kitchen-sink style application.  This is an event system.
+
+It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
+someone has to take an architectural opinion as to how to use it.
+
+That is to say that it takes no opinion on how say, a routes architecture should be created, but instead, gives fundamental building blocks to construct a variety of them.
+
+Similarly, no decree is made about *how* to do two-way data-binding or reactive design.  Instead, there's generic tools which
+makes composing such a system convenient and easy.
+
+It's been in development since 2008 and has been used in ember, angular, react, backbone, and extjs projects.  It has been used
+to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other
+to interact.
+
+### Agnostic Example: Namespaced Events.
+
+EvDa supports namespaced events while not having any opinion on how to do them.  
+
+
+#### Through globals
+
+You can do something like this:
+
+    var 
+      content = EvDa(),
+      toolbar = EvDa(),
+      api = EvDa();
+
+And then have those as three separate "namespaces".
+
+#### Through instances
+
+You can set a context inside of a constructor 
+
+    function Person() {
+      this.events = EvDa(this);
+    }
+
+#### Through dot notation
+
+EvDa support object bubbling and dot notation. So you can do something like:
+
+    var ev = EvDa();
+
+    ev('content', function(obj) {
+      ...
+    });
+
+    ev('content.key', 'value');
+
+    ev({
+        toolbar: {
+          key: 'something'
+        }
+      });
+
+etc...
+
+So as you can see here, there's "namespaces" as per the definition of what a namespace entails, but no direct decree as to how those *ought* to be
+done.  This library empowers your personal liberty as a programmer, instead of restricting it to a preconceived implementation that you may
+not be able to integrate easily.
+
+### A longer example.
+
+For instance, you can have a few globals
 
     var ev = EvDa();
 
@@ -275,6 +339,7 @@ Syntax notations:
  * <a href="#settermap">[object] .setterMap</a> - All the setters
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger
  * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers
+ * <a href="#version">__version__</a> - Grabbing the version of the library
 
 ### Manipulation
 
@@ -315,7 +380,7 @@ Looking at the last style, one can do the following:
 
 If there are no arguments, then an object for inspection is returned.
 
-As of 0.1.22, this is what is returned:
+As of <a href="#version">0.1.28</a>, this is what is returned:
 
     {
       data: ...    The keys and current values
@@ -326,6 +391,7 @@ As of 0.1.22, this is what is returned:
       trace: ...   Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
     }
 
+There is a scope specific object, `dbg`, which may be contextually added to for more information.
 
 <h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
@@ -795,6 +861,13 @@ The `traceList` parameter can be directly manipulated.
  * Removes all keys from the object
  * Does not call any triggers during the removal
  * Retains all hooks for re-population.
+
+<h4><a name="version"></a>__version__</h4>
+
+ * In the `release/` directory, a `__version__` string is tacked on to the global `EvDa` object.
+ * This is a result of a `git describe` as run from the `tools/deploy.sh` directory.
+ * The master is always assumed to be stable and current. 
+   * This library has been in development since 2008 and is in constant, widespread, production use. The API can be considered stable and is forwards compatible from about 2010 meaning that a git pull from master can be considered safe.
 
 ### Examples
 
