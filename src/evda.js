@@ -12,177 +12,210 @@ var EvDa = (function(){
     return EvDa;
   }
 
+  var 
+    slice = Array.prototype.slice,  
+
+    // This is mostly underscore functions here. But they are included to make sure that
+    // they are supported here without requiring an additional library. 
+    //
+    // underscore {
+    toString = Object.prototype.toString,
+    isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
+    isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
+    isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
+    isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
+    isScalar = function(obj) { return isString(obj) || isNumber(obj) },
+    isObject = function(obj) {
+      if(isFunction(obj) || isString(obj) || isNumber(obj) || isArray(obj)) {
+        return false;
+      }
+
+      return obj == null ? 
+        String( obj ) == 'object' : 
+        toString.call(obj) === '[object Object]' || true ;
+    },
+
+    toArray = function(obj) {
+      return slice.call(obj);
+    },
+
+    each = [].forEach ?
+      function (obj, cb) {
+        if (isScalar(obj)) {
+          return each([obj], cb);
+        } else if (isArray(obj) || obj.length) { 
+          toArray(obj).forEach(cb);
+        } else {
+          for( var key in obj ) {
+            cb(key, obj[key]);
+          }
+        }
+      } :
+
+      function (obj, cb) {
+        if (isScalar(obj)) {
+          return each([obj], cb);
+        } else if (isArray(obj)) {
+          for ( var i = 0, len = obj.length; i < len; i++ ) { 
+            cb(obj[i], i);
+          }
+        } else {
+          for( var key in obj ) {
+            cb(key, obj[key]);
+          }
+        }
+      },
+
+    last = function(obj) {
+      return obj.length ? obj[obj.length - 1] : undefined;
+    },
+
+    values = function (obj) {
+      var ret = [];
+
+      for(var key in obj) {
+        ret.push(obj[key]);
+      }
+
+      return ret;
+    },
+
+    keys = ({}).keys || function (obj) {
+      if(isArray(obj)) { 
+        return obj;
+      }
+      var ret = [];
+
+      for(var key in obj) {
+        ret.push(key);
+      }
+
+      return ret;
+    },
+
+    without = function(collection, item) {
+      var ret = [];
+      each(collection, function(which) {
+        if(which !== item) {
+          ret.push(which);
+        }
+      });
+      return ret;
+    },
+
+    uniq = function(obj) {
+      var 
+        old, 
+        ret = [];
+
+      each(keys(obj).sort(), function(which) {
+        if(which != old) {
+          old = which;
+          ret.push(which);
+        }
+      });
+      return ret;
+    },
+
+    select = function(obj, test) {
+      var ret = [];
+      each(obj, function(which) {
+        if(test(which)) { ret.push (which); }
+      });
+      return ret;
+    },
+
+    size = function(obj) {
+      return (obj && 'length' in obj) ? obj.length : 0;
+    },
+
+    map = [].map ?
+      function(array, cb) { 
+        return array.map(cb) 
+      } : 
+
+      function(array, cb) {
+        var ret = [];
+
+        for ( var i = 0, len = array.length; i < len; i++ ) { 
+          ret.push(cb(array[i], i));
+        }
+
+        return ret;
+      },
+
+    clone = function(obj) {
+      if(isArray(obj)) { return slice.call(obj); }
+      if(isObject(obj)) { return extend(obj, {}); }
+      return obj;
+    },
+
+    extend = function(obj) {
+      each(slice.call(arguments, 1), function(source) {
+        for (var prop in source) {
+          if (source[prop] !== void 0) {
+
+            // This recursively assigns
+            /*
+            if ( isObject(source[prop]) && isObject(obj[prop]) ) {
+              extend(obj[prop], source[prop]);
+            } else {
+             */ obj[prop] = source[prop];
+            //}
+          }
+        }
+      });
+      return obj;
+    },
+    
+    // } end of underscore style functions.
+
+    // Constants
+    FIRST = 'first',
+    ON = 'on',
+    AFTER = 'after',
+    OR = 'or',
+    typeList = [FIRST, ON, AFTER, 'test', OR],
+
+    // The one time callback gets a property to
+    // the end of the object to notify our future-selfs
+    // that we ought to remove the function.
+    ONCE = {once: 1};
+
+  function isGlobbed(str) {
+    return str.match(/[?*]/);
+  }
+
+  // This looks to see if a key has a globbing parameter, such
+  // as ? or * and then return it
+  function glob(key, context) {
+    if(isGlobbed(key)) {
+      return select(keys(context ? context : data), function(what) {
+        return what.match(key);
+      });
+    }
+    return key;
+  }
+
+  // This uses the globbing feature and returns
+  // a "smart" map which is only one element if
+  // something matches, otherwise a map 
+  function smartMap(what, cback) {
+    var ret = {};
+    if(isArray(what)) {
+      each(what, function(field) {
+        ret[field] = cback(field);
+      });
+      return ret;
+
+    } else {
+      return cback(what);
+    }
+  }
+
+    
   var e = function (imported) {
-    var 
-      slice = Array.prototype.slice,  
-
-      // This is mostly underscore functions here. But they are included to make sure that
-      // they are supported here without requiring an additional library. 
-      //
-      // underscore {
-      toString = Object.prototype.toString,
-      isArray = [].isArray || function(obj) { return toString.call(obj) === '[object Array]' },
-      isFunction = function(obj) { return !!(obj && obj.constructor && obj.call && obj.apply) },
-      isString = function(obj) { return !!(obj === '' || (obj && obj.charCodeAt && obj.substr)) },
-      isNumber = function(obj) { return toString.call(obj) === '[object Number]' },
-      isScalar = function(obj) { return isString(obj) || isNumber(obj) },
-      isObject = function(obj) {
-        if(isFunction(obj) || isString(obj) || isNumber(obj) || isArray(obj)) {
-          return false;
-        }
-
-        return obj == null ? 
-          String( obj ) == 'object' : 
-          toString.call(obj) === '[object Object]' || true ;
-      },
-
-      toArray = function(obj) {
-        return slice.call(obj);
-      },
-
-      each = [].forEach ?
-        function (obj, cb) {
-          if (isScalar(obj)) {
-            return each([obj], cb);
-          } else if (isArray(obj) || obj.length) { 
-            toArray(obj).forEach(cb);
-          } else {
-            for( var key in obj ) {
-              cb(key, obj[key]);
-            }
-          }
-        } :
-
-        function (obj, cb) {
-          if (isScalar(obj)) {
-            return each([obj], cb);
-          } else if (isArray(obj)) {
-            for ( var i = 0, len = obj.length; i < len; i++ ) { 
-              cb(obj[i], i);
-            }
-          } else {
-            for( var key in obj ) {
-              cb(key, obj[key]);
-            }
-          }
-        },
-
-      last = function(obj) {
-        return obj.length ? obj[obj.length - 1] : undefined;
-      },
-
-      values = function (obj) {
-        var ret = [];
-
-        for(var key in obj) {
-          ret.push(obj[key]);
-        }
-
-        return ret;
-      },
-
-      keys = ({}).keys || function (obj) {
-        if(isArray(obj)) { 
-          return obj;
-        }
-        var ret = [];
-
-        for(var key in obj) {
-          ret.push(key);
-        }
-
-        return ret;
-      },
-
-      without = function(collection, item) {
-        var ret = [];
-        each(collection, function(which) {
-          if(which !== item) {
-            ret.push(which);
-          }
-        });
-        return ret;
-      },
-
-      uniq = function(obj) {
-        var 
-          old, 
-          ret = [];
-
-        each(keys(obj).sort(), function(which) {
-          if(which != old) {
-            old = which;
-            ret.push(which);
-          }
-        });
-        return ret;
-      },
-
-      select = function(obj, test) {
-        var ret = [];
-        each(obj, function(which) {
-          if(test(which)) { ret.push (which); }
-        });
-        return ret;
-      },
-
-      size = function(obj) {
-        return (obj && 'length' in obj) ? obj.length : 0;
-      },
-
-      map = [].map ?
-        function(array, cb) { 
-          return array.map(cb) 
-        } : 
-
-        function(array, cb) {
-          var ret = [];
-
-          for ( var i = 0, len = array.length; i < len; i++ ) { 
-            ret.push(cb(array[i], i));
-          }
-
-          return ret;
-        },
-
-      clone = function(obj) {
-        if(isArray(obj)) { return slice.call(obj); }
-        if(isObject(obj)) { return extend(obj, {}); }
-        return obj;
-      },
-
-      extend = function(obj) {
-        each(slice.call(arguments, 1), function(source) {
-          for (var prop in source) {
-            if (source[prop] !== void 0) {
-
-              // This recursively assigns
-              /*
-              if ( isObject(source[prop]) && isObject(obj[prop]) ) {
-                extend(obj[prop], source[prop]);
-              } else {
-               */ obj[prop] = source[prop];
-              //}
-            }
-          }
-        });
-        return obj;
-      },
-      
-      // } end of underscore style functions.
-
-      // Constants
-      FIRST = 'first',
-      ON = 'on',
-      AFTER = 'after',
-      OR = 'or',
-      typeList = [FIRST, ON, AFTER, 'test', OR],
-
-      // The one time callback gets a property to
-      // the end of the object to notify our future-selfs
-      // that we ought to remove the function.
-      ONCE = {once: 1},
-
+    var
       lockMap = {},
       testLockMap = {},
 
@@ -207,37 +240,6 @@ var EvDa = (function(){
         trace: traceList,
         globs: globberMap
       };
-
-    function isGlobbed(str) {
-      return str.match(/[?*]/);
-    }
-
-    // This looks to see if a key has a globbing parameter, such
-    // as ? or * and then return it
-    function glob(key, context) {
-      if(isGlobbed(key)) {
-        return select(keys(context ? context : data), function(what) {
-          return what.match(key);
-        });
-      }
-      return key;
-    }
-
-    // This uses the globbing feature and returns
-    // a "smart" map which is only one element if
-    // something matches, otherwise a map 
-    function smartMap(what, cback) {
-      var ret = {};
-      if(isArray(what)) {
-        each(what, function(field) {
-          ret[field] = cback(field);
-        });
-        return ret;
-
-      } else {
-        return cback(what);
-      }
-    }
 
     // this will try to resolve what the user
     // is asking for.
@@ -268,7 +270,7 @@ var EvDa = (function(){
         }
       }
     }
-    
+
     // This is the main invocation function. After
     // you declare an instance and call that instance
     // as a function, this is what gets run.
