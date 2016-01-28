@@ -1263,7 +1263,9 @@ if(!self.EvDa) {
     pub.change = pub.on;
     pub.add = pub.push;
 
+    // exposing some internals (mostly for the helper)
     pub.isArray = isArray;
+    pub.each = each;
 
     // After all the mechanisms are set up, then and only then do
     // we do the import
