@@ -191,7 +191,15 @@ function EvDa (imported) {
     traceList = [],
     // last return
     lastMap = {},
-    eventMap = {};
+    eventMap = {},
+    dbg = {
+      data: data, 
+      events: eventMap,
+      locks: lockMap,
+      last: lastMap,
+      trace: traceList,
+      globs: globberMap
+    };
 
   function isGlobbed(str) {
     return str.match(/[?*]/);
@@ -262,14 +270,7 @@ function EvDa (imported) {
     // If there are no arguments, and this is useful in the browser
     // debug console, return all the internal data structures.
     if ( arguments.length === 0 ) {
-      return {
-        data: data, 
-        events: eventMap,
-        locks: lockMap,
-        last: lastMap,
-        trace: traceList,
-        globs: globberMap
-      };
+      return dbg;
     }
 
     // If there was one argument, then this is
@@ -1188,22 +1189,30 @@ function EvDa (imported) {
         startTime = +new Date(),
         // Use a few levels of indirection to be
         // able to toggle the sniffing on or off.
-        sniff = function(args) {
-          if(!ignoreMap[args[0]]) {
-            console.log((+new Date()) - startTime, args);
-          }
+        sniffConsole = function(args) {
+          // If we are to ignore this then we do nothing,
+          // otherwise we console.log when this occurs.
+          return ignoreMap[args[0]] || console.log(new Date() - startTime, args);
         },
         dummy = function() {},
-        sniffProxy = sniff;
+        sniffProxy = sniffConsole;
 
+      // sniffProxy either points to sniffConsole
+      // when it's on or dummy when it's off.
       traceList.unshift(function(args){
+        // That's why we can't call the proxy directly.
         sniffProxy(args);
       });
          
+      dbg.ignore = ignoreMap;
+
       // neuter this function but don't populate
       // the users keyspace.
-      pub.sniff = function(key) {
-        var args = slice(arguments), ret = [];
+      pub.sniff = function() {
+        var args = slice.call(arguments), 
+            key,
+            ret = [];
+
         while(key = args.pop()) {
           if(isString(key)) {
             ignoreMap[key] = !ignoreMap[key];
@@ -1213,12 +1222,16 @@ function EvDa (imported) {
             // by linking the proxy to the real sniff function.
             //
             // Otherwise, we link the proxy to a dummy function
-            sniffProxy = key ? sniff : dummy;
+            sniffProxy = key ? sniffConsole : dummy;
             ret.push(key);
           }
         } 
         return ret || keys(ignoreMap);
       }
+
+      // After we've done the swapping to turn this thing on,
+      // now we call the internal function with the args set
+      return pub.sniff.apply(pub.context, arguments);
     }
   });
 
