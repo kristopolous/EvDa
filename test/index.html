@@ -1595,7 +1595,7 @@ module("Tracing");
     expect(2);
 
     var ev = EvDa(), run = 0; 
-    ev.traceList.push(function(args) {
+    ev().trace.push(function(args) {
       if(run === 0) {
         equal(args[0], 'key', 'Trace called, args correct');
       } else {
