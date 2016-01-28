@@ -297,6 +297,45 @@ module("sniff");
       e: 'e'
     });
   });
+
+  test("ignore 2 keys with a single call", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.sniff('a','b');
+    var keys = ev.sniff();
+
+    equal(keys.length, 2, 'two keys ignored');
+    equal(keys[0], 'a', 'first key is right');
+  });
+
+  test("ignore 2 keys with multiple calls", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.sniff();
+    ev.sniff('a');
+    ev.sniff('b');
+    var keys = ev.sniff();
+
+    equal(keys.length, 2, 'two keys ignored');
+    equal(keys[0], 'a', 'first key is right');
+  });
+
+  test("unignore 2 keys with multiple calls", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.sniff();
+    ev.sniff('a');
+    ev.sniff('b');
+
+    ev.sniff('a');
+    var keys = ev.sniff();
+
+    equal(keys.length, 1, 'two keys ignored');
+    equal(keys[0], 'b', 'first key is right');
+  });
  
 module("Pausing");
   test("pause responding to a callback until a variable is set, then play it", function(){
