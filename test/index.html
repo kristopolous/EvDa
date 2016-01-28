@@ -132,6 +132,24 @@ module("OO binding");
     equal(ev('key'), 1, 'cb style setter ran');
   });
 
+module('context');
+  test('basic context', function(){
+    expect(1);
+
+    function Klass() {
+      this.events = EvDa(this);
+      this.key = 'value';
+    }
+
+    var k = new Klass();
+    k.events('a', function(m) {
+      equal(this.key, 'value', 'this pointer has been passed');
+    });
+
+    k.events('a', 'value');
+
+  });
+
 module('chaining')
   test('basic chain', function(){
     expect(3);
