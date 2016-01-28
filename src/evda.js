@@ -1204,8 +1204,6 @@ function EvDa (imported) {
         sniffProxy(args);
       });
          
-      dbg.ignore = ignoreMap;
-
       // neuter this function but don't populate
       // the users keyspace.
       pub.sniff = function() {
@@ -1213,10 +1211,15 @@ function EvDa (imported) {
             key,
             ret = [];
 
-        while(key = args.pop()) {
+        while(key = args.shift()) {
           if(isString(key)) {
-            ignoreMap[key] = !ignoreMap[key];
-            ret.push("[Un]ignoring " + key);
+            if(ignoreMap[key]) {
+              delete ignoreMap[key];
+            } else {
+              ignoreMap[key] = true;
+            }
+            ret.push([key, ignoreMap[key]]);
+
           } else {
             // If the key is true then we turn sniffing "on"
             // by linking the proxy to the real sniff function.
@@ -1226,7 +1229,8 @@ function EvDa (imported) {
             ret.push(key);
           }
         } 
-        return ret || keys(ignoreMap);
+
+        return args.length ? ret : keys(ignoreMap);
       }
 
       // After we've done the swapping to turn this thing on,
