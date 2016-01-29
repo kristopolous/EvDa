@@ -6,6 +6,7 @@
   <script src=jquery.js></script>
   <script src=underscore.js > </script>
   <script src=../src/evda.js > </script>
+  <script src=../src/evda-helper.js > </script>
   <script src=qunit.js > </script>
 </head>
 <body>
@@ -150,6 +151,26 @@ module('context');
 
   });
 
+  test('basic context with exposure', function(){
+    expect(3);
+
+    function Person(name) {
+      this.events = EvDa(this);
+      this.name = name;
+      this.events.expose('greet');
+    }
+
+    equal('expose' in EvDa._ext, true, 'evda has been extended');
+
+    var john = new Person('john');
+    john.greet(function(when) {
+      equal(this.name, 'john', 'this pointer has been passed');
+      equal(when, 'morning', 'the args have been preserved');
+    });
+      
+    john.greet('morning');
+
+  });
 module('chaining')
   test('basic chain', function(){
     expect(3);
