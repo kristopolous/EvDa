@@ -1,5 +1,5 @@
 # A Generic Event System
-EvDa is a collection of about 30 or so functions (backed by over 300 tests) to construct a modular no-kitchen-sink style application.  This is an event system.
+EvDa is a collection of about 30 or so functions to construct a modular no-kitchen-sink style application.  This is an event system.
 
 It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
 someone has to take an architectural opinion as to how to use it.
@@ -31,11 +31,20 @@ And then have those as three separate "namespaces".
 
 #### Through instances
 
-You can set a context inside of a constructor 
+You can set a context inside of a constructor (with EvDa-helper)
 
-    function Person() {
+    function Person(name) {
       this.events = EvDa(this);
+      this.name = name;
+
+      this.events.expose('greet');
+      this.greet(function(when) {
+        return "Good " + when + "! My name is " + this.name + ".";
+      });
     }
+
+    new Person('john').greet('morning');
+    >> Good morning! My name is John.
 
 #### Through dot notation
 
@@ -380,7 +389,7 @@ Looking at the last style, one can do the following:
 
 If there are no arguments, then an object for inspection is returned.
 
-As of <a href="#version">0.1.28</a>, this is what is returned:
+As of <a href="#version">0.1.37</a>, this is what is returned:
 
     {
       data: ...    The keys and current values
