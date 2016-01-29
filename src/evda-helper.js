@@ -75,6 +75,20 @@ EvDa.easy_bind = function(list, instance) {
   });
 }
 
+EvDa.extend('expose', function(pub, key_list) {
+  if(!EvDa.isArray(key_list)) {
+    key_list = [key_list];
+  }
+  for(var ix = 0; ix < key_list.length; ix++) {
+    (function(){
+      var key = key_list[ix];
+      pub.context[key] = function() {
+        pub.apply(pub.context, [key].concat(Array.prototype.slice.call(arguments)));
+      }
+    })();
+  }
+});
+
 (function(){
   // First we have a local-storage getter/setter that is determined
   // based on argument length - to make our lives easier.
