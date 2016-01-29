@@ -168,6 +168,37 @@
     
     // } end of underscore style functions.
 
+    isGlobbed = function(str) {
+      return str.match(/[?*]/);
+    },
+
+    // This looks to see if a key has a globbing parameter, such
+    // as ? or * and then return it
+    glob = function (key, context) {
+      if(isGlobbed(key)) {
+        return select(keys(context ? context : data), function(what) {
+          return what.match(key);
+        });
+      }
+      return key;
+    },
+
+    // This uses the globbing feature and returns
+    // a "smart" map which is only one element if
+    // something matches, otherwise a map 
+    smartMap = function(what, cback) {
+      var ret = {};
+      if(isArray(what)) {
+        each(what, function(field) {
+          ret[field] = cback(field);
+        });
+        return ret;
+
+      } else {
+        return cback(what);
+      }
+    },
+
     // Constants
     FIRST = 'first',
     ON = 'on',
@@ -179,38 +210,6 @@
     // the end of the object to notify our future-selfs
     // that we ought to remove the function.
     ONCE = {once: 1};
-
-  function isGlobbed(str) {
-    return str.match(/[?*]/);
-  }
-
-  // This looks to see if a key has a globbing parameter, such
-  // as ? or * and then return it
-  function glob(key, context) {
-    if(isGlobbed(key)) {
-      return select(keys(context ? context : data), function(what) {
-        return what.match(key);
-      });
-    }
-    return key;
-  }
-
-  // This uses the globbing feature and returns
-  // a "smart" map which is only one element if
-  // something matches, otherwise a map 
-  function smartMap(what, cback) {
-    var ret = {};
-    if(isArray(what)) {
-      each(what, function(field) {
-        ret[field] = cback(field);
-      });
-      return ret;
-
-    } else {
-      return cback(what);
-    }
-  }
-
     
   var e = function (imported) {
     var
@@ -1130,7 +1129,6 @@
       },
 
       setdel: function ( key, value, meta ) {
-
         var
           before = data[key] || [],
           after = without( before, value);
@@ -1204,13 +1202,12 @@
       sniff: function () {
         var 
           ignoreMap = {"":1},
-          startTime = +new Date(),
           // Use a few levels of indirection to be
           // able to toggle the sniffing on or off.
           sniffConsole = function(args) {
             // If we are to ignore this then we do nothing,
             // otherwise we console.log when this occurs.
-            return ignoreMap[args[0]] || console.log(new Date() - startTime, args);
+            return ignoreMap[args[0]] || console.log(args);
           },
           dummy = function() {},
           sniffProxy = sniffConsole;
@@ -1293,4 +1290,4 @@
   self.EvDa = e;
 
 })();
-EvDa.__version__='0.1-versioning-added-40-g2eea875';
+EvDa.__version__='0.1-versioning-added-42-g12290ee';
