@@ -865,6 +865,8 @@ And there I go.
 
 The `traceList` parameter can be directly manipulated.
 
+By default the bubbled top, "", is set to be ignored. This can be un-ignored with `ev.sniff('')`.
+
 <h4><a name="empty"></a>.empty()</h4>
 
  * Removes all keys from the object
