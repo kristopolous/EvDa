@@ -1269,11 +1269,10 @@ var EvDa = (function(){
     pub.change = pub.on;
     pub.add = pub.push;
 
-    // exposing some internals (mostly for the helper)
-    pub.isArray = isArray;
-
-    each(e._ext, function(key, val) {
-      pub[key] = val;
+    each(e._ext, function(key, cb) {
+      pub[key] = function() {
+        cb.apply(pub.context, [pub].concat(slice.call(arguments)));
+      }
     });
 
     // After all the mechanisms are set up, then and only then do
@@ -1289,6 +1288,9 @@ var EvDa = (function(){
   e.extend = function(name, cb) {
     e._ext[name] = cb;
   }
+
+  // exposing some internals (mostly for the helper)
+  e.isArray = isArray;
 
   return e;
 
