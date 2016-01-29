@@ -337,6 +337,16 @@ module("sniff");
     });
   });
 
+  test("ignore bubble'd top", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.sniff('');
+    var keys = ev.sniff();
+
+    equal(keys.length, 0, 'zero keys ignored');
+  });
+
   test("ignore 2 keys with a single call", function(){
     expect(2);
     var ev = EvDa();
@@ -344,8 +354,8 @@ module("sniff");
     ev.sniff('a','b');
     var keys = ev.sniff();
 
-    equal(keys.length, 2, 'two keys ignored');
-    equal(keys[0], 'a', 'first key is right');
+    equal(keys.length, 3, 'two keys ignored');
+    equal(keys[1], 'a', 'first key is right');
   });
 
   test("ignore 2 keys with multiple calls", function(){
@@ -357,8 +367,8 @@ module("sniff");
     ev.sniff('b');
     var keys = ev.sniff();
 
-    equal(keys.length, 2, 'two keys ignored');
-    equal(keys[0], 'a', 'first key is right');
+    equal(keys.length, 3, 'two keys ignored');
+    equal(keys[1], 'a', 'first key is right');
   });
 
   test("unignore 2 keys with multiple calls", function(){
@@ -372,8 +382,8 @@ module("sniff");
     ev.sniff('a');
     var keys = ev.sniff();
 
-    equal(keys.length, 1, 'two keys ignored');
-    equal(keys[0], 'b', 'first key is right');
+    equal(keys.length, 2, 'two keys ignored');
+    equal(keys[1], 'b', 'first key is right');
   });
  
 module("Pausing");
