@@ -203,8 +203,9 @@
     FIRST = 'first',
     ON = 'on',
     AFTER = 'after',
+    TEST = 'test',
     OR = 'or',
-    typeList = [FIRST, ON, AFTER, 'test', OR],
+    typeList = [FIRST, ON, AFTER, TEST, OR],
 
     // The one time callback gets a property to
     // the end of the object to notify our future-selfs
@@ -826,7 +827,7 @@
 
         try {
           var 
-            testKey = 'test' + key,
+            testKey = TEST + key,
             result,
             args = slice.call(arguments),
             times = size(eventMap[ testKey ]),
