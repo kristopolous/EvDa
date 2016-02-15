@@ -205,6 +205,7 @@
     AFTER = 'after',
     TEST = 'test',
     OR = 'or',
+    SET = "set",
     typeList = [FIRST, ON, AFTER, TEST, OR],
 
     // The one time callback gets a property to
@@ -354,7 +355,7 @@
       return pub [ 
         ( isFunction ( value ) || 
           ( isArray(value) && isFunction(value[0]) )
-        ) ? ON : 'set' ].apply(this, args);
+        ) ? ON : SET ].apply(this, args);
     }
 
     // Register callbacks for
@@ -496,7 +497,7 @@
 
       } 
 
-      var setKey = 'set' + key;
+      var setKey = SET + key;
       // If I know how to set this key but
       // I just haven't done it yet, run through
       // that function now.
@@ -584,7 +585,7 @@
           return eventMap[type + name];
         }
         if(name) {
-          return smartMap(typeList.concat(['set']), function(type) {
+          return smartMap(typeList.concat([SET]), function(type) {
             return eventMap[type + name];
           });
         }
@@ -599,7 +600,7 @@
           pub.isPaused = true;
           pub._.set = pub.set;
           pub.set = function() {
-            backlog.push(['set', arguments]);
+            backlog.push([SET, arguments]);
           }
           return true;
         }
@@ -635,7 +636,7 @@
       // Unlike much of the reset of the code,
       // setters have single functions.
       setter: function ( key, callback ) {
-        eventMap['set' + key] = callback;
+        eventMap[SET + key] = callback;
 
         // If I am setting a setter and
         // a function is already waiting on it,
@@ -1126,7 +1127,7 @@
 
       settoggle: function ( key, value, meta ) {
         var routine = ((data[key] || []).indexOf(value) === -1) ? 'add' : 'del';
-        return pub['set' + routine](key, value, meta);
+        return pub[SET + routine](key, value, meta);
       },
 
       setdel: function ( key, value, meta ) {
