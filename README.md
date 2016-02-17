@@ -902,7 +902,11 @@ or in C++:
 
 And you *think* you know what's going on.  But really, anything could be happening.  Not only, but if you load up a debugger you could be jumping around to weird parts of the code or worse yet, go through quite a few layers of scaffolding and redirection before getting to the actual thing that is happening.
 
-The powerful abstraction and comprehension that these methodologies afford can also violate the separation of concerns and make code do too many things at once.
+The powerful abstraction and comprehension that these methodologies afford can also violate the separation of concerns and make code do too many things at once. At the end you have code that works like some marvelous complex watch with interacting gears and not a straight-forward easy to dissect or recompose thing.
+
+The generalized event listener and multiple-dispatch model suffer from this problem. 
+
+EvDa seeks to try to solve this through introspection tools.
 
 ### Examples
 
