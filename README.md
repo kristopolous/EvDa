@@ -349,6 +349,7 @@ Syntax notations:
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger
  * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers
  * <a href="#version">__version__</a> - Grabbing the version of the library
+ * <a href="#callbackhell">callback hell</a> - Avoiding it.
 
 ### Manipulation
 
@@ -879,6 +880,29 @@ By default the bubbled top, "", is set to be ignored. This can be un-ignored wit
  * This is a result of a `git describe` as run from the `tools/deploy.sh` directory.
  * The master is always assumed to be stable and current. 
    * This library has been in development since 2008 and is in constant, widespread, production use. The API can be considered stable and is forwards compatible from about 2010 meaning that a git pull from master can be considered safe.
+
+<h4><a name="callbackhell"></a>Avoiding callback hell</h4>
+
+Callback hell is an example of an [action at a distance](https://en.wikipedia.org/wiki/Action_at_a_distance_%28computer_programming%29) antipattern.  In general terms, this is the same problem that you get from C unions or C++ operator overloading.
+
+You see a seemingly linear state of events such as (in EvDa):
+
+    ... 
+    ev.set('key', 'value');
+    ...
+
+
+or in C:
+
+    some_union.prop = 1;
+
+or in C++:
+
+    c = a + b;
+
+And you *think* you know what's going on.  But really, anything could be happening.  Not only, but if you load up a debugger you could be jumping around to weird parts of the code or worse yet, go through quite a few layers of scaffolding and redirection before getting to the actual thing that is happening.
+
+The powerful abstraction and comprehension that these methodologies afford can also violate the separation of concerns and make code do too many things at once.
 
 ### Examples
 
