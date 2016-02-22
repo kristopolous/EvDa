@@ -254,6 +254,16 @@ module('fire');
 
     ev.fire(['keyA', 'keyB']);
   });
+  test("list value fire", function(){
+    expect(1);
+    var ev = EvDa({key: [2,2,3]});
+
+    ev('key', function(key, obj){
+      equal(key[0], 1, "Everything is fine");
+    });
+    ev.fire('key');
+  });
+
   test("scalar fire", function(){
     expect(2);
     var ev = EvDa({key: 1});
@@ -264,6 +274,7 @@ module('fire');
     ev.fire('key');
     ev.fire('key');
   });
+
   test("empty fire", function(){
     expect(1);
     var ev = EvDa({key: {}});
