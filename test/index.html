@@ -1725,7 +1725,7 @@ module("Defining a setter");
     });
   });
 
-  test("Defining a setter, then setting a key manually thus negating it's use", function(){
+  test("Defining a setter, then setting a key manually thus negating its use", function(){
     expect(1);
     var ev = EvDa(), order = 1;
 
@@ -1736,6 +1736,23 @@ module("Defining a setter");
 
     // manually set it.
     ev('key', 'value');
+
+    ev.isset('key', function(value) {
+      equal(value, "value", "This should be run");
+    });
+  });
+
+  test("Defining a setter, in a different order, then setting a key manually thus negating its use", function(){
+    expect(1);
+    var ev = EvDa(), order = 1;
+
+    // manually set it.
+    ev('key', 'value');
+
+    ev.setter('key', function() {
+      equal(order, 1, "setter shouldn't have been run");
+      ev('key', "value");
+    });
 
     ev.isset('key', function(value) {
       equal(value, "value", "This should be run");
