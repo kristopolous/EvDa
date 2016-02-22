@@ -510,9 +510,12 @@
         // reliably check if the code explicitly set things after the function
         // returns.
         
-        /* var ThisIsWorthless = */ eventMap[setKey](function(value) {
-          pub.set.call(pub.context, key, value, meta);
-        });
+        // We only call this if we aren't set yet.
+        if(! (key in data) ) {
+          /* var ThisIsWorthless = */ eventMap[setKey](function(value) {
+            pub.set.call(pub.context, key, value, meta);
+          });
+        }
 
         delete eventMap[setKey];
       }
