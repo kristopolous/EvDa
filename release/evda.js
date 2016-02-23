@@ -386,9 +386,14 @@
           return my_map[stage + key];
         }
 
+        if(!callback.$) {
+          callback.$ = {ref: [], ix: 0, last: false, line: []} 
+        }
         // This is the back-reference map to this callback
         // so that we can unregister it in the future.
-        (callback.$ || (callback.$ = [])).push ( stage + key );
+        callback.$.ref.push( stage + key );
+        // And so we can know where things were registered.
+        callback.$.line.push( (new Error).stack.split('\n')[1] );
 
         if (isGlobbed(key)) {
           my_map = globberMap;
@@ -397,7 +402,6 @@
         // 
         // For debugging purposes we register where this is being registered at.
         //
-        callback.line = (new Error).stack.split('\n')[1];
 
         (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
@@ -452,7 +456,7 @@
     });
 
     function del ( handle ) {
-      each ( handle.$, function( stagekey ) {
+      each ( handle.$.ref, function( stagekey ) {
         var map = isGlobbed(stagekey) ? globberMap : eventMap;
         map[ stagekey ] = without( map[ stagekey ], handle );
       });
@@ -544,7 +548,7 @@
     };
 
     function runCallback(callback, context, value, meta) {
-      if( ! callback.S) {
+      if( ! callback.$.norun) {
         // our ingested meta was folded into our callback
         var res = callback.call ( 
           context, 
@@ -555,6 +559,9 @@
         if ( callback.once ) {
           del ( callback );
         }
+
+        callback.$.ix++;
+        callback.$.last = new Date();
 
         return res;
       }
@@ -1074,12 +1081,12 @@
 
       enable: function ( listName ) {
         each(pub.list[listName], function(callback) {
-          if ( callback.S && callback.S[listName] ) {
-            delete callback.S[listName];
+          if ( callback.$.norun && callback.$.norun[listName] ) {
+            delete callback.$.norun[listName];
           }
 
-          if ( size(callback.S) == 0 ) {
-            delete callback.S;
+          if ( size(callback.$.norun) == 0 ) {
+            delete callback.$.norun;
           }
         });
         return pub.list[listName];
@@ -1152,7 +1159,7 @@
 
       disable: function ( listName ) {
         each(pub.list[listName], function(callback) {
-          ( callback.S || (callback.S = {}) ) [ listName ] = true;
+          ( callback.$.norun || (callback.$.norun = {}) ) [ listName ] = true;
         });
 
         return pub.list[listName];
@@ -1300,4 +1307,4 @@
   self.EvDa = e;
 
 })();
-EvDa.__version__='0.1-versioning-added-57-g707e424';
+EvDa.__version__='0.1-versioning-added-60-gcb94413';
