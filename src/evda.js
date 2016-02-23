@@ -393,7 +393,7 @@
         // so that we can unregister it in the future.
         callback.$.ref.push( stage + key );
         // And so we can know where things were registered.
-        callback.$.line.push( (new Error).stack.split('\n')[1] );
+        callback.$.line.push( (new Error).stack );
 
         if (isGlobbed(key)) {
           my_map = globberMap;

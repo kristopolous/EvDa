@@ -204,7 +204,7 @@ And now you want to re-enable them and then increment all the keys at once?
 There you go ... 
 
 
-### Diagnostic tools.
+### Diagnostic tools (introduction)
 
 There's also a nice way to diagnose things.
 
@@ -213,9 +213,14 @@ A nice way to find out if there's events associated with say, 'key1' you can do 
     >> ev.events('key1')
     Object { first: undefined, on: Array[3], after: undefined, test: undefined, or: undefined, set: undefined }
 
-    >> ev.events('key1').on[0].__line
-    pub@http://localhost/ghub/ytmix/js/raw/evda.js:355:14
+    >> ev.events('key1').on[0].$
+    { ref: ['onname'], ix: 1, last: Date 2016-02-23T20:48:26.346Z, line: [(stack trace)] }
 
+This tells us that the first function that will be run in the on handler of key 1 is registered for just one function, onname; it's been called once, last at 2016-02-23T20:48:26.346Z and was registered from 1 place.
+
+We can thus do an action and then see if these numbers change. Things like disabling a group or setting something as running once is also stored here for inspection.
+
+There's other tools to to trace execution and do various other inspections.
 
 ### Setters
 
