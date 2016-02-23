@@ -255,11 +255,12 @@ module('fire');
     ev.fire(['keyA', 'keyB']);
   });
   test("list value fire", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa({key: [1,2,3]});
 
     ev('key', function(key, obj){
-      equal(key[0], 1, "Everything is fine");
+      equal(key[0], 1, "The first value of the array is 1, as expected");
+      equal(key[2], 3, "The third value of the array is 3, as expected");
     });
     ev.fire('key');
   });
@@ -269,7 +270,7 @@ module('fire');
     var ev = EvDa({key: 1});
 
     ev('key', function(key, obj){
-      equal(key, 1, "Everything is fine");
+      equal(key, 1, "Key is 1 as expected");
     });
     ev.fire('key');
     ev.fire('key');
