@@ -394,6 +394,11 @@
           my_map = globberMap;
         }
 
+        // 
+        // For debugging purposes we register where this is being registered at.
+        //
+        callback.line = (new Error).stack.split('\n')[1];
+
         (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
         //
