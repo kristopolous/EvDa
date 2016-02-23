@@ -548,7 +548,7 @@
     };
 
     function runCallback(callback, context, value, meta) {
-      if( ! callback.S) {
+      if( ! callback.$.norun) {
         // our ingested meta was folded into our callback
         var res = callback.call ( 
           context, 
@@ -559,6 +559,9 @@
         if ( callback.once ) {
           del ( callback );
         }
+
+        callback.$.ix++;
+        callback.$.last = new Date();
 
         return res;
       }
@@ -1078,12 +1081,12 @@
 
       enable: function ( listName ) {
         each(pub.list[listName], function(callback) {
-          if ( callback.S && callback.S[listName] ) {
-            delete callback.S[listName];
+          if ( callback.$.norun && callback.$.norun[listName] ) {
+            delete callback.$.norun[listName];
           }
 
-          if ( size(callback.S) == 0 ) {
-            delete callback.S;
+          if ( size(callback.$.norun) == 0 ) {
+            delete callback.$.norun;
           }
         });
         return pub.list[listName];
@@ -1156,7 +1159,7 @@
 
       disable: function ( listName ) {
         each(pub.list[listName], function(callback) {
-          ( callback.S || (callback.S = {}) ) [ listName ] = true;
+          ( callback.$.norun || (callback.$.norun = {}) ) [ listName ] = true;
         });
 
         return pub.list[listName];
