@@ -386,9 +386,14 @@
           return my_map[stage + key];
         }
 
+        if(!callback.$) {
+          callback.$ = {ref: [], ix: 0, last: false, line: []} 
+        }
         // This is the back-reference map to this callback
         // so that we can unregister it in the future.
-        (callback.$ || (callback.$ = [])).push ( stage + key );
+        callback.$.ref.push( stage + key );
+        // And so we can know where things were registered.
+        callback.$.line.push( (new Error).stack.split('\n')[1] );
 
         if (isGlobbed(key)) {
           my_map = globberMap;
@@ -397,7 +402,6 @@
         // 
         // For debugging purposes we register where this is being registered at.
         //
-        callback.line = (new Error).stack.split('\n')[1];
 
         (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
@@ -452,7 +456,7 @@
     });
 
     function del ( handle ) {
-      each ( handle.$, function( stagekey ) {
+      each ( handle.$.ref, function( stagekey ) {
         var map = isGlobbed(stagekey) ? globberMap : eventMap;
         map[ stagekey ] = without( map[ stagekey ], handle );
       });

@@ -204,13 +204,19 @@ And now you want to re-enable them and then increment all the keys at once?
 There you go ... 
 
 
+### Diagnostic tools.
+
 There's also a nice way to diagnose things.
 
 A nice way to find out if there's events associated with say, 'key1' you can do something like:
 
     >> ev.events('key1')
+    Object { first: undefined, on: Array[3], after: undefined, test: undefined, or: undefined, set: undefined }
 
- 
+    >> ev.events('key1').on[0].__line
+    pub@http://localhost/ghub/ytmix/js/raw/evda.js:355:14
+
+
 ### Setters
 
 Watch this. Pretend I know how to get something, like say, a user profile, but I don't want to load it
