@@ -72,8 +72,6 @@ not be able to integrate easily.
 
 ### A longer example.
 
-For instance, you can have a few globals
-
     var ev = EvDa();
 
 creates an event namespace, ev. You can use one for the entire app, that's fine.
@@ -205,9 +203,15 @@ And now you want to re-enable them and then increment all the keys at once?
 
 There you go ... 
 
-Smooth like butta' baby.
 
-### Be years ahead of those low-contrast hard-to read blog articles with curvy custom hairline fonts.
+There's also a nice way to diagnose things.
+
+A nice way to find out if there's events associated with say, 'key1' you can do something like:
+
+    >> ev.events('key1')
+
+ 
+### Setters
 
 Watch this. Pretend I know how to get something, like say, a user profile, but I don't want to load it
 unnecessarily.
@@ -253,7 +257,7 @@ Oh but what if you declare the two things in the reverse order? That works. Sure
 
 Yep. more trivial stuff also works; who'd think that? Nobody really does this yet. I don't know why.
 
-### Doesn't backbone have these things?
+### Doesn't framework-XYZ have these things?
 
 Oh right. Here's one for you.  Let's say that we have a function:
 
