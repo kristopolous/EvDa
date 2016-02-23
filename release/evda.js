@@ -394,6 +394,11 @@
           my_map = globberMap;
         }
 
+        // 
+        // For debugging purposes we register where this is being registered at.
+        //
+        callback.line = (new Error).stack.split('\n')[1];
+
         (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
         //
@@ -1295,4 +1300,4 @@
   self.EvDa = e;
 
 })();
-EvDa.__version__='0.1-versioning-added-51-g3cfe6c1';
+EvDa.__version__='0.1-versioning-added-57-g707e424';
