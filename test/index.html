@@ -256,7 +256,7 @@ module('fire');
   });
   test("list value fire", function(){
     expect(1);
-    var ev = EvDa({key: [2,2,3]});
+    var ev = EvDa({key: [1,2,3]});
 
     ev('key', function(key, obj){
       equal(key[0], 1, "Everything is fine");
