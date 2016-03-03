@@ -8,7 +8,8 @@
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
 (function(){
-  //"use strict";
+  "use strict";
+
   if(self.EvDa) { return; }
 
   var 
