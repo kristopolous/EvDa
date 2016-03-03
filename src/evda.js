@@ -571,7 +571,7 @@
     function bubble(key) {
       var
         parts = key.split('.'),
-        parts_key = parts.pop();
+        parts_key = parts.pop(),
         parts_obj = [];
 
       parts_obj[parts_key] = data[key];
