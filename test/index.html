@@ -101,6 +101,20 @@ module("Basic");
     equal(_.keys(ev.db).join(''), '', "Removed");
   });
 
+  test("Error propagation", function(){
+    expect(1);
+    var ev = EvDa();
+    ev('key', function(){
+      throw new ReferenceError();
+    });
+    try {
+      ev('key','value');
+    } catch(e) {
+      equal(e instanceof ReferenceError, true, 'Proper error passed up');
+    }
+  });
+
+
 module("OO binding");
   test("Set a key", function() {
     expect(3);
