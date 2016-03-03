@@ -8,6 +8,7 @@
 // Dual licensed under the MIT or GPL Version 2 licenses.
 //
 (function(){
+  //"use strict";
   if(self.EvDa) { return; }
 
   var 
@@ -1239,9 +1240,10 @@
         // neuter this function but don't populate
         // the users keyspace.
         pub.sniff = function() {
-          var args = slice.call(arguments), 
-              key,
-              ret = [];
+          var 
+            args = slice.call(arguments), 
+            key,
+            ret = [];
 
           each(args, function(key) {
             if(isString(key)) {
