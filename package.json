@@ -1,0 +1,28 @@
+{
+  "name": "evda",
+  "version": "1.0.0",
+  "description": "A thoroughly documented and tested event system",
+  "main": "release/evda.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kristopolous/EvDa.git"
+  },
+  "keywords": [
+    "event",
+    "dispatch",
+    "callback"
+  ],
+  "author": "Chris McKenzie <kristopolous@yahoo.com> (http://9ol.es)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kristopolous/EvDa/issues"
+  },
+  "homepage": "https://github.com/kristopolous/EvDa#readme"
+}
