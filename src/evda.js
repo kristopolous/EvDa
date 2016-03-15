@@ -765,7 +765,7 @@ var
         // if key is in data but isn't a number, it returns NaN and sets it
         // if key is 1, then it gets reduced to 0, getting 0,
         // if key is any other number, than it gets set
-        return pub.set ( key, data[key] - amount || 0, meta );
+        return pub ( key, data[key] - amount || 0, meta );
       },
 
       // If we are pushing and popping a non-array then

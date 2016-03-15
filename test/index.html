@@ -356,6 +356,33 @@ module("incr/decr");
     equal(ev('x'), 11, 'existent key correctly incremented to 11');
   });
 
+  test("increment two keys that do not exist", function(){
+    expect(2);
+    var ev = EvDa();
+    ev.incr(['a', 'b']);
+
+    equal(ev('a'), 1, 'nonexistent key correctly incremented to 1');
+    equal(ev('b'), 1, 'nonexistent key correctly incremented to 1');
+  });
+
+  test("decrement two keys that do not exist", function(){
+    expect(2);
+    var ev = EvDa();
+    ev.decr(['a', 'b']);
+
+    equal(ev('a'), 0, 'nonexistent key correctly decremented to 0');
+    equal(ev('b'), 0, 'nonexistent key correctly decremented to 0');
+  });
+  test("decrement two keys that do not exist twice", function(){
+    expect(2);
+    var ev = EvDa();
+    ev.decr(['a', 'b']);
+    ev.decr(['a', 'b']);
+
+    equal(ev('a'), -1, 'nonexistent key correctly decremented to -1');
+    equal(ev('b'), -1, 'nonexistent key correctly decremented to -1');
+  });
+
   test("increment a key that exists by a string expression", function(){
     expect(1);
     var ev = EvDa({x: 1});
@@ -403,6 +430,16 @@ module("incr/decr");
 
     equal(ev('x'), 0, 'Non existent key correctly set to 0');
   });
+
+  test("decrement a key that doesn't exist twice", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.decr('x');
+    ev.decr('x');
+
+    equal(ev('x'), -1, 'Non existent key correctly set to -1');
+  });
+
 module("sniff");
   test("register object callbacks, set from object, make sure they all are hit", function(){
     expect(3);
