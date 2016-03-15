@@ -365,6 +365,33 @@ module("incr/decr");
     equal(ev('b'), 1, 'nonexistent key correctly incremented to 1');
   });
 
+  test("increment two keys by a custom value", function(){
+    expect(2);
+    var ev = EvDa({a: 0, b: 1});
+    ev.incr(['a', 'b'], 10);
+
+    equal(ev('a'), 10, 'nonexistent key correctly incremented to 10');
+    equal(ev('b'), 11, 'nonexistent key correctly incremented to 11');
+  });
+
+  test("increment two keys by a custom expression", function(){
+    expect(2);
+    var ev = EvDa({a: 1, b: 2});
+    ev.incr(['a', 'b'], "*2");
+
+    equal(ev('a'), 2, 'nonexistent key correctly incremented to 2');
+    equal(ev('b'), 4, 'nonexistent key correctly incremented to 4');
+  });
+
+  test("increment two keys by a custom expression using the mod alias", function(){
+    expect(2);
+    var ev = EvDa({a: 1, b: 2});
+    ev.mod(['a', 'b'], "*2");
+
+    equal(ev('a'), 2, 'nonexistent key correctly incremented to 2');
+    equal(ev('b'), 4, 'nonexistent key correctly incremented to 4');
+  });
+
   test("decrement two keys that do not exist", function(){
     expect(2);
     var ev = EvDa();
