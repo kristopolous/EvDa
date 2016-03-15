@@ -235,6 +235,7 @@ var
         data: data, 
         events: eventMap,
         locks: lockMap,
+        testLocks: testLockMap,
         last: lastMap,
         trace: traceList,
         globs: globberMap
@@ -1327,4 +1328,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-87-g7501f1a';
+EvDa.__version__='0.1-versioning-added-90-g280cf9e';
