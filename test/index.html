@@ -356,6 +356,22 @@ module("incr/decr");
     equal(ev('x'), 11, 'existent key correctly incremented to 11');
   });
 
+  test("increment a key that exists by a string expression", function(){
+    expect(1);
+    var ev = EvDa({x: 1});
+    ev.incr('x', '*3');
+
+    equal(ev('x'), 3, 'existent key correctly incremented to 3');
+  });
+
+  test("increment a key that does not exist by a string expression", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.incr('x', '+3');
+
+    equal(ev('x'), 3, 'existent key correctly incremented to 3');
+  });
+
   test("increment a key that doesn't exist", function(){
     expect(1);
     var ev = EvDa();
