@@ -235,6 +235,7 @@ var
         data: data, 
         events: eventMap,
         locks: lockMap,
+        testLocks: testLockMap,
         last: lastMap,
         trace: traceList,
         globs: globberMap

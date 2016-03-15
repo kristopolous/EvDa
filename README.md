@@ -405,15 +405,16 @@ Looking at the last style, one can do the following:
 
 If there are no arguments, then an object for inspection is returned.
 
-As of <a href="#version">0.1.37</a>, this is what is returned:
+As of <a href="#version">0.1.88</a>, this is what is returned:
 
     {
-      data: ...    The keys and current values
-      events: ...  The events (on, after, before, test ...)
-      locks: ...   Used to prevent recursion, it can also (if buggy) prevent firing
-      last: ...    The last function return value for each key (useful for debugging closures)
-      globs: ...   Regex style event listening
-      trace: ...   Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
+      data: ...       The keys and current values
+      events: ...     The events (on, after, before, test ...)
+      locks: ...      Used to prevent recursion, it can also (if buggy) prevent firing
+      testLocks: ...  Used to prevent test recursion
+      last: ...       The last function return value for each key (useful for debugging closures)
+      globs: ...      Regex style event listening
+      trace: ...      Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
     }
 
 There is a scope specific object, `dbg`, which may be contextually added to for more information.
