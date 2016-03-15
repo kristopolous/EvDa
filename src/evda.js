@@ -588,9 +588,13 @@ var
     }
 
     function mod( key, cb, arg, meta ) {
-      var val = isNumber(data[key]) ? data[key] : 0;
-      return pub.set ( key, cb(val, arg), meta );
+      var res = map(isArray(key) ? key : [key], function(which) {
+        var val = isNumber(data[which]) ? data[which] : 0;
+        return pub.set ( which, cb(val, arg), meta );
+      });
+      return isArray(key) ? res : res[0];
     }
+
     mod.add = function(val, amount) {
       return val + amount;
     }
