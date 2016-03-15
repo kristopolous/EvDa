@@ -348,6 +348,14 @@ module("incr/decr");
     equal(ev('x'), 2, 'existent key correctly incremented to 2');
   });
   
+  test("increment a key that exists by a custom value", function(){
+    expect(1);
+    var ev = EvDa({x: 1});
+    ev.incr('x', 10);
+
+    equal(ev('x'), 11, 'existent key correctly incremented to 11');
+  });
+
   test("increment a key that doesn't exist", function(){
     expect(1);
     var ev = EvDa();
@@ -364,6 +372,14 @@ module("incr/decr");
     equal(ev('x'), 1, 'existent key correctly decremented to 1');
   });
   
+  test("decrement a key that exists by a custom value", function(){
+    expect(1);
+    var ev = EvDa({x: 12});
+    ev.decr('x', 10);
+
+    equal(ev('x'), 2, 'existent key correctly decremented to 2');
+  });
+
   test("decrement a key that doesn't exist", function(){
     expect(1);
     var ev = EvDa();
