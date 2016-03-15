@@ -611,11 +611,21 @@ A place where this would be useful is say if you have a volume button and you wa
 it to go up 110% and down 90% as opposed to a +/- 10 amount.  Here (as of 0.1.80) 
 you can use `incr` as a general purpose `mod` as follows:
 
-    ev('volume', '*(11/10)')
+    ev.incr('volume', '*(11/10)')
     > 1.100
 
-    ev('volume', '*(10/11)')
+    ev.incr('volume', '*(10/11)')
     > 1.000
+
+In fact, `.mod` is aliased to `.incr` to make this look more semantically meaningful:
+
+    ev.mod('volume', '*(11/10)')
+    > 1.100
+
+    ev.mod('volume', '*(10/11)')
+    > 1.000
+
+Does the same thing.
 
 You can set ceilings and floors by denying the values through tests such as:
 

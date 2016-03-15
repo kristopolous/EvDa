@@ -587,9 +587,13 @@ var
       );
     }
 
-    function mod( key, cb, arg, meta ) {
+    // An internal wrapper function for the increment and decrement
+    // operations.
+    function mod( key, cb, arg, meta, initial ) {
+      initial = initial || 0;
+
       var res = map(isArray(key) ? key : [key], function(which) {
-        var val = isNumber(data[which]) ? data[which] : 0;
+        var val = isNumber(data[which]) ? data[which] : initial;
         return pub.set ( which, cb(val, arg), meta );
       });
       return isArray(key) ? res : res[0];
@@ -769,7 +773,7 @@ var
         // if key is in data but isn't a number, it returns NaN and sets it
         // if key is 1, then it gets reduced to 0, getting 0,
         // if key is any other number, than it gets set
-        return pub ( key, data[key] - amount || 0, meta );
+        return mod ( key, mod.add, -(amount || 1), meta, 1 );
       },
 
       // If we are pushing and popping a non-array then
@@ -1292,6 +1296,7 @@ var
     pub.osetAdd = pub.osetadd;
     pub.setDel = pub.setdel;
     pub.isSet = pub.isset;
+    pub.mod = pub.incr;
 
     pub.get = pub;
     pub.change = pub.on;
