@@ -339,13 +339,37 @@ module("empty");
     ev('key', 'value');
   });
 
-module("incr");
+module("incr/decr");
+  test("increment a key that exists", function(){
+    expect(1);
+    var ev = EvDa({x: 1});
+    ev.incr('x');
+
+    equal(ev('x'), 2, 'existent key correctly incremented to 2');
+  });
+  
   test("increment a key that doesn't exist", function(){
     expect(1);
     var ev = EvDa();
     ev.incr('x');
 
     equal(ev('x'), 1, 'Non existent key correctly incremented to 1');
+  });
+
+  test("decrement a key that exists", function(){
+    expect(1);
+    var ev = EvDa({x: 2});
+    ev.decr('x');
+
+    equal(ev('x'), 1, 'existent key correctly decremented to 1');
+  });
+  
+  test("decrement a key that doesn't exist", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.decr('x');
+
+    equal(ev('x'), 0, 'Non existent key correctly set to 0');
   });
 module("sniff");
   test("register object callbacks, set from object, make sure they all are hit", function(){
