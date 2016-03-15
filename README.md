@@ -606,6 +606,23 @@ Example:
     ev.incr('key', 2)
     > 3
 
+Also if the second argument is a string, then this gets treated as an expression.  
+A place where this would be useful is say if you have a volume button and you want
+it to go up 110% and down 90% as opposed to a +/- 10 amount.  Here (as of 0.1.80) 
+you can use `incr` as a general purpose `mod` as follows:
+
+    ev('volume', '*(11/10)')
+    > 1.100
+
+    ev('volume', '*(10/11)')
+    > 1.000
+
+You can set ceilings and floors by denying the values through tests such as:
+
+    ev.test('volume', function(val, meta) {
+      meta(val > 10 || val < 0);
+    });
+
 <h4><a name="decr"></a>[number] .decr(key &lt;, amount, meta &gt; )</h4>
 
  * Atomically (in the JS sense) decrements a key's value by an amount or 1 if not specified. 
