@@ -185,6 +185,7 @@ module('context');
     john.greet('morning');
 
   });
+
 module('chaining')
   test('basic chain', function(){
     expect(3);
@@ -338,6 +339,14 @@ module("empty");
     ev('key', 'value');
   });
 
+module("incr");
+  test("increment a key that doesn't exist", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.incr('x');
+
+    equal(ev('x'), 1, 'Non existent key correctly incremented to 1');
+  });
 module("sniff");
   test("register object callbacks, set from object, make sure they all are hit", function(){
     expect(3);
