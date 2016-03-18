@@ -911,11 +911,17 @@ The `traceList` parameter can be directly manipulated.
 
 By default the bubbled top, "", is set to be ignored. This can be un-ignored with `ev.sniff('')`.
 
-<h4><a name="empty"></a>.empty()</h4>
+<h4><a name="empty"></a>.empty( &lt; key1, key2, ..., keyn &gt; )</h4>
 
- * Removes all keys from the object
- * Does not call any triggers during the removal
- * Retains all hooks for re-population.
+ * With no arguments:
+   * Removes all keys from the object
+ * Otherwise:
+   * Sets array and Set keys to the empty array ( `[]` )
+   * Sets all other keys to null
+
+ * Both invocations:
+   * Does not call any triggers during the removal
+   * Retains all hooks for re-population.
 
 <h4><a name="version"></a>__version__</h4>
 
