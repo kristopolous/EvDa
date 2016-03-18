@@ -31,7 +31,7 @@ var
       }
 
       return obj == null ? 
-        String( obj ) == 'object' : 
+        String( obj ) === 'object' : 
         toString.call(obj) === '[object Object]' || true ;
     },
 
@@ -345,7 +345,7 @@ var
 
       // This will return all the handlers associated with
       // this event.
-      if ( args.length == 1 ) {
+      if ( args.length === 1 ) {
         return smartMap(scope, resolve);
       } 
 
@@ -474,7 +474,7 @@ var
         var myKey = key.pop();
 
         return isset(glob(myKey), function(data, meta) {
-          var next = (key.length == 1) ? key[0] : key;
+          var next = (key.length === 1) ? key[0] : key;
           return isset(next, callback, meta);
         }, meta);
         // ^^ this should recurse nicely.
@@ -696,7 +696,7 @@ var
 
               // see if there's any more false things
               // and if there are not then we run this
-              if(values(flagMap).indexOf(false) == -1) {
+              if(values(flagMap).indexOf(false) === -1) {
                 toTest.apply(pub.context, slice.call(arguments));
               }
             };
@@ -731,7 +731,7 @@ var
 
             toTest = attempt;
           } catch (ex) { }
-        } else if ( arguments.length == 2 ) {
+        } else if ( arguments.length === 2 ) {
           return pub.isset ( key, toTest );
         }
 
@@ -844,7 +844,7 @@ var
           noexec = _opts['noexec'];
 
         // this is when we are calling a future setter
-        if(arguments.length == 1) {
+        if(arguments.length === 1) {
           var ret = function() {
             pub.set.apply(pub.context, [key].concat(slice.call(arguments)));
           }
@@ -1106,7 +1106,7 @@ var
             delete callback.$.norun[listName];
           }
 
-          if ( size(callback.$.norun) == 0 ) {
+          if ( size(callback.$.norun) === 0 ) {
             delete callback.$.norun;
           }
         });
@@ -1127,7 +1127,7 @@ var
             meta.set = clone(before);
 
             each(valArray, function(what) {
-              if(meta.set.indexOf(what) == -1) {
+              if(meta.set.indexOf(what) === -1) {
                 meta.set.push(what);
               }
             });
@@ -1229,7 +1229,7 @@ var
             newlen = size(value),
             oldlen = size(meta.old);
           
-          if(newlen - oldlen == 1) {
+          if(newlen - oldlen === 1) {
             callback.call( pub.context, last(value) );
           } else if (newlen > oldlen) { 
             callback.call( pub.context, toArray(value).slice(oldlen) );
