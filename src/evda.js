@@ -1169,7 +1169,7 @@ var
               meta.value = meta.set; 
             }
             // the operation that was done.
-            meta.oper = ['setadd', value];
+            meta.oper = {name:'setadd', value:value};
 
             return (before.length != meta.set.length);
           }
@@ -1188,7 +1188,7 @@ var
 
         if ( before.length != after.length) {
           meta = meta || {};
-          meta.oper = ['setdel', value];
+          meta.oper = {name:'setdel', value:value};
 
           return pub ( key, after, meta, {value: value} );
         }
