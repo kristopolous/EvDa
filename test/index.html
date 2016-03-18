@@ -318,6 +318,21 @@ module("empty");
     equal(_.keys(ev.db).length, 0);
   });
 
+  test("fill in an object and empty specific key", function() {
+    expect(3);
+    var ev = EvDa();
+    ev('key', 'value');
+    ev('list', [1,2,3]);
+    ev('', function(){
+      equal(true, true, "don't call");
+    });
+    ev.empty('key', 'list');
+    equal(ev('key'), null, "Key correctly set to null");
+    equal(ev('list').length, 0, "List correctly set to 0 length");
+    // bubble test.
+    equal(ev('').list.length, 0, "List correctly set to 0 length");
+  });
+
   test("fill in an object and empty it, make sure callbacks aren't called", function() {
     expect(0);
     var ev = EvDa();
