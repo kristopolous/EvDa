@@ -1317,6 +1317,8 @@ var
     pub.setAdd = pub.setadd;
     pub.setToggle = pub.settoggle;
     pub.osetAdd = pub.osetadd;
+    pub.osetdel = pub.setdel;
+    pub.osetDel = pub.setdel;
     pub.setDel = pub.setdel;
     pub.isSet = pub.isset;
     pub.mod = pub.incr;
