@@ -325,6 +325,7 @@ Syntax notations:
 
  * <a href="#setadd">[set] .setAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key`
  * <a href="#osetadd">[set] .osetAdd(key, value &lt;, meta &gt; )</a> - add value to a set at `key` maintaining the order
+ * <a href="#osetdel">[set] .osetDel(key, value &lt;, meta &gt; )</a> - delete value from a set at `key` (alias to `setDel`)
  * <a href="#setdel">[set] .setDel(key, value &lt;, meta &gt; )</a> - delete value from a set at `key`
  * <a href="#settoggle">[set] .setToggle(key, value &lt;, meta &gt; )</a> - toggle the membership of a value in a set at `key`
 
@@ -429,10 +430,10 @@ There is a scope specific object, `dbg`, which may be contextually added to for 
    * noexec: if set, disables all callbacks from being fired when settings.
    * noset: if set, doesn't set any value.
    * onlychange: if set, only run callbacks if something is changed.
-   * coroutine: `function(meta, isFinal)` if set, this is a function that gets passed the meta object before each test and prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations perhaps done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
+   * coroutine: `function(meta, isFinal)` if set, this is a function that gets passed the meta object before each test and prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
    If `isFinal` is true then it means this is the last call prior to being set.
    the `meta.value` at the end of the coroutine function is the one that will be sent to the `after` and `on` listeners - in this sense is more of a middleware than a knuthian coroutine - but since its passed as a lambda during the actual set as opposed to a decoupled listener, the flow of control more closely resembles that of a coroutine than a middleware stack.
-   coroutines Should return `true`.
+   coroutines must return a `true` vlaue or else it acts as a test.
    
 
 Example:
@@ -555,6 +556,10 @@ Example:
 <h4><a name="osetadd"></a>[set] .osetAdd(key, value &lt;, meta &gt; )</h4>
 
  * Identical to `setAdd` but maintains the order of the set at a slight complexity cost.
+
+<h4><a name="osetdel"></a>[set] .osetDel(key, value &lt;, meta &gt; )</h4>
+
+ * An alias to `setDel` existing for symmetrical reasons.
 
 <h4><a name="setdel"></a>[set] .setDel(key, value &lt;, meta &gt; )</h4>
 
