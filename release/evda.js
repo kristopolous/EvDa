@@ -1148,6 +1148,7 @@ var
             if(isFinal) {
               meta.value = meta.set; 
             }
+            meta.oper = {name:'osetadd', value:value};
 
             return (before.length != meta.set.length);
           }
@@ -1168,7 +1169,6 @@ var
             if(isFinal) {
               meta.value = meta.set; 
             }
-            // the operation that was done.
             meta.oper = {name:'setadd', value:value};
 
             return (before.length != meta.set.length);
@@ -1189,7 +1189,9 @@ var
         if ( before.length != after.length) {
           return pub ( key, after, meta, {
             coroutine: function(meta, isFinal) {
-                meta.oper = {name:'setdel', value:value};
+                if(isFinal) {
+                  meta.oper = {name:'setdel', value:value};
+                }
                 return true;
               },
             value: value} );
@@ -1315,6 +1317,8 @@ var
     pub.setAdd = pub.setadd;
     pub.setToggle = pub.settoggle;
     pub.osetAdd = pub.osetadd;
+    pub.osetdel = pub.setdel;
+    pub.osetDel = pub.setdel;
     pub.setDel = pub.setdel;
     pub.isSet = pub.isset;
     pub.mod = pub.incr;
@@ -1348,4 +1352,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-104-g7ed2077';
+EvDa.__version__='0.1-versioning-added-108-g7155353';
