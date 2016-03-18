@@ -1187,10 +1187,12 @@ var
           after = without( before, value);
 
         if ( before.length != after.length) {
-          meta = meta || {};
-          meta.oper = {name:'setdel', value:value};
-
-          return pub ( key, after, meta, {value: value} );
+          return pub ( key, after, meta, {
+            coroutine: function(meta, isFinal) {
+                meta.oper = {name:'setdel', value:value};
+                return true;
+              },
+            value: value} );
         }
 
         return after;
