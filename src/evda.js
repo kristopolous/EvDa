@@ -751,10 +751,22 @@ var
         });
       },
 
-      empty: function() {
+      empty: function(key) {
         // we want to maintain references to the object itself
-        for (var key in data) {
-          delete data[key];
+        if(arguments.length === 0) {
+          for (var key in data) {
+            delete data[key];
+          }
+        } else {
+          each(arguments, function(key) {
+            if(key in data) {
+              if(isArray(data[key])) {
+                data[key] = [];
+              } else {
+                data[key] = null; 
+              }
+            }
+          });
         }
       },
 
