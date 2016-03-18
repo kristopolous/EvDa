@@ -751,10 +751,22 @@ var
         });
       },
 
-      empty: function() {
+      empty: function(key) {
         // we want to maintain references to the object itself
-        for (var key in data) {
-          delete data[key];
+        if(arguments.length === 0) {
+          for (var key in data) {
+            delete data[key];
+          }
+        } else {
+          each(arguments, function(key) {
+            if(key in data) {
+              if(isArray(data[key])) {
+                pub.set(key, [], {}, {bypass:1, noexec:1});
+              } else {
+                pub.set(key, null, {}, {bypass:1, noexec:1});
+              }
+            }
+          });
         }
       },
 
@@ -1041,6 +1053,7 @@ var
                 if(!noexec) {
                   result = cback.call(pub.context);
                 } else {
+                  bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
                   // if we are not executing this, then
                   // we return a set of functions that we
                   // would be executing.
@@ -1328,4 +1341,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-92-g62ab4b0';
+EvDa.__version__='0.1-versioning-added-98-g977528c';
