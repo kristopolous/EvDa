@@ -749,7 +749,7 @@ module('Bubbling');
     expect(4);
     var ev = EvDa();
 
-    ev('a.b', function(value) {
+    ev('a.b', function(value, meta) {
       equal(true, true, 'callback');
     });
 
@@ -1468,12 +1468,14 @@ module("Tests");
   });
 
   test("Setadd testing of the value", function() {
-    expect(2);
+    expect(4);
     var ev = EvDa();
 
     ev.setAdd('key', 1);
 
     ev.test('key', function(value, meta) {
+      equal(meta.oper.name, 'setadd', 'function name is passed');
+      equal(meta.oper.value, 2, 'function value is passed');
       equal(meta.set.join(''), 12, 'individual value is correct');
       meta();
     });
@@ -1712,6 +1714,18 @@ module("Removing elements from a set");
     // This should simply not crash
     var ev = EvDa();
 
+    ev.setDel('s', 1);
+  });
+
+  test("Add one element, delete and check meta", function(){
+    expect(2);
+    var ev = EvDa();
+
+    ev.setAdd('s', 1);
+    ev('s', function(value, meta) {
+      equal(meta.oper.name, 'setdel', 'function name is passed');
+      equal(meta.oper.value, 1, 'function value is passed');
+    });
     ev.setDel('s', 1);
   });
 

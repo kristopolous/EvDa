@@ -9,7 +9,7 @@ That is to say that it takes no opinion on how say, a routes architecture should
 Similarly, no decree is made about *how* to do two-way data-binding or reactive design.  Instead, there's generic tools which
 makes composing such a system convenient and easy.
 
-This isn't a weekend project.  It's been in development since 2008 and includes a suite with over 260 tests. Code is never pushed to master unless it passes all the tests.  
+This isn't a weekend project.  It's been in development since 2008 and includes a suite with over 270 tests. Code is never pushed to master unless it passes all the tests.  
 
 It's been used in ember, angular, react, backbone, and extjs projects to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other to interact.
 
