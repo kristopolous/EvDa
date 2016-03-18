@@ -1168,6 +1168,8 @@ var
             if(isFinal) {
               meta.value = meta.set; 
             }
+            // the operation that was done.
+            meta.oper = ['setadd', value];
 
             return (before.length != meta.set.length);
           }
@@ -1185,6 +1187,9 @@ var
           after = without( before, value);
 
         if ( before.length != after.length) {
+          meta = meta || {};
+          meta.oper = ['setdel', value];
+
           return pub ( key, after, meta, {value: value} );
         }
 
@@ -1341,4 +1346,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-98-g977528c';
+EvDa.__version__='0.1-versioning-added-100-gedcef8d';
