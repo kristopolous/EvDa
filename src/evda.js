@@ -761,9 +761,9 @@ var
           each(arguments, function(key) {
             if(key in data) {
               if(isArray(data[key])) {
-                data[key] = [];
+                pub.set(key, [], {}, {bypass:1, noexec:1});
               } else {
-                data[key] = null; 
+                pub.set(key, null, {}, {bypass:1, noexec:1});
               }
             }
           });
@@ -1053,6 +1053,7 @@ var
                 if(!noexec) {
                   result = cback.call(pub.context);
                 } else {
+                  bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
                   // if we are not executing this, then
                   // we return a set of functions that we
                   // would be executing.
