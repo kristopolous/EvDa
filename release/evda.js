@@ -228,12 +228,16 @@ var
       backlog = [],
       globberMap = {},
       traceList = [],
+      // previous values 
+      logSize = 10,
+      logMap = {},
       // last return
       lastMap = {},
       eventMap = {},
       dbg = {
         data: data, 
         events: eventMap,
+        log: logMap,
         locks: lockMap,
         testLocks: testLockMap,
         last: lastMap,
@@ -357,6 +361,18 @@ var
         ( isFunction ( value ) || 
           ( isArray(value) && isFunction(value[0]) )
         ) ? ON : SET ].apply(this, args);
+    }
+
+    function log(key, value) {
+      if(!logMap[key]) {
+        logMap[key] = [];
+      }
+
+      logMap[key].push([value, new Date()]);
+
+      if(logMap[key].length > logSize) {
+        logMap[key].shift();
+      }
     }
 
     // Register callbacks for
@@ -1012,9 +1028,12 @@ var
               // The old value is being passed in
               // through the meta
               //
+              // SETTER: This is the actual setting code
+              //
               if(!(_opts.onlychange && value === data[key])) {
 
                 if(!_opts.noset) {
+                  log(key, value);
                   data[key] = value;
 
                   if(key != '') {
@@ -1352,4 +1371,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-108-g7155353';
+EvDa.__version__='0.1-versioning-added-113-gc8337c5';
