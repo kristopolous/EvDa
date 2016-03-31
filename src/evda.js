@@ -368,7 +368,7 @@ var
         logMap[key] = [];
       }
 
-      logMap[key].push([value, +new Date()]);
+      logMap[key].push([value, new Date()]);
 
       if(logMap[key].length > logSize) {
         logMap[key].shift();
