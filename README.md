@@ -406,7 +406,7 @@ Looking at the last style, one can do the following:
 
 If there are no arguments, then an object for inspection is returned.
 
-As of <a href="#version">0.1.88</a>, this is what is returned:
+As of <a href="#version">0.1.111</a>, this is what is returned:
 
     {
       data: ...       The keys and current values
@@ -414,11 +414,16 @@ As of <a href="#version">0.1.88</a>, this is what is returned:
       locks: ...      Used to prevent recursion, it can also (if buggy) prevent firing
       testLocks: ...  Used to prevent test recursion
       last: ...       The last function return value for each key (useful for debugging closures)
+      log: ...        A log (see below) of the previous values
       globs: ...      Regex style event listening
       trace: ...      Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
     }
 
 There is a scope specific object, `dbg`, which may be contextually added to for more information.
+
+<h5>.log</h5>
+As of 0.1.111, a log is being kept of the previous values (currently hardcoded to 10) and when they were set.  You can run a `console.table` on a value, such as `ev().log.key` and
+get the previous values in a nice tabular format with dates.
 
 <h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
