@@ -1060,37 +1060,29 @@ module("Callbacks on set");
   test("register a callback, check execution order (after)", function(){
     expect(4);
     var ev = EvDa();
-    ev.after('key', function(value, meta) {
-      equal(meta.order, 2, '2nd registered');
-    });
-    ev('key', function(value, meta) {
-      equal(meta.order, 0, 'First registered ran first');
-    });
-    ev.after('key', function(value, meta) {
-      equal(meta.order, 3, '3rd registered');
-    });
-    ev('key', function(value, meta) {
-      equal(meta.order, 1, 'Second registered ran second');
-    });
+    ev.after('key', function(value, meta) { equal(meta.order, 2, '(after-1) 3rd'); });
+    ev('key', function(value, meta) { equal(meta.order, 0, '(on-1) 1st'); });
+    ev.after('key', function(value, meta) { equal(meta.order, 3, '(after-2) 4th'); });
+    ev('key', function(value, meta) { equal(meta.order, 1, '(on-2) 2nd'); });
     ev('key',1);
   });
 
   test("register a callback, check execution order (misc)", function(){
     expect(3);
     var ev = EvDa();
-    ev.after('key', function(value, meta) { equal(meta.order, 2, '3rd registered'); });
-    ev.on('key', function(value, meta) { equal(meta.order, 1, '2nd registered'); });
-    ev.first('key', function(value, meta) { equal(meta.order, 0, '1st registered'); });
+    ev.after('key', function(value, meta) { equal(meta.order, 2, '(after) 3rd'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 1, '(on) 2nd'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 0, '(first) 1st'); });
     ev('key',1);
   });
 
   test("register a callback, check execution order (test)", function(){
     expect(4);
     var ev = EvDa();
-    ev.after('key', function(value, meta) { equal(meta.order, 3, '4th registered'); });
-    ev.on('key', function(value, meta) { equal(meta.order, 2, '3rd registered'); });
-    ev.first('key', function(value, meta) { equal(meta.order, 1, '2nd registered'); });
-    ev.test('key', function(value, meta) { equal(meta.order, 0, '1st registered'); meta.done(true)});
+    ev.after('key', function(value, meta) { equal(meta.order, 3, '(after) 4th'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 2, '(on) 3rd'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 1, '(first) 2nd'); });
+    ev.test('key', function(value, meta) { equal(meta.order, 0, '(test) 1st'); meta.done(true)});
     ev('key',1);
   });
 
