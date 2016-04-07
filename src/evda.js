@@ -577,6 +577,7 @@ var
     function runCallback(callback, context, value, meta) {
       if( ! callback.$.norun) {
         // our ingested meta was folded into our callback
+        meta.order++;
         var res = callback.call ( 
           context, 
           value, 
@@ -585,7 +586,6 @@ var
         );
 
         console.log('here', meta.order);
-        meta.order++;
 
         if ( callback.once ) {
           del ( callback );
@@ -933,7 +933,8 @@ var
             // meaning, so it's fine.
             meta = doTest ? (
               function ( ok ) {
-                var res, _value;
+                var res;
+
                 failure |= (ok === false);
 
                 if ( ! --times ) { 
@@ -967,12 +968,10 @@ var
                   testIx++;
 
                   if (coroutine(meta, false)) {
-                    _value = hasvalue ? _opts['value'] : meta.value;
-
                     res = runCallback(
                       eventMap[ testKey ][ testIx ], 
                       pub.context, 
-                      _value, 
+                      (hasvalue ? _opts['value'] : meta.value), 
                       meta
                     );
 
@@ -994,7 +993,7 @@ var
             // During testing, the setter gets called on success.  We should
             // make sure that our order is continually accumulated if this
             // is part of a re-ingestion
-            order: _opts.order || 0,
+            order: _opts.order || -1,
             meta: _meta || {},
             done: meta, 
             result: meta,
@@ -1011,11 +1010,11 @@ var
 
               // This is the test handlers
               if(coroutine(meta, false)) {
-                res = eventMap[ testKey ][ testIx ].call ( 
+                res = runCallback(
+                  eventMap[ testKey ][ testIx ], 
                   pub.context, 
                   (hasvalue ? _opts['value'] : meta.value), 
-                  meta,
-                  meta.meta
+                  meta
                 );
 
                 if(res === true || res === false) {
