@@ -1,6 +1,6 @@
 {
   "name": "evda",
-  "version": "1.0.112",
+  "version": "1.0.125",
   "description": "A thoroughly documented and tested event system",
   "main": "release/evda.js",
   "directories": {
