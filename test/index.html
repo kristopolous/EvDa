@@ -1072,7 +1072,7 @@ module("Callbacks on set");
     ev('key',1);
   });
 
-  test("register a callback, check execution order (test)", function(){
+  test("register a callback, check execution order (test-1)", function(){
     expect(4);
     var ev = EvDa();
     ev.after('key', function(value, meta) { equal(meta.order, 3, '(after) 4th'); });
@@ -1082,7 +1082,7 @@ module("Callbacks on set");
     ev('key',1);
   });
 
-  test("register a callback, check execution order (test 2x)", function(){
+  test("register a callback, check execution order (test-2)", function(){
     expect(6);
     var ev = EvDa();
     ev.after('key', function(value, meta) { equal(meta.order, 5, '(after) 6th'); });
@@ -1127,7 +1127,7 @@ module("Callbacks on set");
   });
 
   test("register a callback, pass meta object information after a test", function(){
-    expect(2);
+    expect(4);
     var ev = EvDa();
 
     ev.test('key', function(){
@@ -1135,23 +1135,26 @@ module("Callbacks on set");
     });
 
     ev({
-      key: function(value, meta) {
+      key: function(value, meta, mine) {
         equal(meta.meta.one, true, 'meta info correct');
+        equal(mine.one, true, 'meta info correct');
       }
     });
-    ev('key', function(value, meta) {
+    ev('key', function(value, meta, mine) {
       equal(meta.meta.one, true, 'meta info correct');
+      equal(mine.one, true, 'meta info correct');
     });
 
     ev('key', 'value', {one: true});
   });
 
   test("register a callback, pass meta object information", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa();
 
-    ev('key', function(value, meta) {
+    ev('key', function(value, meta, mine) {
       equal(meta.meta.key, 'value', 'meta info correct');
+      equal(mine.key, 'value', 'meta info correct');
     });
 
     ev('key', 'value', {key: 'value'});
@@ -1166,6 +1169,20 @@ module("Callbacks on set");
     });
     ev('key', function(value, meta) {
       equal(meta.something, 1, 'values passed down');
+    });
+
+    ev('key', 'value');
+  });
+
+  test("register a callback, pass secondary-meta as middleware", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev('key', function(value, meta, mine) {
+      mine.something = 1;
+    });
+    ev('key', function(value, meta, mine) {
+      equal(mine.something, 1, 'values passed down');
     });
 
     ev('key', 'value');
