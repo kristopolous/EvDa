@@ -965,7 +965,9 @@ var
                   testIx++;
 
                   if (coroutine(meta, false)) {
-                    res = eventMap[ testKey ][ testIx ].call ( pub.context, (hasvalue ? _opts['value'] : meta.value), meta, meta.meta );
+                    var _value = hasvalue ? _opts['value'] : meta.value;
+
+                    res = eventMap[ testKey ][ testIx ].call ( pub.context, _value, meta, meta.meta );
 
                     if(res === true || res === false) {
                       meta(res);
