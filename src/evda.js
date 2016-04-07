@@ -580,7 +580,8 @@ var
         var res = callback.call ( 
           context, 
           value, 
-          meta
+          meta,
+          meta.meta
         );
 
         console.log('here', meta.order);
@@ -632,7 +633,6 @@ var
     mod.add = function(val, amount) {
       return val + amount;
     }
-
         
     extend(pub, {
       // Exposing the internal variables so that
@@ -924,8 +924,8 @@ var
                   callback, 
                   pub.context, 
                   hasvalue ? _opts['value'] : meta.value, 
-                  meta,
-                  meta.meta);
+                  meta
+                );
               });
             },
             // Invoke will also get done
