@@ -1111,7 +1111,19 @@ module("Callbacks on set");
     expect(2);
     var ev = EvDa();
     ev.test("key", function(value, meta) { equal(meta.order, 0, 'test 1st'); meta(false); });
-    ev.or('key', function(value, meta){ equal(meta.order, 1, "function ran"); });
+    ev.or('key', function(value, meta){ equal(meta.order, 1, "test 2nd"); });
+    ev('key',1);
+  });
+
+  test("execution order of or multiple handlers", function(){
+    expect(4);
+    var ev = EvDa();
+    
+    ev.test("key", function(value, meta) { equal(meta.order, 0, 'test 1st (pass)'); meta(true); });
+    ev.test("key", function(value, meta) { equal(meta.order, 1, 'test 2nd (fail)'); meta(false); });
+    ev.or('key', function(value, meta){ equal(meta.order, 2, "or 1st"); });
+    ev.or('key', function(value, meta){ equal(meta.order, 3, "or 2nd"); });
+
     ev('key',1);
   });
 
@@ -1627,6 +1639,27 @@ module("Or");
     ev.or('key', function(){
       equal(true, true, "function ran");
     });
+
+    ev.incr('key');
+
+  });
+
+  test("Set a key to a value, deny the set, make sure nothing else is run", function() {
+    expect(3);
+    var ev = EvDa();
+
+    equal(ev.incr("key"), 1, "Key initialized to 1");
+    ev.test("key", function(value, meta) {
+      equal(value, 2, "Key is attempting to be set to 2");
+
+      // deny it the pleasure.
+      meta(false);
+    });
+
+    ev.or('key', function(){ equal(true, true, "function ran"); });
+    ev.on('key', function(){ equal(true, false, 'on function should not be here'); });
+    ev.first('key', function(){ equal(true, false, 'first function should not be here'); });
+    ev.after('key', function(){ equal(true, false, 'after function should not be here'); });
 
     ev.incr('key');
 
