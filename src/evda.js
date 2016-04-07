@@ -585,9 +585,7 @@ var
           meta.meta
         );
 
-        console.log('here', meta.order);
-
-        if ( callback.once ) {
+        if( callback.once ) {
           del ( callback );
         }
 
@@ -725,7 +723,7 @@ var
 
               // see if there's any more false things
               // and if there are not then we run this
-              if(values(flagMap).indexOf(false) === -1) {
+              if (values(flagMap).indexOf(false) === -1) {
                 toTest.apply(pub.context, slice.call(arguments));
               }
             };
@@ -782,7 +780,7 @@ var
 
       empty: function(key) {
         // we want to maintain references to the object itself
-        if(arguments.length === 0) {
+        if (arguments.length === 0) {
           for (var key in data) {
             delete data[key];
           }
@@ -839,7 +837,7 @@ var
 
         ( pub.list[list] || (pub.list[list] = []) );
 
-        if(isFunction(ret)) {
+        if ( isFunction(ret)) {
           pub.list[list].push(ret);
         } else {
           each(ret, function(value, key) {
@@ -863,7 +861,7 @@ var
       },
 
       count: function(key) {
-        if(arguments.length === 0) {
+        if ( arguments.length === 0) {
           return Math.max.apply(this, values(data_ix));
         } else {
           return data_ix[key];
@@ -885,7 +883,7 @@ var
           noexec = _opts.noexec;
 
         // this is when we are calling a future setter
-        if(arguments.length === 1) {
+        if ( arguments.length === 1) {
           var ret = function() {
             pub.set.apply(pub.context, [key].concat(slice.call(arguments)));
           }
@@ -894,7 +892,7 @@ var
         }
 
         // recursion prevention.
-        if(lockMap[key] > 0) { 
+        if ( lockMap[key] > 0) { 
           each ( traceList, function ( callback ) {
             callback.call ( pub.context, extend({locked: key}, args) );
           });
@@ -992,8 +990,9 @@ var
           extend(meta, {
             // During testing, the setter gets called on success.  We should
             // make sure that our order is continually accumulated if this
-            // is part of a re-ingestion
-            order: _opts.order || -1,
+            // is part of a re-ingestion.  We make it -1 because we front-load
+            // how this is incremented.
+            order: ('order' in _opts) ? _opts.order : -1,
             meta: _meta || {},
             done: meta, 
             result: meta,
