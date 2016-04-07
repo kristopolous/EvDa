@@ -583,6 +583,9 @@ var
           meta
         );
 
+        console.log('here', meta.order);
+        meta.order++;
+
         if ( callback.once ) {
           del ( callback );
         }
@@ -923,7 +926,6 @@ var
                   hasvalue ? _opts['value'] : meta.value, 
                   meta,
                   meta.meta);
-                meta.order++;
               });
             },
             // Invoke will also get done
@@ -931,7 +933,6 @@ var
             // meaning, so it's fine.
             meta = doTest ? (
               function ( ok ) {
-                meta.order++;
                 failure |= (ok === false);
 
                 if ( ! --times ) { 
@@ -1066,7 +1067,6 @@ var
                     ),
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
-                      meta.order++;
                     });
 
                   // After this, we bubble up if relevant.
@@ -1080,7 +1080,6 @@ var
                   each(eventMap[AFTER + key] || [],
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
-                      meta.order++;
                     });
 
                   // Record this as the last value.
