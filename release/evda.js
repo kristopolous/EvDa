@@ -876,10 +876,10 @@ var
 
         var 
           res,
-          bypass = _opts['bypass'], 
+          bypass = _opts.bypass, 
           coroutine = _opts['coroutine'] || function(){ return true },
           hasvalue = ('value' in _opts),
-          noexec = _opts['noexec'];
+          noexec = _opts.noexec;
 
         // this is when we are calling a future setter
         if(arguments.length === 1) {
@@ -923,6 +923,7 @@ var
                   hasvalue ? _opts['value'] : meta.value, 
                   meta,
                   meta.meta);
+                meta.order++;
               });
             },
             // Invoke will also get done
@@ -930,6 +931,7 @@ var
             // meaning, so it's fine.
             meta = doTest ? (
               function ( ok ) {
+                meta.order++;
                 failure |= (ok === false);
 
                 if ( ! --times ) { 
@@ -954,7 +956,7 @@ var
                       // passed through would magically change if a test gets
                       // placed in the chain.
                       //
-                      pub.set ( key, meta.value, meta.meta, {bypass: 1} );
+                      pub.set ( key, meta.value, meta.meta, {bypass: 1, order: meta.order} );
                     } else {
                       orHandler();
                     }
@@ -980,6 +982,10 @@ var
           meta.old = clone(data[key]);
 
           extend(meta, {
+            // During testing, the setter gets called on success.  We should
+            // make sure that our order is continually accumulated if this
+            // is part of a re-ingestion
+            order: _opts.order || 0,
             meta: _meta || {},
             done: meta, 
             result: meta,
@@ -1058,6 +1064,7 @@ var
                     ),
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
+                      meta.order++;
                     });
 
                   // After this, we bubble up if relevant.
@@ -1071,6 +1078,7 @@ var
                   each(eventMap[AFTER + key] || [],
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
+                      meta.order++;
                     });
 
                   // Record this as the last value.
@@ -1381,4 +1389,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.1-versioning-added-119-g05f0eda';
+EvDa.__version__='0.1-versioning-added-123-g9c14859';
