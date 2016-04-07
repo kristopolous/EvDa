@@ -1063,8 +1063,10 @@ module("Callbacks on set");
       return true;
     });
 
-    ev('key', function(value, meta) {
-      equal(meta.meta.one, true, 'meta info correct');
+    ev({
+      key: function(value, meta) {
+        equal(meta.meta.one, true, 'meta info correct');
+      }
     });
     ev('key', function(value, meta) {
       equal(meta.meta.one, true, 'meta info correct');
