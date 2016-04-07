@@ -1048,12 +1048,8 @@ module("Callbacks on set");
   test("register a callback, check execution order", function(){
     expect(2);
     var ev = EvDa();
-    ev('key', function(value, meta) {
-      equal(meta.order, 0, 'First registered ran first');
-    });
-    ev('key', function(value, meta) {
-      equal(meta.order, 1, 'Second registered ran second');
-    });
+    ev('key', function(value, meta) { equal(meta.order, 0, '(on-1) 1st'); });
+    ev('key', function(value, meta) { equal(meta.order, 1, '(on-2) 2nd'); });
     ev('key',1);
   });
 
@@ -1089,12 +1085,12 @@ module("Callbacks on set");
   test("register a callback, check execution order (test 2x)", function(){
     expect(6);
     var ev = EvDa();
-    ev.after('key', function(value, meta) { equal(meta.order, 5, 'after 6th registered'); });
-    ev.on('key', function(value, meta) { equal(meta.order, 4, 'on 5th registered'); });
-    ev.first('key', function(value, meta) { equal(meta.order, 2, 'first 3rd registered'); });
-    ev.first('key', function(value, meta) { equal(meta.order, 3, 'first 4th registered'); });
-    ev.test('key', function(value, meta) { equal(meta.order, 0, 'test 1st registered'); meta.done(true)});
-    ev.test('key', function(value, meta) { equal(meta.order, 1, 'test 2nd registered'); meta.done(true)});
+    ev.after('key', function(value, meta) { equal(meta.order, 5, '(after) 6th'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 4, '(on) 5th'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 2, '(first-1) 3rd'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 3, '(first-2) 4th'); });
+    ev.test('key', function(value, meta) { equal(meta.order, 0, '(test-1) 1st'); meta.done(true)});
+    ev.test('key', function(value, meta) { equal(meta.order, 1, '(test-2) 2nd'); meta.done(true)});
     ev('key',1);
   });
 
@@ -1102,8 +1098,8 @@ module("Callbacks on set");
   test("execution order of or handler", function(){
     expect(2);
     var ev = EvDa();
-    ev.test("key", function(value, meta) { equal(meta.order, 0, 'test 1st'); meta(false); });
-    ev.or('key', function(value, meta){ equal(meta.order, 1, "test 2nd"); });
+    ev.test("key", function(value, meta) { equal(meta.order, 0, '(test) 1st (fail)'); meta(false); });
+    ev.or('key', function(value, meta){ equal(meta.order, 1, "(or) 2nd"); });
     ev('key',1);
   });
 
@@ -1111,10 +1107,10 @@ module("Callbacks on set");
     expect(4);
     var ev = EvDa();
     
-    ev.test("key", function(value, meta) { equal(meta.order, 0, 'test 1st (pass)'); meta(true); });
-    ev.test("key", function(value, meta) { equal(meta.order, 1, 'test 2nd (fail)'); meta(false); });
-    ev.or('key', function(value, meta){ equal(meta.order, 2, "or 1st"); });
-    ev.or('key', function(value, meta){ equal(meta.order, 3, "or 2nd"); });
+    ev.test("key", function(value, meta) { equal(meta.order, 0, '(test-1) 1st (pass)'); meta(true); });
+    ev.test("key", function(value, meta) { equal(meta.order, 1, '(test-2) 2nd (fail)'); meta(false); });
+    ev.or('key', function(value, meta){ equal(meta.order, 2, "(or-1) 3rd"); });
+    ev.or('key', function(value, meta){ equal(meta.order, 3, "(or-2) 4th"); });
 
     ev('key',1);
   });
