@@ -1033,10 +1033,11 @@ module("Callbacks on set");
   });
 
   test("register a callback, expect meta information", function(){
+    expect(3);
     var ev = EvDa();
 
     ev('key', function(value, meta) {
-      equal(_.keys(meta).sort().join(' '), 'done key meta old result value', 'Meta information there');
+      equal(_.keys(meta).sort().join(' '), 'done key meta old order result value', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
       equal(meta.key, 'key', 'key correct');
     });
@@ -1044,6 +1045,54 @@ module("Callbacks on set");
     ev('key', 'value');
   });
 
+  test("register a callback, check execution order", function(){
+    expect(2);
+    var ev = EvDa();
+    ev('key', function(value, meta) {
+      equal(meta.order, 0, 'First registered ran first');
+    });
+    ev('key', function(value, meta) {
+      equal(meta.order, 1, 'Second registered ran second');
+    });
+    ev('key',1);
+  });
+
+  test("register a callback, check execution order (after)", function(){
+    expect(4);
+    var ev = EvDa();
+    ev.after('key', function(value, meta) {
+      equal(meta.order, 2, '2nd registered');
+    });
+    ev('key', function(value, meta) {
+      equal(meta.order, 0, 'First registered ran first');
+    });
+    ev.after('key', function(value, meta) {
+      equal(meta.order, 3, '3rd registered');
+    });
+    ev('key', function(value, meta) {
+      equal(meta.order, 1, 'Second registered ran second');
+    });
+    ev('key',1);
+  });
+
+  test("register a callback, check execution order (misc)", function(){
+    expect(3);
+    var ev = EvDa();
+    ev.after('key', function(value, meta) { equal(meta.order, 2, '3rd registered'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 1, '2nd registered'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 0, '1st registered'); });
+    ev('key',1);
+  });
+
+  test("register a callback, check execution order (test)", function(){
+    expect(4);
+    var ev = EvDa();
+    ev.after('key', function(value, meta) { equal(meta.order, 3, '4th registered'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 2, '3rd registered'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 1, '2nd registered'); });
+    ev.test('key', function(value, meta) { equal(meta.order, 0, '1st registered'); meta.done(true)});
+    ev('key',1);
+  });
   test("register a callback, pass meta information", function(){
     expect(1);
     var ev = EvDa();

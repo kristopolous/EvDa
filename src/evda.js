@@ -980,6 +980,7 @@ var
           meta.old = clone(data[key]);
 
           extend(meta, {
+            order: 0,
             meta: _meta || {},
             done: meta, 
             result: meta,
@@ -1002,6 +1003,7 @@ var
                   meta,
                   meta.meta
                 );
+                meta.order++;
 
                 if(res === true || res === false) {
                   meta(res);
@@ -1058,6 +1060,7 @@ var
                     ),
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
+                      meta.order++;
                     });
 
                   // After this, we bubble up if relevant.
@@ -1071,6 +1074,7 @@ var
                   each(eventMap[AFTER + key] || [],
                     function(callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
+                      meta.order++;
                     });
 
                   // Record this as the last value.
