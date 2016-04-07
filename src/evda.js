@@ -933,6 +933,7 @@ var
             // meaning, so it's fine.
             meta = doTest ? (
               function ( ok ) {
+                var res, _value;
                 failure |= (ok === false);
 
                 if ( ! --times ) { 
@@ -966,9 +967,14 @@ var
                   testIx++;
 
                   if (coroutine(meta, false)) {
-                    var _value = hasvalue ? _opts['value'] : meta.value;
+                    _value = hasvalue ? _opts['value'] : meta.value;
 
-                    res = eventMap[ testKey ][ testIx ].call ( pub.context, _value, meta, meta.meta );
+                    res = runCallback(
+                      eventMap[ testKey ][ testIx ], 
+                      pub.context, 
+                      _value, 
+                      meta
+                    );
 
                     if(res === true || res === false) {
                       meta(res);
