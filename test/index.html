@@ -1093,6 +1093,28 @@ module("Callbacks on set");
     ev.test('key', function(value, meta) { equal(meta.order, 0, '1st registered'); meta.done(true)});
     ev('key',1);
   });
+
+  test("register a callback, check execution order (test 2x)", function(){
+    expect(6);
+    var ev = EvDa();
+    ev.after('key', function(value, meta) { equal(meta.order, 5, 'after 6th registered'); });
+    ev.on('key', function(value, meta) { equal(meta.order, 4, 'on 5th registered'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 2, 'first 3rd registered'); });
+    ev.first('key', function(value, meta) { equal(meta.order, 3, 'first 4th registered'); });
+    ev.test('key', function(value, meta) { equal(meta.order, 0, 'test 1st registered'); meta.done(true)});
+    ev.test('key', function(value, meta) { equal(meta.order, 1, 'test 2nd registered'); meta.done(true)});
+    ev('key',1);
+  });
+
+
+  test("execution order of or handler", function(){
+    expect(2);
+    var ev = EvDa();
+    ev.test("key", function(value, meta) { equal(meta.order, 0, 'test 1st'); meta(false); });
+    ev.or('key', function(value, meta){ equal(meta.order, 1, "function ran"); });
+    ev('key',1);
+  });
+
   test("register a callback, pass meta information", function(){
     expect(1);
     var ev = EvDa();
