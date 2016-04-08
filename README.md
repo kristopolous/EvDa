@@ -296,6 +296,20 @@ I still have to know what will load before what; that's what synchronous is. Lik
 
 Well, this library does that. Fancy that. 
 
+## Overview
+
+This schematic overview has been created to document the normal flow of an event call.  Note that none of the optional things need to be assigned.
+At its most minimal, this library acts as a duck-typed object store ... essentially identical to javascript's regular object. 
+<img src='http://i.imgur.com/y6sWhjx.png'>
+
+You can set a key through many kinds of notations.  You can increment or decrement a number, add or remove a member from a set, or just assign a literal value.
+
+When this is done: 
+
+ * <a href="#test">tests</a> can be optionally set, run, or bypassed to see if this is an allowed operation (with optional <a href="#or">error conditions</a>).
+ * <a href="#set">coroutines</a> can act as middle-ware to permute the actual value being set.
+ * Routines that are usually associated with two-way binding, syncing, or other types of event propagation can then be <a href="#on">run</a>, <a href="#first">prioritized</a>, or <a href="#after">deferred</a>.
+
 ## API
 
 ### Functions
