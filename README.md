@@ -300,7 +300,8 @@ Well, this library does that. Fancy that.
 
 This schematic overview has been created to document the normal flow of an event call.  Note that none of the optional things need to be assigned.
 At its most minimal, this library acts as a duck-typed object store ... essentially identical to javascript's regular object. 
-<img src='http://i.imgur.com/y6sWhjx.png'>
+
+<img src='http://i.imgur.com/55Ogzkh.png'>
 
 You can set a key through many kinds of notations.  You can increment or decrement a number, add or remove a member from a set, or just assign a literal value.
 
