@@ -869,7 +869,7 @@ var
         var 
           res,
           bypass = _opts.bypass, 
-          coroutine = _opts['coroutine'] || function (){ return true },
+          coroutine = _opts.coroutine || function (){ return true },
           hasvalue = ('value' in _opts),
           noexec = _opts.noexec;
 
@@ -1067,7 +1067,7 @@ var
                   // After this, we bubble up if relevant.
                   if (key.length > 0) {
                     // But we don't hit the coroutine
-                    delete _opts['coroutine'];
+                    delete _opts.coroutine;
 
                     bubble.apply(pub.context, [key].concat(slice.call(myargs, 2)));
                   }
