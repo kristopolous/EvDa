@@ -413,16 +413,11 @@ var
         // This is the back-reference map to this callback
         // so that we can unregister it in the future.
         callback.$.ref.push( stage + key );
-        // And so we can know where things were registered.
-        if (isString(callback.$.line)) {
-          callback.$.line = [callback.$.line];
-        }
-        callback.$.line.push ( (new Error).stack );
-        if (callback.$.line.length === 1) {
-          callback.$.line = callback.$.line[0];
-        }
 
-        if (isGlobbed(key)) {
+        // And so we can know where things were registered.
+        callback.$.line.push ( (new Error).stack );
+
+        if ( isGlobbed(key) ) {
           my_map = globberMap;
         }
 
