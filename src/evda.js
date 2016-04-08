@@ -414,16 +414,12 @@ var
         // so that we can unregister it in the future.
         callback.$.ref.push( stage + key );
 
-        // And so we can know where things were registered.
+        // For debugging purposes we register where this is being registered at.
         callback.$.line.push ( (new Error).stack );
 
         if ( isGlobbed(key) ) {
           my_map = globberMap;
         }
-
-        // 
-        // For debugging purposes we register where this is being registered at.
-        //
 
         (my_map[stage + key] || (my_map[stage + key] = [])).push ( callback );
 
