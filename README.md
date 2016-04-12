@@ -1,16 +1,7 @@
 **EvDa** is a collection of about 30 or so functions to construct a modular no-kitchen-sink style application.  This is an event system.
 
-It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
-someone has to take an architectural opinion as to how to use it.
+It's been in development since 2008 and includes a suite with over 300 tests. 
 
-That is to say that it takes no opinion on how say, a routes architecture should be created, but instead, gives fundamental building blocks to construct a variety of them.
-
-Similarly, no decree is made about *how* to do two-way data-binding or reactive design.  Instead, there's generic tools which
-makes composing such a system convenient and easy.
-
-This isn't a weekend project.  It's been in development since 2008 and includes a suite with over 300 tests. 
-
-It's been used in ember, angular, react, backbone, and extjs projects to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other to interact.
 
 ## Overview
 
@@ -27,8 +18,42 @@ When this is done:
  * <a href="#set">coroutines</a> can act as middle-ware to permute the actual value being set.
  * Routines that are usually associated with two-way binding, syncing, or other types of event propagation can then be <a href="#on">run</a>, <a href="#first">prioritized</a>, or <a href="#after">deferred</a>.
 
-## Events and callbacks as an anti-design
+## Events and Callbacks As An Anti-design
 
+Event systems provide a supplemental, indirect layer for application flow on top of the facilities provided by the underlying language.  Because of this, normal
+methodologies of debugging often fail and leave code cryptic.
+
+I've often seen projects where I think "what talks to what and how does it do that?  What is the separation of concerns and where does this code live?" along with 
+"why are things so indirect and why do you make things so convoluted?".  This is usually followed by some ideas like "This person doesn't know what they are doing"
+or "This is merely for job security. Nobody can figure out what's going on?"
+
+Sound familiar?
+
+I've come to the realization that if I only had the proper **tooling to inspect** the code I could be on-boarded much faster to a project and find out what's going on. Such callback and routing based approaches often construct a rather inpenetrable walled garden of complexity where the inner-mechanisms of the project aren't laid bare for inspection but are complexly interwoven upon layers of undocumented ephemeral abstraction.
+
+Because these "frameworks" if you will, provide a supplemental flow upon the language it's the responsibility of the implementer of such systems to provide the fundamental constructs that allow for the debugging and inspection of things which are built on top of them.  
+
+This means there needs to be features such as watching, logging, debugging, and tracing at the implementation level (which is on top of the callback system) and not be solely reliant on what is provided by the underlying language.  
+
+EvDa tries to alleviate this by keeping track of:
+
+  * Where callbacks are registered (by doing a stack dump at registration)
+  * When they are fired (through a tracing infrastructure)
+  * A log of previous values, when they were set, and from where
+  * The execution order of a specific set of callbacks
+  * The current call-depth and callback-stack specific to the event infrastructure
+
+As an extreme analogy, not providing these tools of insight at the library's layer of abstraction would be like trying to debug a javascript web app by having the browsers' executable open with gdb.
+
+It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
+someone has to take an architectural opinion as to how to use it.
+
+That is to say that it takes no opinion on how say, a routes architecture should be created, but instead, gives fundamental building blocks to construct a variety of them.
+
+Similarly, no decree is made about *how* to do two-way data-binding or reactive design.  Instead, there's generic tools which
+makes composing such a system convenient and easy.
+
+It's been used in ember, angular, react, backbone, and extjs projects to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other to interact.
 
 ### Agnostic Example: Namespaced Events
 
