@@ -45,7 +45,39 @@ EvDa tries to alleviate this by keeping track of:
 
 As an extreme analogy, not providing these tools of insight at the library's layer of abstraction would be like trying to debug a javascript web app by having the browsers' executable open with gdb.
 
-It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
+## Solve Existing Problems Without New Ones
+
+Oftentimes when you need to solve a problem and are looking for an off-the-shelf solution, there's a rewrite cost beyond the immediate problem.  There's presumptions and demands upon the existing application in order for the solution to work.  These are gnerally written-off as "improvements" and done in the vain of making things better.  
+
+The rewrite cost then, is the amount of time needed to accomodate a particular solution.  
+
+We're going to compute the equation for aggregate time saved is by first defining
+
+ * DIY: Estimated Time to do a roll your own solution
+ * FW: Estimated Time to do the solution using the off-the-shelf solution
+ * FW_rewrite: Time to implement the demands ("improvements") the solution has in order to work
+ * FW_training: Time to getting the whole team to read the documentation and become proficient in the new way
+ * FW_testing: Time to test the new code that was rewritten and fix the issues
+ * FW_regression: Time to test the solvency of the old code that wasn't touched
+
+Now Aggregate Time Saved is
+    
+  Agg Time = DIY - (FW + FW_rewrite + FW_training + FW_testing + FW_regression)
+
+And this is presuming that the proposed solution actually reduces complexity or simplifies a problem as opposed to merely redefining it in other terms.
+
+As you can see here, Agg Time is often NEGATIVE meaning that there's a net LOSS in productivity which is generally speaking, counter to the conventional wisdom that such moves will save time.  In practice this is never the case - not because you've done it wrong, but because the conventional wisdom is just plain dead wrong.
+
+The solution is to reduce the `FW_*` metrics *as much as possible* by having a light-handed solution that can be implemented quickly, seemlessly, and in a side-effect free way without any impositions on how anything else works.  
+
+This is done by taking a few steps back from the offerings.  
+
+
+### Small and general 
+
+Instead of giving a feature-based solution to a problem, basic building blocks are given to construct these features from primitives.
+
+EvDa seeks to be 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
 someone has to take an architectural opinion as to how to use it.
 
 That is to say that it takes no opinion on how say, a routes architecture should be created, but instead, gives fundamental building blocks to construct a variety of them.
@@ -54,6 +86,12 @@ Similarly, no decree is made about *how* to do two-way data-binding or reactive 
 makes composing such a system convenient and easy.
 
 It's been used in ember, angular, react, backbone, and extjs projects to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other to interact.
+
+In so doing, since `FW_rewrite` becomes 0, that means that everything but `FW_training` also becomes 0.  
+
+Getting `FW_training` near 0 can only be done through great care in writing documentation for humans with plenty of examples. 
+
+Let's start with demonstrating how EvDa is purely agnostic.
 
 ### Agnostic Example: Namespaced Events
 
