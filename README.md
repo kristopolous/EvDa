@@ -27,6 +27,9 @@ When this is done:
  * <a href="#set">coroutines</a> can act as middle-ware to permute the actual value being set.
  * Routines that are usually associated with two-way binding, syncing, or other types of event propagation can then be <a href="#on">run</a>, <a href="#first">prioritized</a>, or <a href="#after">deferred</a>.
 
+## Events and callbacks as an anti-design
+
+
 ### Agnostic Example: Namespaced Events
 
 EvDa supports namespaced events while not having any opinion on how to do them.  
