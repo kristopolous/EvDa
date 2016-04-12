@@ -1,5 +1,4 @@
-# A Generic Event System
-EvDa is a collection of about 30 or so functions to construct a modular no-kitchen-sink style application.  This is an event system.
+**EvDa** is a collection of about 30 or so functions to construct a modular no-kitchen-sink style application.  This is an event system.
 
 It's 100% agnostic as to the MV\* approach or other libraries used and intended to be just below a level of complexity where 
 someone has to take an architectural opinion as to how to use it.
@@ -352,12 +351,12 @@ Syntax notations:
 
 #### Triggers
 
- * <a href="#on">[handle] .on(key, lambda ( value &lt;, info, meta&gt; ) )</a> - register lambda to run **when** key is set
- * <a href="#after">[handle] .after(key, lambda ( value, info ) )</a> - register lambda to run **after** key is set
+ * <a href="#on">[handle] .on(key, lambda ( value &lt;, info, meta &gt; ) )</a> - register lambda to run **when** key is set
+ * <a href="#after">[handle] .after(key, lambda ( value &lt;, info, meta &gt; ) )</a> - register lambda to run **after** key is set
  * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key
  * <a href="#or">[handle] .or(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run if a test fails
  * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once
- * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, info ) )</a> - run a lambda when a key **is a certain value**
+ * <a href="#when">[handle] .when(key, value | lambda, lambda ( value &t;, info, meta &gt; ) )</a> - run a lambda when a key **is a certain value**
  * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test
  * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
  * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**
@@ -446,12 +445,12 @@ get the previous values in a nice tabular format with dates.
  * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
  * Passes the meta information if supplied to the registered functions.
  * The opts section gives options for how the flow of the setter is run.  This is a kind of ["multiple dispatch"](http://en.wikipedia.org/wiki/Multiple_dispatch) that is needed for internal unification.  The options are:
-   * value: a value to be passed to the setters and the callbacks which may be different from the actual value set.
-   * bypass: if set, bypasses any test conditions when running a setter
-   * noexec: if set, disables all callbacks from being fired when settings.
-   * noset: if set, doesn't set any value.
-   * onlychange: if set, only run callbacks if something is changed.
-   * coroutine: `function(meta, isFinal)` if set, this is a function that gets passed the meta object before each test and prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
+   * **value**: a value to be passed to the setters and the callbacks which may be different from the actual value set.
+   * **bypass**: if set, bypasses any test conditions when running a setter
+   * **noexec**: if set, disables all callbacks from being fired when settings.
+   * **noset**: if set, doesn't set any value.
+   * **onlychange**: if set, only run callbacks if something is changed.
+   * **coroutine**: `function(meta, isFinal)` if set, this is a function that gets passed the meta object before each test and prior to the value actually being set.  Since `meta.value` is the value that will be set in the system, this can permit any permutations done by the testers or other handlers to be taken into consideration before the final `meta.value` is set.  
    If `isFinal` is true then it means this is the last call prior to being set.
    the `meta.value` at the end of the coroutine function is the one that will be sent to the `after` and `on` listeners - in this sense is more of a middleware than a knuthian coroutine - but since its passed as a lambda during the actual set as opposed to a decoupled listener, the flow of control more closely resembles that of a coroutine than a middleware stack.
    coroutines must return a `true` vlaue or else it acts as a test.
