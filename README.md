@@ -352,12 +352,12 @@ Syntax notations:
 
 #### Triggers
 
- * <a href="#on">[handle] .on(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **when** key is set
- * <a href="#after">[handle] .after(key, lambda ( value, { key, old, meta } ) )</a> - register lambda to run **after** key is set
+ * <a href="#on">[handle] .on(key, lambda ( value &lt;, info, meta&gt; ) )</a> - register lambda to run **when** key is set
+ * <a href="#after">[handle] .after(key, lambda ( value, info ) )</a> - register lambda to run **after** key is set
  * <a href="#test">[handle] .test(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run as **a condition OF** setting a key
  * <a href="#or">[handle] .or(key, lambda ( value, { key, old, result, meta } | cb ))</a> - register lambda to run if a test fails
  * <a href="#once">[handle] .once(key, lambda)</a> - run an on, but only once
- * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, { key, old, meta } ) )</a> - run a lambda when a key **is a certain value**
+ * <a href="#when">[handle] .when(key, value | lambda, lambda ( value, info ) )</a> - run a lambda when a key **is a certain value**
  * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test
  * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
  * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**
