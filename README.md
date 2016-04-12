@@ -8,7 +8,7 @@ That is to say that it takes no opinion on how say, a routes architecture should
 Similarly, no decree is made about *how* to do two-way data-binding or reactive design.  Instead, there's generic tools which
 makes composing such a system convenient and easy.
 
-This isn't a weekend project.  It's been in development since 2008 and includes a suite with over 300 tests. Code is never pushed to master unless it passes all the tests.  
+This isn't a weekend project.  It's been in development since 2008 and includes a suite with over 300 tests. 
 
 It's been used in ember, angular, react, backbone, and extjs projects to supplement features that aren't in these libraries and also to get multiple libraries that don't play nice with each other to interact.
 
@@ -27,7 +27,7 @@ When this is done:
  * <a href="#set">coroutines</a> can act as middle-ware to permute the actual value being set.
  * Routines that are usually associated with two-way binding, syncing, or other types of event propagation can then be <a href="#on">run</a>, <a href="#first">prioritized</a>, or <a href="#after">deferred</a>.
 
-### Agnostic Example: Namespaced Events.
+### Agnostic Example: Namespaced Events
 
 EvDa supports namespaced events while not having any opinion on how to do them.  
 
@@ -84,7 +84,7 @@ So as you can see here, there's "namespaces" as per the definition of what a nam
 done.  This library empowers your personal liberty as a programmer, instead of restricting it to a preconceived implementation that you may
 not be able to integrate easily.
 
-### A longer example.
+### A longer example
 
     var ev = EvDa();
 
@@ -94,7 +94,7 @@ You can also seed it with initialization values by passing in an object, for ins
 
     var ev = EvDa({key: 'value'});
 
-You have hipster promises like this:
+You have promises like this:
 
     ev.isset('key', function() { });
 
@@ -238,7 +238,7 @@ There's other tools to to trace execution and do various other inspections.
 
 ### Setters
 
-Watch this. Pretend I know how to get something, like say, a user profile, but I don't want to load it
+Pretend I know how to get something, like say, a user profile, but I don't want to load it
 unnecessarily.
 
 For example:
@@ -284,7 +284,7 @@ Yep. more trivial stuff also works; who'd think that? Nobody really does this ye
 
 ### Doesn't framework-XYZ have these things?
 
-Oh right. Here's one for you.  Let's say that we have a function:
+Let's say that we have a function:
 
     this.once("something", function(){});
 
@@ -292,11 +292,7 @@ and then I do
 
     this.trigger("something");
 
-That's wonderful. Totally asynchronous, right? 
-
-Nope. That's so wrong. That's so silly. This isn't asynchronous at all. It's "deferred". There's a difference.
-
-What if the trigger runs BEFORE I register the handler?  Then the trigger falls on the floor and the handler goes 
+But what if the trigger runs BEFORE I register the handler?  Then the trigger falls on the floor and the handler goes 
 into neverland.  That's not asynchronous.  
 
 I still have to know what will load before what; that's what synchronous is. Like, that is synchronous's definition.  Something that's really
@@ -307,8 +303,6 @@ I still have to know what will load before what; that's what synchronous is. Lik
     this.whenSet("something", function(){}); << This will run after trigger.
 
     this.trigger("something"); << OR here, it doesn't matter.
-
-Well, this library does that. Fancy that. 
 
 
 ## API
