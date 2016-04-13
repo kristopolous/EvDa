@@ -159,13 +159,13 @@ You can also seed it with initialization values by passing in an object, for ins
 
     var ev = EvDa({key: 'value'});
 
-You have promises like this:
-
-    ev.isset('key', function() { });
-
-Along with things that you can do before they are cool. Like this:
+And can specify the order that callbacks run in a simplified manner:
 
     ev.after('key', function() { });
+    ev.first('key', function() { });
+
+And have test that permit or deny something being set.
+
     ev.test('key', function() { return false; });
 
 What about a way to console log whenever anything gets set?
@@ -191,7 +191,7 @@ What about having two callbacks for this?
 
 What about having just one?
 
-    ev(['key1','key2'], function(new_value, meta_info) {
+    ev(['key1','key2'], function(new_value) {
       console.log(key + ' was set to ' + new_value);
     })
 
@@ -199,7 +199,7 @@ What about having just one?
 
 What about making them run just once?
 
-    ev(['key1','key2'], function(new_value, meta_info) {
+    ev(['key1','key2'], function(new_value) {
       console.log(key + ' was set to ' + new_value);
     }, {once: 1})
 
@@ -207,7 +207,7 @@ What about making them run just once?
     
 What about unregistering one of them?
 
-    var list = ev(['key1','key2'], function(new_value, meta_info) {
+    var list = ev(['key1','key2'], function(new_value) {
       console.log(key + ' was set to ' + new_value);
     });
 
@@ -345,9 +345,8 @@ Oh but what if you declare the two things in the reverse order? That works. Sure
       };
     }
 
-Yep. more trivial stuff also works; who'd think that? Nobody really does this yet. I don't know why.
 
-### Doesn't framework-XYZ have these things?
+### Truly Asynchronous 
 
 Let's say that we have a function:
 
@@ -501,9 +500,9 @@ get the previous values in a nice tabular format with dates.
 
 <h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
- * Sets [key] to [value] or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
- * Passes the meta information if supplied to the registered functions.
- * The opts section gives options for how the flow of the setter is run.  This is a kind of ["multiple dispatch"](http://en.wikipedia.org/wiki/Multiple_dispatch) that is needed for internal unification.  The options are:
+ * Sets `key` to `value` or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
+ * Passes a user-supplied meta object if supplied to the registered functions.
+ * The `_opts` section gives options for how the flow of the setter is run.  This is a kind of ["multiple dispatch"](http://en.wikipedia.org/wiki/Multiple_dispatch) that is needed for internal unification.  The options are:
    * **value**: a value to be passed to the setters and the callbacks which may be different from the actual value set.
    * **bypass**: if set, bypasses any test conditions when running a setter
    * **noexec**: if set, disables all callbacks from being fired when settings.
