@@ -46,11 +46,14 @@ As an extreme analogy, not providing these tools of insight at the library's lay
 
 ## Solve Existing Problems Without New Ones
 
-Oftentimes when you need to solve a problem and are looking for an off-the-shelf solution, there's a rewrite cost beyond the immediate problem.  There's presumptions and demands upon the existing application in order for the solution to work.  These are gnerally written-off as "improvements" and done in the vain of making things better.  
+Oftentimes when you need to solve a problem and are looking for an off-the-shelf solution, there's a rewrite cost beyond the immediate problem.  There's presumptions and demands upon the existing application in order for the solution to work.  
 
-The rewrite cost then, is the amount of time needed to accomodate a particular solution.  
+Let's introduce two broad terms:
 
-We're going to compute the equation for aggregate time saved is by first defining
+ * **rewrite cost**: the amount of time needed to accomodate the solution
+ * **aggregate time saved**: the time reduction by using the solution
+
+To compute the equation for aggregate time saved we define
 
  * DIY: Estimated Time to do a roll your own solution
  * FW: Estimated Time to do the solution using the off-the-shelf solution
