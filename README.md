@@ -51,28 +51,28 @@ Oftentimes when you need to solve a problem and are looking for an off-the-shelf
 Let's introduce two broad terms:
 
  * **rewrite cost**: the amount of time needed to accomodate the solution
- * **aggregate time saved**: the time reduction by using the solution
+ * **aggregate time saved (ATS)**: the time reduction by using the solution
 
-To compute the equation for aggregate time saved we define
+To compute the equation for ATS we define:
 
- * DIY: Estimated Time to do a roll your own solution
- * FW: Estimated Time to do the solution using the off-the-shelf solution
- * FW_rewrite: Time to implement the demands ("improvements") the solution has in order to work
- * FW_training: Time to getting the whole team to read the documentation and become proficient in the new way
- * FW_testing: Time to test the new code that was rewritten and fix the issues
- * FW_regression: Time to test the solvency of the old code that wasn't touched
+ * **DIY**: Estimated Time to do a roll your own solution
+ * **FW**: Estimated Time to do the solution using the off-the-shelf solution
+ * **FW_rewrite**: Time to implement the demands the solution has in order to work
+ * **FW_training**: Time to read the documentation and become proficient in the new way
+ * **FW_testing**: Time to test the new code that was rewritten and fix the issues
+ * **FW_regression**: Time to test the solvency of the old code that wasn't touched
 
-Now Aggregate Time Saved is
+So ATS is:
     
-  Agg Time = DIY - (FW + FW_rewrite + FW_training + FW_testing + FW_regression)
+  ATS = DIY - (FW + FW_rewrite + FW_training + FW_testing + FW_regression)
 
-And this is presuming that the proposed solution actually reduces complexity or simplifies a problem as opposed to merely redefining it in other terms.
+The base computation, `DIY - FW > 0` is only possible if the proposed solution actually reduces complexity or simplifies a problem as opposed to merely redefining it in other terms. 
 
-As you can see here, Agg Time is often NEGATIVE meaning that there's a net LOSS in productivity which is generally speaking, counter to the conventional wisdom that such moves will save time.  In practice this is never the case - not because you've done it wrong, but because the conventional wisdom is just plain dead wrong.
+Even under these constraints, if the other `FW_*` variables are too high, ATS can often be negative.  This means that using an off-the-shelf solution can be a net loss in productivity.  This is counter to the conventional wisdom that such moves will almost always save time.  
 
-The solution is to reduce the `FW_*` metrics *as much as possible* by having a light-handed solution that can be implemented quickly, seemlessly, and in a side-effect free way without any impositions on how anything else works.  
+In practice this is far less often the case. In order to make ATS positive, one has to reduce the `FW_*` metrics *as much as possible* by having a light-handed solution that can be implemented quickly, seemlessly, and in a side-effect free way without any impositions on how anything else works.  Also, the solution has to provide benefits that are beyond preferential syntax and has to provide a real-world material decrease in complexity.
 
-This is done by taking a few steps back from the offerings.  
+This is done by taking a few steps back to offer generalized primitives that seek to reduce intellectual load and collapse theories leading to a cognitive reduction of the details of implementation as opposed to further expounding on them.
 
 
 ### Small and general 
