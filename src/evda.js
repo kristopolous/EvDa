@@ -232,7 +232,6 @@ var
       logSize = 10,
       logMap = {},
       // last return
-      lastMap = {},
       eventMap = {},
       dbg = {
         data: data, 
@@ -240,7 +239,6 @@ var
         log: logMap,
         locks: lockMap,
         testLocks: testLockMap,
-        last: lastMap,
         trace: traceList,
         globs: globberMap
       };
@@ -631,16 +629,19 @@ var
       list: {},
       isPaused: false,
       db: data,
-      events: function (name, type){
+      debug: function (name, type) {
+        var res = {
+          'events': eventMap
+        };
         if (type) {
-          return eventMap[type + name];
+          res['events'] = eventMap[type + name];
         }
         if (name) {
-          return smartMap(typeList.concat([SET]), function (type) {
+          res['events'] = smartMap(typeList.concat([SET]), function (type) {
             return eventMap[type + name];
           });
         }
-        return eventMap;
+        return res;
       },
       del: del,
       whenSet: isset,
@@ -1076,9 +1077,6 @@ var
                     function (callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
                     });
-
-                  // Record this as the last value.
-                  lastMap[key] = meta.last;
 
                   return value;
                 }
