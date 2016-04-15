@@ -480,7 +480,7 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-If there are no arguments, then an object for inspection is returned.
+You can do `ev.debug()` to return an object for inspection is returned.
 
 As of <a href="#version">0.1.111</a>, this is what is returned:
 
@@ -489,7 +489,7 @@ As of <a href="#version">0.1.111</a>, this is what is returned:
       events: ...     The events (on, after, before, test ...)
       locks: ...      Used to prevent recursion, it can also (if buggy) prevent firing
       testLocks: ...  Used to prevent test recursion
-      last: ...       The last function return value for each key (useful for debugging closures)
+      lastReturn: ... The last function return value for each key (useful for debugging closures)
       log: ...        A log (see below) of the previous values
       globs: ...      Regex style event listening
       trace: ...      Functions to run each time, see <a href='#sniff'>sniff</a> for more information.

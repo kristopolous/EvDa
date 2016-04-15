@@ -631,7 +631,7 @@ var
         }
 
         var res = {
-          last_return: lastReturnMap[name],
+          lastReturn: lastReturnMap[name],
           lock: lockMap[name],
           log: logMap[name],
           value: data[name]
