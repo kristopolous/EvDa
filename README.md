@@ -480,27 +480,6 @@ Looking at the last style, one can do the following:
       b: 2
     });
 
-You can do `ev.debug()` to return an object for inspection is returned.
-
-As of <a href="#version">0.1.111</a>, this is what is returned:
-
-    {
-      data: ...       The keys and current values
-      events: ...     The events (on, after, before, test ...)
-      locks: ...      Used to prevent recursion, it can also (if buggy) prevent firing
-      testLocks: ...  Used to prevent test recursion
-      lastReturn: ... The last function return value for each key (useful for debugging closures)
-      log: ...        A log (see below) of the previous values
-      globs: ...      Regex style event listening
-      trace: ...      Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
-    }
-
-There is a scope specific object, `dbg`, which may be contextually added to for more information.
-
-<h5>.log</h5>
-As of 0.1.111, a log is being kept of the previous values (currently hardcoded to 10) and when they were set.  You can run a `console.table` on a value, such as `ev().log.key` and
-get the previous values in a nice tabular format with dates.
-
 <h4><a name="set"></a>[value] .set(key, value, meta, _opts)</h4>
 
  * Sets `key` to `value` or undefined if a value is omitted. Although undefined is a falsy value, the engine checks for set membership so it won't be fooled by things like undefined and null. 
@@ -965,8 +944,25 @@ Inline example:
 
 <h4><a name="debug"></a>.debug(name, type)</h4>
 
- * With no arguments, the event system is returned.
- * With a name argument, all of the types of events associated with that name is returned.  These can be re-ordered.
+With no arguments you get this:
+
+    {
+      data: ...       The keys and current values
+      events: ...     The events (on, after, before, test ...)
+      locks: ...      Used to prevent recursion, it can also (if buggy) prevent firing
+      testLocks: ...  Used to prevent test recursion
+      removed: ...    Removed and completed setters or other events
+      lastReturn: ... The last function return value for each key (useful for debugging closures)
+      log: ...        A log (see below) of the previous values
+      globs: ...      Regex style event listening
+      trace: ...      Functions to run each time, see <a href='#sniff'>sniff</a> for more information.
+    }
+
+<h5>.log</h5>
+A log of the previous values (currently hardcoded to 10) and when they were set.  You can run a `console.table` on a value, such as `ev.debug(key).log` and get the previous values in a nice tabular format with dates.
+
+<h5>reordering events</h5>
+With a name argument, all of the types of events associated with that name is returned.  These can be re-ordered.
 
 For instance, say I had two test conditions and I wanted to make the second one registered run first.
 
