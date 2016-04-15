@@ -230,6 +230,7 @@ var
       traceList = [],
       // previous values 
       logSize = 10,
+      lastReturnMap = {},
       logMap = {},
       // last return
       eventMap = {},
@@ -237,6 +238,7 @@ var
         data: data, 
         events: eventMap,
         log: logMap,
+        lastReturn: lastReturnMap,
         locks: lockMap,
         testLocks: testLockMap,
         trace: traceList,
@@ -631,13 +633,18 @@ var
       db: data,
       debug: function (name, type) {
         var res = {
-          'events': eventMap
+          events: eventMap
         };
         if (type) {
           res['events'] = eventMap[type + name];
         }
         if (name) {
-          res['events'] = smartMap(typeList.concat([SET]), function (type) {
+          var log = logMap[name];
+          res.last_return = lastReturnMap[name];
+          res.lock = lockMap[name];
+          res.log = logMap[name];
+          res.value = data[name];
+          res.events = smartMap(typeList.concat([SET]), function (type) {
             return eventMap[type + name];
           });
         }
@@ -1077,6 +1084,8 @@ var
                     function (callback) {
                       meta.last = runCallback(callback, pub.context, value, meta);
                     });
+
+                  lastReturnMap[key] = meta.last;
 
                   return value;
                 }

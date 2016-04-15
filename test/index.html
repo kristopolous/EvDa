@@ -648,7 +648,7 @@ module('Last');
       return 'def';
     });
     ev('key', 'value');
-    equal(ev().last.key, 'def', 'last value is registered right')
+    equal(ev.debug('key').last_return, 'def', 'last value is registered right')
   });
   test('seeing if last value is registered at after right', function(){
     expect(1);
@@ -660,7 +660,7 @@ module('Last');
       return 'def';
     });
     ev('key', 'value');
-    equal(ev().last.key, 'abc', 'last value is registered right')
+    equal(ev.debug('key').last_return, 'abc', 'last value is registered right')
   });
 
 module('Bubbling');
