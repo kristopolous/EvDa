@@ -281,12 +281,6 @@ var
     function pub ( scope, value, meta, opts ) {
       var args = slice.call( arguments );
 
-      // If there are no arguments, and this is useful in the browser
-      // debug console, return all the internal data structures.
-      if ( args.length === 0 ) {
-        return dbg;
-      }
-
       if ( scope === undefined ) {
         throw "Undefined passed in as first argument.";
       }
@@ -632,22 +626,25 @@ var
       isPaused: false,
       db: data,
       debug: function (name, type) {
-        var res = {
-          events: eventMap
-        };
-        if (type) {
-          res['events'] = eventMap[type + name];
+        if(!name) {
+          return dbg;
         }
-        if (name) {
-          var log = logMap[name];
-          res.last_return = lastReturnMap[name];
-          res.lock = lockMap[name];
-          res.log = logMap[name];
-          res.value = data[name];
+
+        var res = {
+          last_return: lastReturnMap[name],
+          lock: lockMap[name],
+          log: logMap[name],
+          value: data[name]
+        };
+
+        if (type) {
+          res.events = eventMap[type + name];
+        } else {
           res.events = smartMap(typeList.concat([SET]), function (type) {
             return eventMap[type + name];
           });
-        }
+        } 
+
         return res;
       },
       del: del,
