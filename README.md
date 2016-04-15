@@ -435,7 +435,7 @@ Syntax notations:
 
 #### Miscellaneous
 
- * <a href="#events">[object] .events( &lt; key, type &gt; )</a> - The registered events to (re)order them
+ * <a href="#debug">[object] .debug( &lt; key, type &gt; )</a> - A number of properties associated with an instance, key or key/type.
  * <a href="#db">[object] .db</a> - The current database
  * <a href="#settermap">[object] .setterMap</a> - All the setters
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger
@@ -963,7 +963,7 @@ Inline example:
 
  * A direct reference (not a copy) to the internal hash.  This can be used to extend the library
 
-<h4><a name="events"></a>.events(name, type)</h4>
+<h4><a name="debug"></a>.debug(name, type)</h4>
 
  * With no arguments, the event system is returned.
  * With a name argument, all of the types of events associated with that name is returned.  These can be re-ordered.
@@ -976,7 +976,7 @@ For instance, say I had two test conditions and I wanted to make the second one 
 
 I can use this to re-order the events.
 
-    var list = ev.events('key', 'test');
+    var list = ev.debug('key', 'test').events;
 
     list.unshift(list.pop());
 
