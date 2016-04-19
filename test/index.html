@@ -1126,6 +1126,28 @@ module("Callbacks on set");
     ev('key', 'value', 'meta');
   });
 
+  test("try based on a test to a k/v", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.test('key', function(res, meta) {
+      return meta(true);
+    });
+    if(ev.test('key', 'value')) {
+      equal(1, 1, 'test pass thru correct');
+    }
+  });
+
+  test("try based on a test to a k/v (fail)", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.test('key', function(res, meta) {
+      return meta(false);
+    });
+    if(!ev.test('key', 'value')) {
+      equal(1, 1, 'test pass thru correct');
+    }
+  });
+
   test("register a callback, pass meta object information after a test", function(){
     expect(4);
     var ev = EvDa();
