@@ -1137,6 +1137,34 @@ module("Callbacks on set");
     }
   });
 
+  test("try based on a test to a k/v (pass - non-existent)", function(){
+    expect(1);
+    var ev = EvDa();
+    if(ev.isok('key', 'value')) {
+      equal(1, 1, 'test pass thru correct');
+    }
+  });
+
+  test("try based on a test to a k/v (pass - multi)", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.test('key', function() { return true });
+    ev.test('key', function() { return true });
+    if(ev.isok('key', 'value')) {
+      equal(1, 1, 'test pass thru correct');
+    }
+  });
+
+  test("try based on a test to a k/v (fail - multi)", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.test('key', function() { return false });
+    ev.test('key', function() { return true });
+    if(!ev.isok('key', 'value')) {
+      equal(1, 1, 'test pass thru correct');
+    }
+  });
+
   test("try based on a test to a k/v (fail)", function(){
     expect(1);
     var ev = EvDa();
