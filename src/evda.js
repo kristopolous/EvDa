@@ -649,14 +649,17 @@ var
           // If the times value is the same then we didn't
           // recurse into the tests and instead returned
           // a truthy or falsey value, supposedly.
-          if(_times == times) {
+          if(_times == times && !!res === res) {
             meta(res);
           }
         },
         meta = function ( ok ) {
           failure |= (ok === false);
+          times--;
 
-          if ( --times ) { 
+          if (times < 0) { 
+            return; 
+          } else if ( times ) { 
             testIx++;
 
             if (_coroutine(meta, false)) {
@@ -684,7 +687,7 @@ var
         result: meta,
       });
 
-      meta(true);
+      return meta(true);
     }
 
     extend(pub, {
@@ -695,7 +698,16 @@ var
       list: {},
       isPaused: false,
       isok: function (key, value) {
-        return test(key, {_value: value});
+        var res;
+
+        test(
+          key, 
+          {_value: value}, 
+          function pass(){ res = true; }, 
+          function fail(){ res = false; }
+        );
+
+        return res;
       },
 
       db: data,
