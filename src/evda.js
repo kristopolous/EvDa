@@ -484,9 +484,6 @@ var
       });
     }
 
-    function isok (key, value) {
-    }
-
     function isset ( key, callback, meta ) {
       // This supports the style
       // ev.isset(['key1', 'key2'], something).
@@ -637,25 +634,26 @@ var
       var 
         stub = function(){ return true },
         testKey = TEST + key,
-        testIx = 0,
-        times = size(eventMap[ testKey ]),
+        testIx = 0 - 1,
+        times = size(eventMap[ testKey ]) + 1,
         failure,
         cb = function() {
           var 
-            _myIx = testIx,
+            _times = times,
             res = runCallback(
               eventMap[ testKey ][ testIx ], 
               pub.context, 
               ('_value' in meta ? meta._value : meta.value), 
               meta
             );
-          if(_myIx == testIx) {
+          // If the times value is the same then we didn't
+          // recurse into the tests and instead returned
+          // a truthy or falsey value, supposedly.
+          if(_times == times) {
             meta(res);
           }
         },
         meta = function ( ok ) {
-          var res;
-
           failure |= (ok === false);
 
           if ( --times ) { 
@@ -675,6 +673,8 @@ var
           return ok;
         };
 
+      // we should be able to do things
+      // without these defined.
       _pass = _pass || stub;
       _fail = _fail || stub;
       _coroutine = _coroutine || stub;
@@ -683,12 +683,8 @@ var
         done: meta, 
         result: meta,
       });
-      // start it off
-      if (_coroutine(meta, false)) {
-        cb();
-      } else {
-        _fail(meta);
-      }
+
+      meta(true);
     }
 
     extend(pub, {
@@ -698,6 +694,10 @@ var
       context: this,
       list: {},
       isPaused: false,
+      isok: function (key, value) {
+        return test(key, {_value: value});
+      },
+
       db: data,
       debug: function (name, type) {
         if(!name) {
@@ -1394,6 +1394,7 @@ var
     pub.get = pub;
     pub.change = pub.on;
     pub.add = pub.push;
+    pub.isOK = pub.isok;
 
     each(e._ext, function (key, cb) {
       pub[key] = function () {
