@@ -1126,13 +1126,13 @@ module("Callbacks on set");
     ev('key', 'value', 'meta');
   });
 
-  test("try based on a test to a k/v", function(){
+  test("try based on a test to a k/v (pass)", function(){
     expect(1);
     var ev = EvDa();
     ev.test('key', function(res, meta) {
       return meta(true);
     });
-    if(ev.test('key', 'value')) {
+    if(ev.isok('key', 'value')) {
       equal(1, 1, 'test pass thru correct');
     }
   });
@@ -1143,7 +1143,7 @@ module("Callbacks on set");
     ev.test('key', function(res, meta) {
       return meta(false);
     });
-    if(!ev.test('key', 'value')) {
+    if(!ev.isok('key', 'value')) {
       equal(1, 1, 'test pass thru correct');
     }
   });
@@ -1166,7 +1166,7 @@ module("Callbacks on set");
     var ev = EvDa();
 
     ev.test('key', function(){
-      return true;
+      return false;
     });
     ev.or('key', function(){ equal(1,1, 'should be here'); });
     ev.on('key', function(){ equal(1,0, 'should not be here'); });
