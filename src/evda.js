@@ -962,7 +962,6 @@ var
         _opts = _opts || {};
 
         var 
-          res,
           bypass = _opts.bypass, 
           coroutine = _opts.coroutine || function (){ return true },
           hasvalue = ('value' in _opts),
