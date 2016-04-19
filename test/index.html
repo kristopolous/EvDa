@@ -1037,7 +1037,7 @@ module("Callbacks on set");
     var ev = EvDa();
 
     ev('key', function(value, meta) {
-      equal(_.keys(meta).sort().join(' '), 'done key meta old order result value', 'Meta information there');
+      equal(_.keys(meta).sort().join(' '), 'key meta old order value', 'Meta information there');
       equal(meta.old, undefined, 'Old value correct');
       equal(meta.key, 'key', 'key correct');
     });
@@ -1146,6 +1146,32 @@ module("Callbacks on set");
     if(!ev.test('key', 'value')) {
       equal(1, 1, 'test pass thru correct');
     }
+  });
+
+  test("register a callback, do return value testing", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.test('key', function(){
+      return true;
+    });
+    ev.or('key', function() { equal(1,0, 'should not be here'); });
+    ev.on('key', function() { equal(1,1, 'should be here'); });
+
+    ev('key',1);
+  });
+
+  test("register a callback, do return value or testing", function(){
+    expect(1);
+    var ev = EvDa();
+
+    ev.test('key', function(){
+      return true;
+    });
+    ev.or('key', function(){ equal(1,1, 'should be here'); });
+    ev.on('key', function(){ equal(1,0, 'should not be here'); });
+
+    ev('key',1);
   });
 
   test("register a callback, pass meta object information after a test", function(){
@@ -1579,7 +1605,7 @@ module("Tests");
     equal(ev.get("key"), 2, "Key set to 2 in the test");
   });
 
-  test("Setadd testing of the value", function() {
+  test("Setadd testing of the value all fields", function() {
     expect(4);
     var ev = EvDa();
 
