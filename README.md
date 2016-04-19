@@ -421,6 +421,7 @@ Syntax notations:
  * <a href="#del">[void] .del(handle)</a> - delete a handle returned by on, after, or test
  * <a href="#setter">[boolean] .setter(key, lambda)</a> - define a way to set a key if requested
  * <a href="#isset">[boolean | undefined] .isSet(key | object)</a> - see if a key or a group of keys have been set, **firing a setter if necessary**
+ * <a href="#isok">[boolean | undefined] .isOK(key, value)</a> - run just the testers for a key.
  * <a href="#whenset">[boolean | undefined] .whenSet(key | object, lambda)</a> - do something once when a key is set, **firing a setter if necessary**
  * <a href="#pause">[boolean] pause()</a> - stop running callbacks
  * <a href="#play">[boolean] play()</a> - run the aggregate callbacks
@@ -786,6 +787,13 @@ Example:
       console.log("failure");
     });
 
+Also, these need not be chained as above:
+
+    ev.test( ... );
+
+    ev.or( ... );
+
+
 <h4><a name="when"></a>[handle] .when(key, value | test | eval string, lambda)</h4>
 
  * Executes lambda when `key === value` OR `test(value) == true`
@@ -874,6 +882,22 @@ Inline example:
 
  * You can pass in K/V object style arguments similar to the ev() notation above.
  * You can also pass an array of things ... all of them need to be set for the lambda to run. 
+
+<h4><a name="isok"></a>[boolean | undefined] .is[ok | OK](key, value)</h4>
+ 
+ * Runs the tests on a key, if any of them exist, and returns whether those tests failed or not.
+ * Does not run the usual `first`, `on`, `after`, or `or` events.
+ * Returns a boolean
+
+Example:
+
+    ev.test('key', function(key, value) {
+      return (value == 'value');
+    });
+
+    if (ev.isOK('key', 'value')) {
+      ...
+    }
 
 <h4><a name="whenset"></a>[boolean | undefined] .whenSet(key | object, lambda)</h4>
 
