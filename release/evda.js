@@ -630,6 +630,66 @@ var
       return val + amount;
     }
         
+    function test(key, _meta, _pass, _fail, _coroutine) {
+      var 
+        stub = function(){ return true },
+        testKey = TEST + key,
+        testIx = 0 - 1,
+        times = size(eventMap[ testKey ]) + 1,
+        failure,
+        cb = function() {
+          var 
+            _times = times,
+            res = runCallback(
+              eventMap[ testKey ][ testIx ], 
+              pub.context, 
+              ('_value' in meta ? meta._value : meta.value), 
+              meta
+            );
+          // If the times value is the same then we didn't
+          // recurse into the tests and instead returned
+          // a truthy or falsey value, supposedly.
+          if(_times == times && !!res === res) {
+            meta(res);
+          }
+        },
+        meta = function ( ok ) {
+          failure |= (ok === false);
+          times--;
+
+          if (times < 0) { 
+            return; 
+          } else if ( times ) { 
+            testIx++;
+
+            if (_coroutine(meta, false)) {
+              cb();
+            } else {
+              _fail(meta);
+            }
+          } else if ( failure ) { 
+            _fail(meta);
+          } else {
+            _pass(key, meta);
+          }
+
+          return ok;
+        };
+
+      // we should be able to do things
+      // without these defined.
+      _pass = _pass || stub;
+      _fail = _fail || stub;
+      _coroutine = _coroutine || stub;
+
+      extend(meta, _meta, {
+        done: meta, 
+        result: meta,
+      });
+
+      return meta(true);
+    }
+
     extend(pub, {
       // Exposing the internal variables so that
       // extensions can be made.
@@ -637,6 +697,19 @@ var
       context: this,
       list: {},
       isPaused: false,
+      isok: function (key, value) {
+        var res;
+
+        test(
+          key, 
+          {_value: value}, 
+          function pass(){ res = true; }, 
+          function fail(){ res = false; }
+        );
+
+        return res;
+      },
+
       db: data,
       debug: function (name, type) {
         if(!name) {
@@ -889,7 +962,6 @@ var
         _opts = _opts || {};
 
         var 
-          res,
           bypass = _opts.bypass, 
           coroutine = _opts.coroutine || function (){ return true },
           hasvalue = ('value' in _opts),
@@ -923,11 +995,12 @@ var
 
             // Tests are run sequentially, not
             // in parallel.
-            testIx = 0,
             doTest = (times && !bypass),
-            failure,
 
-            orHandler = function () {
+            orHandler = function (_meta) {
+              if(_meta) {
+                meta = _meta;
+              }
               // If the tests fail, then this is the alternate failure
               // path that will be run
               each ( eventMap[ OR + key ] || [], function ( callback ) {
@@ -939,64 +1012,33 @@ var
                 );
               });
             },
+            successHandler = function(key, meta) {
+              //
+              // The actual setter gets the real value.
+              //
+              // If a "coroutine" is set then this will be
+              // called before the final setter goes through.
+              //
+              if (coroutine(meta, true)) {
+
+                //
+                // Since the setter normally wraps the meta through a layer
+                // of indirection and we have done that already, we need
+                // to pass the meta this time as the wrapped version.
+                //
+                // Otherwise the calling convention of the data getting
+                // passed through would magically change if a test gets
+                // placed in the chain.
+                //
+                pub.set ( key, meta.value, meta.meta, {bypass: 1, order: meta.order} );
+              } else {
+                orHandler();
+              }
+            },
             // Invoke will also get done
             // but it will have no semantic
             // meaning, so it's fine.
-            meta = doTest ? (
-              function ( ok ) {
-                var res;
-
-                failure |= (ok === false);
-
-                if ( ! --times ) { 
-                  if ( failure ) { 
-                    orHandler();
-                  } else {
-
-                    //
-                    // The actual setter gets the real value.
-                    //
-                    // If a "coroutine" is set then this will be
-                    // called before the final setter goes through.
-                    //
-                    if (coroutine(meta, true)) {
-
-                      //
-                      // Since the setter normally wraps the meta through a layer
-                      // of indirection and we have done that already, we need
-                      // to pass the meta this time as the wrapped version.
-                      //
-                      // Otherwise the calling convention of the data getting
-                      // passed through would magically change if a test gets
-                      // placed in the chain.
-                      //
-                      pub.set ( key, meta.value, meta.meta, {bypass: 1, order: meta.order} );
-                    } else {
-                      orHandler();
-                    }
-                  }
-                } else {
-                  testIx++;
-
-                  if (coroutine(meta, false)) {
-                    res = runCallback(
-                      eventMap[ testKey ][ testIx ], 
-                      pub.context, 
-                      (hasvalue ? _opts['value'] : meta.value), 
-                      meta
-                    );
-
-                    if ( res === true || res === false) {
-                      meta(res);
-                    }
-                  } else {
-                    orHandler();
-                  }
-                }
-
-                return ok;
-              }
-            ) : {};
+            meta = {};
 
           meta.old = clone(data[key]);
 
@@ -1007,9 +1049,8 @@ var
             // how this is incremented.
             order: ('order' in _opts) ? _opts.order : -1,
             meta: _meta || {},
-            done: meta, 
-            result: meta,
             key: key,
+            _value: hasvalue ? _opts['value'] : meta.value, 
             // the value to set ... or change.
             value: value
           });
@@ -1019,23 +1060,7 @@ var
             lockMap[key]--;
             if (testLockMap[key] !== true) {
               testLockMap[key] = true;
-
-              // This is the test handlers
-              if ( coroutine(meta, false)) {
-                res = runCallback(
-                  eventMap[ testKey ][ testIx ], 
-                  pub.context, 
-                  (hasvalue ? _opts['value'] : meta.value), 
-                  meta
-                );
-
-                if (res === true || res === false) {
-                  meta(res);
-                }
-              } else {
-                orHandler();
-              }
-
+              test(key, meta, successHandler, orHandler, coroutine);
               testLockMap[key] = false;
             }
 
@@ -1380,6 +1405,7 @@ var
     pub.get = pub;
     pub.change = pub.on;
     pub.add = pub.push;
+    pub.isOK = pub.isok;
 
     each(e._ext, function (key, cb) {
       pub[key] = function () {
@@ -1406,4 +1432,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.2-unified-debugging-8-g9b86ff1';
+EvDa.__version__='0.2-unified-debugging-17-g3c9bd8d';
