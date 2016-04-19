@@ -484,6 +484,9 @@ var
       });
     }
 
+    function isok (key, value) {
+    }
+
     function isset ( key, callback, meta ) {
       // This supports the style
       // ev.isset(['key1', 'key2'], something).
@@ -638,12 +641,17 @@ var
         times = size(eventMap[ testKey ]),
         failure,
         cb = function() {
-          return runCallback(
-            eventMap[ testKey ][ testIx ], 
-            pub.context, 
-            ('_value' in meta ? meta._value : meta.value), 
-            meta
-          );
+          var 
+            _myIx = testIx,
+            res = runCallback(
+              eventMap[ testKey ][ testIx ], 
+              pub.context, 
+              ('_value' in meta ? meta._value : meta.value), 
+              meta
+            );
+          if(_myIx == testIx) {
+            meta(res);
+          }
         },
         meta = function ( ok ) {
           var res;
@@ -654,11 +662,7 @@ var
             testIx++;
 
             if (_coroutine(meta, false)) {
-              res = cb();
-
-              if ( res === true || res === false) {
-                meta(res);
-              }
+              cb();
             } else {
               _fail(meta);
             }
@@ -680,7 +684,11 @@ var
         result: meta,
       });
       // start it off
-      cb();
+      if (_coroutine(meta, false)) {
+        cb();
+      } else {
+        _fail(meta);
+      }
     }
 
     extend(pub, {
