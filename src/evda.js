@@ -208,6 +208,7 @@ var
     TEST = 'test',
     OR = 'or',
     SET = "set",
+    stub = function(){ return true },
     typeList = [FIRST, ON, AFTER, TEST, OR],
 
     // The one time callback gets a property to
@@ -632,16 +633,15 @@ var
         
     function test(key, _meta, _pass, _fail, _coroutine) {
       var 
-        stub = function(){ return true },
-        testKey = TEST + key,
+        testList = eventMap[TEST + key] || [],
         testIx = 0 - 1,
-        times = size(eventMap[ testKey ]) + 1,
+        times = testList.length + 1,
         failure,
         cb = function() {
           var 
             _times = times,
             res = runCallback(
-              eventMap[ testKey ][ testIx ], 
+              testList[ testIx ], 
               pub.context, 
               ('_value' in meta ? meta._value : meta.value), 
               meta
@@ -963,7 +963,7 @@ var
 
         var 
           bypass = _opts.bypass, 
-          coroutine = _opts.coroutine || function (){ return true },
+          coroutine = _opts.coroutine || stub,
           hasvalue = ('value' in _opts),
           noexec = _opts.noexec;
 
@@ -988,14 +988,12 @@ var
 
         try {
           var 
-            testKey = TEST + key,
             result,
             args = slice.call(arguments),
-            times = size(eventMap[ testKey ]),
 
             // Tests are run sequentially, not
             // in parallel.
-            doTest = (times && !bypass),
+            doTest = (size(eventMap[ TEST + key ]) && !bypass),
 
             orHandler = function (_meta) {
               if(_meta) {
