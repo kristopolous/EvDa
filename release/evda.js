@@ -493,10 +493,10 @@ var
       // what order we trigger things in.  We don't have to do any crazy
       // accounting, just cascading should do fine.
       if ( isArray(key) ) {
-        var myKey = key.pop();
+        var myKey = key.pop(), next;
 
         return isset(glob(myKey), function (data, meta) {
-          var next = (key.length === 1) ? key[0] : key;
+          next = (key.length === 1) ? key[0] : key;
           return isset(next, callback, meta);
         }, meta);
         // ^^ this should recurse nicely.
@@ -1430,4 +1430,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.2-unified-debugging-22-g5d62545';
+EvDa.__version__='0.2-unified-debugging-23-g40aa900';

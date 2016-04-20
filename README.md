@@ -1,6 +1,6 @@
 **EvDa** is a collection of about 30 or so functions to construct a modular no-kitchen-sink style application.  This is an event system.
 
-It's been in development since 2008 and includes a suite with over 300 tests. 
+It's been in development since 2008 and includes a suite with over 315 tests. 
 
 
 ## Overview

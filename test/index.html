@@ -1971,6 +1971,35 @@ module("Running a setter");
       equal(value, 'value', 'Key set to value');
     });
   });
+
+  test("Setting a variable, checking order of set", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev.isset('key', function(value, meta) {
+      equal(value, 'value', 'Key set to value');
+      equal(meta.order, 0, 'execution order - 1st');
+    });
+    ev.isset('key', function(value, meta) {
+      equal(value, 'value', 'Key set to value');
+      equal(meta.order, 1, 'execution order - 2nd');
+    });
+    ev.set('key', 'value');
+  });
+  test("Setting a variable, checking order of set - using first", function(){
+    expect(4);
+    var ev = EvDa();
+
+    ev.isset('key', function(value, meta) {
+      equal(value, 'value', 'Key set to value');
+      equal(meta.order, 1, 'execution order - 2nd');
+    });
+    ev.isset('key', function(value, meta) {
+      equal(value, 'value', 'Key set to value');
+      equal(meta.order, 0, 'execution order - 1st');
+    }, {first: true});
+    ev.set('key', 'value');
+  });
   test("Registering a setter arglist style, then Setting a variable", function(){
     expect(1);
     var ev = EvDa();
