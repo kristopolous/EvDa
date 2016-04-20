@@ -565,7 +565,7 @@ var
         meta = meta || {};
         return key in data ?
           callback.call ( pub.context, data[key], meta ) :
-          pub[meta.first ? 'first' : 'on' ] ( key, callback, extend( meta , ONCE ) );
+          pub[meta.first ? FIRST : ON ] ( key, callback, extend( meta , ONCE ) );
       }
 
       // Otherwise, if there is no callback, just return

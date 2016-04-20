@@ -565,7 +565,7 @@ var
         meta = meta || {};
         return key in data ?
           callback.call ( pub.context, data[key], meta ) :
-          pub[meta.first ? 'first' : 'on' ] ( key, callback, extend( meta , ONCE ) );
+          pub[meta.first ? FIRST : ON ] ( key, callback, extend( meta , ONCE ) );
       }
 
       // Otherwise, if there is no callback, just return
@@ -1430,4 +1430,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.2-unified-debugging-20-gc7579d9';
+EvDa.__version__='0.2-unified-debugging-21-g6957704';
