@@ -899,7 +899,7 @@ Example:
       ...
     }
 
-<h4><a name="whenset"></a>[boolean | undefined] .whenSet(key | object, lambda)</h4>
+<h4><a name="whenset"></a>[boolean | undefined] .when[Ss]et(key | object, lambda)</h4>
 
  * An alias to `.isSet` for syntactic sugar.
 
