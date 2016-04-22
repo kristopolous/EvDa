@@ -1233,7 +1233,7 @@ var
       },
 
       toggle: function ( key ) {
-        ev(key, !!data[key]);
+        return pub(key, !data[key]);
       },
 
       // This is a sort + M complexity version that
