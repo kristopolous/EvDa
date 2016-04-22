@@ -1232,6 +1232,10 @@ var
         });
       },
 
+      toggle: function ( key ) {
+        return pub(key, !data[key]);
+      },
+
       // This is a sort + M complexity version that
       // doesn't perserve ordinality.
       setadd: function ( key, value, meta ) {
@@ -1398,6 +1402,7 @@ var
     pub.osetDel = pub.setdel;
     pub.setDel = pub.setdel;
     pub.isSet = pub.isset;
+    pub.whenset = pub.isset;
     pub.mod = pub.incr;
 
     pub.get = pub;
@@ -1430,4 +1435,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.2-unified-debugging-23-g40aa900';
+EvDa.__version__='0.2-unified-debugging-29-g5ec6f6f';
