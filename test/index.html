@@ -1958,6 +1958,45 @@ module("Removing elements from a set");
     equal(JSON.stringify(ev('s').sort()), '[1,3]', 'Set is correct');
   });
 
+module("Toggle");
+  test("Undefined key", function(){
+    expect(3);
+    var ev = EvDa();
+    equal(ev('key'), undefined, 'value starts undefined');
+    var res = ev.toggle('key');
+
+    equal(res, true, 'default true value received');
+    equal(ev('key'), true, 'default value set');
+  });
+  test("false key, 2 toggles", function(){
+    expect(3);
+    var ev = EvDa({key: false});
+    equal(ev('key'), false, 'value starts false');
+    ev.toggle('key');
+    var res = ev.toggle('key');
+
+    equal(res, false, 'false value received');
+    equal(ev('key'), false, 'key is false');
+  });
+  test("toggle + when", function(){
+    expect(1);
+    var ev = EvDa();
+    ev.when('key', true, function(value) {
+      equal(value, true, 'handler called');
+    });
+    ev.toggle('key');
+    ev.toggle('key');
+  });
+  test("toggle + when (strict)", function(){
+    expect(0);
+    var ev = EvDa();
+    ev.when('key', 1, function(value) {
+      equal(value, true, 'handler called');
+    });
+    ev.toggle('key');
+    ev.toggle('key');
+  });
+
 module("Running a setter");
   test("Setting a variable, checking to see if it's been set", function(){
     expect(2);
