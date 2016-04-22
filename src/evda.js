@@ -1402,6 +1402,7 @@ var
     pub.osetDel = pub.setdel;
     pub.setDel = pub.setdel;
     pub.isSet = pub.isset;
+    pub.whenset = pub.isset;
     pub.mod = pub.incr;
 
     pub.get = pub;
