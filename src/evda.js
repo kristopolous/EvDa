@@ -1,6 +1,6 @@
 //
 // EvDa Events and Data 
-// See EvDa.__version__ at the end for version info.
+// See EvDa.version at the end for version info.
 //
 // https://github.com/kristopolous/EvDa
 //
