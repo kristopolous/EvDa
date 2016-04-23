@@ -895,15 +895,32 @@ Inline example:
  
  * Runs the tests on a key, if any of them exist, and returns whether those tests failed or not.
  * Does not run the usual `first`, `on`, `after`, or `or` events.
- * Returns a boolean
+ * Appends `{ _isok: true }' to the `meta` for detection.
+ * Returns a Boolean
 
-Example:
+Example 1:
 
-    ev.test('key', function(key, value) {
+    ev.test('key', function(value) {
       return (value == 'value');
     });
 
     if (ev.isOK('key', 'value')) {
+      ...
+    }
+
+Example 2:
+
+    ev.test('key', function(value, meta) {
+      if(meta._isok) {
+        // run a test for the checker
+      } else {
+        // do something else..
+      }
+      return (value == 'value');
+    });
+
+    if (ev.isOK('key', 'value')) {
+      ev('key', 'value');
       ...
     }
 

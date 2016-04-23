@@ -1127,9 +1127,10 @@ module("Callbacks on set");
   });
 
   test("try based on a test to a k/v (pass)", function(){
-    expect(1);
+    expect(2);
     var ev = EvDa();
     ev.test('key', function(res, meta) {
+      equal(meta._isok, true, 'boolean saying im in an isok correct');
       return meta(true);
     });
     if(ev.isok('key', 'value')) {
