@@ -407,8 +407,9 @@ Syntax notations:
 
 ##### Values
 
- * <a href="#incr">[value] .incr(key &lt;, amount, meta &gt; )</a> - increment a key's value - returning the new value
- * <a href="#decr">[value] .decr(key &lt;, amount, meta &gt; )</a> - decrement a key's value - returning the new value
+ * <a href="#incr">[number] .incr(key &lt;, amount, meta &gt; )</a> - increment a key's value - returning the new value
+ * <a href="#decr">[number] .decr(key &lt;, amount, meta &gt; )</a> - decrement a key's value - returning the new value
+ * <a href="#toggle">[boolean] .toggle(key)</a> - toggles the value of a key to either True or False.
 
 #### Triggers
 
@@ -713,6 +714,13 @@ Example:
 
     ev.decr('key', 2)
     > -2 
+
+<h4><a name="toggle"></a>[boolean] .toggle(key)</h4>
+
+  * If the key is not defined, it is set as `True`.
+  * Otherwise 
+    * If it's a "truthy" value it gets set to `False`.
+    * If it's a "falsy" value it gets set to `True`.
 
 ### Triggers
 
