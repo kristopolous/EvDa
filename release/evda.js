@@ -1,6 +1,6 @@
 //
 // EvDa Events and Data 
-// See EvDa.__version__ at the end for version info.
+// See EvDa.version at the end for version info.
 //
 // https://github.com/kristopolous/EvDa
 //
@@ -1340,6 +1340,9 @@ var
         });
       },
 
+      version: function() {
+        return EvDa.version;
+      },
       sniff: function () {
         var 
           ignoreMap = {"":1},
@@ -1435,4 +1438,4 @@ var
 
   return e;
 })();
-EvDa.__version__='0.2-unified-debugging-29-g5ec6f6f';
+EvDa.version='0.2.34-20160422';
