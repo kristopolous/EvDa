@@ -1340,6 +1340,9 @@ var
         });
       },
 
+      version: function() {
+        return EvDa.version;
+      },
       sniff: function () {
         var 
           ignoreMap = {"":1},
