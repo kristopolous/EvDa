@@ -371,12 +371,12 @@ var
       removedMap[key].push(cb || eventMap[key]);
     }
 
-    function log(key, value) {
+    function log(key, value, notes) {
       if (!logMap[key]) {
         logMap[key] = [];
       }
 
-      logMap[key].push([value, new Date()]);
+      logMap[key].push([value, new Date(), notes]);
 
       if (logMap[key].length > logSize) {
         logMap[key].shift();
@@ -653,6 +653,14 @@ var
             meta(res);
           }
         },
+        pass = function(key,meta) {
+          log(key, meta.value, 'test:pass');
+          return ( _pass || stub ) (key, meta);
+        },
+        fail = function(meta) {
+          log(key, meta.value, 'test:fail');
+          return ( _fail || stub ) (meta);
+        },
         meta = function ( ok ) {
           failure |= (ok === false);
           times--;
@@ -665,12 +673,12 @@ var
             if (_coroutine(meta, false)) {
               cb();
             } else {
-              _fail(meta);
+              fail(meta);
             }
           } else if ( failure ) { 
-            _fail(meta);
+            fail(meta);
           } else {
-            _pass(key, meta);
+            pass(key, meta);
           }
 
           return ok;
@@ -678,8 +686,6 @@ var
 
       // we should be able to do things
       // without these defined.
-      _pass = _pass || stub;
-      _fail = _fail || stub;
       _coroutine = _coroutine || stub;
 
       extend(meta, _meta, {
@@ -1092,7 +1098,7 @@ var
               if (!(_opts.onlychange && value === data[key])) {
 
                 if (!_opts.noset) {
-                  log(key, value);
+                  log(key, value, 'set');
                   data[key] = value;
 
                   if (key != '') {
