@@ -441,7 +441,7 @@ Syntax notations:
  * <a href="#settermap">[object] .setterMap</a> - All the setters
  * <a href="#sniff">[void] .sniff()</a> - Enable a debugger
  * <a href="#empty">[void] .empty()</a> - Resetting all values and keeping all triggers
- * <a href="#version">__version__</a> - Grabbing the version of the library
+ * <a href="#version">version</a> - Grabbing the version of the library
  * <a href="#callbackhell">callback hell</a> - Avoiding it.
 
 ### Manipulation
@@ -1029,10 +1029,10 @@ By default the bubbled top, "", is set to be ignored. This can be un-ignored wit
    * Does not call any triggers during the removal
    * Retains all hooks for re-population.
 
-<h4><a name="version"></a>__version__</h4>
+<h4><a name="version"></a>version</h4>
 
- * In the `release/` directory, a `__version__` string is tacked on to the global `EvDa` object.
- * This is a result of a `git describe` as run from the `tools/deploy.sh` directory.
+ * In the `release/` directory, a `version` string is tacked on to the global `EvDa` object.
+ * This is a result of a `git describe` along with a date of the build as run from the `tools/deploy.sh` directory.
  * The master is always assumed to be stable and current. 
    * This library has been in development since 2008 and is in constant, widespread, production use. The API can be considered stable and is forwards compatible from about 2010 meaning that a git pull from master can be considered safe.
 
