@@ -654,11 +654,11 @@ var
           }
         },
         pass = function(key,meta) {
-          log(key, meta.value, 'test:pass');
+          log(key, meta.value, ['test:pass', meta]);
           return ( _pass || stub ) (key, meta);
         },
         fail = function(meta) {
-          log(key, meta.value, 'test:fail');
+          log(key, meta.value, ['test:fail', meta]);
           return ( _fail || stub ) (meta);
         },
         meta = function ( ok ) {
@@ -708,7 +708,10 @@ var
 
         test(
           key, 
-          {_value: value}, 
+          {
+           _value: value,
+           _isok: true
+          }, 
           function pass(){ res = true; }, 
           function fail(){ res = false; }
         );
@@ -1444,4 +1447,4 @@ var
 
   return e;
 })();
-EvDa.version='0.2.38-20160422';
+EvDa.version='0.2.40-20160422';
