@@ -405,6 +405,19 @@ var
           });
         }
 
+        if (isArray(key)) {
+          // take everything after the first argument
+          var args = slice.call(arguments, 1);
+          
+          // go through the callback as an array, returning
+          // its list of cbs
+          return map(key, function (which) {
+            // call within the oo binding context, the key, the cb,
+            // and the remaining args.
+            return pub[stage].apply(pub.context, [which].concat(args));
+          });
+        }
+
         var my_map = eventMap;
 
         if ( !callback ) {
@@ -1447,4 +1460,4 @@ var
 
   return e;
 })();
-EvDa.version='0.2.40-20160422';
+EvDa.version='0.2.41-20171219';
